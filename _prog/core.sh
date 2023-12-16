@@ -75,6 +75,8 @@ _pumpCompanion-frame() {
 }
 
 _pumpCompanion-deframe() {
+	_messageNormal '_pumpCompanion-deframe'
+	
 	#|| [[ $(head -c 288 "$HOME"/Downloads/_framed.bin | tr -dc 'a-z0-9') != "f0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03ae" ]] || [[ $(tail -c 289 "$HOME"/Downloads/_framed.bin | tr -dc 'a-z0-9') != "2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a" ]]
 	if [[ ! -e "$HOME"/Downloads/_framed.bin ]]
 	then
@@ -92,6 +94,7 @@ _pumpCompanion-deframe() {
 	
 	
 	
+	_messagePlain_nominal 'done: _pumpCompanion-deframe'
 }
 
 
