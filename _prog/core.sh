@@ -71,9 +71,9 @@ _pumpCompanion-deframe() {
 
 
 _refresh_anchors() {
-	cp -a "$scriptAbsoluteLocation" ./_anchor ./_pumpCompanion-frame
-	cp -a "$scriptAbsoluteLocation" ./_anchor ./_pumpCompanion-deframe
+	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
+	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
 	
-	cp -a "$scriptAbsoluteLocation" ./_anchor.bat ./_pumpCompanion-frame.bat
-	cp -a "$scriptAbsoluteLocation" ./_anchor.bat ./_pumpCompanion-deframe.bat
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-frame.bat
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-deframe.bat
 }
