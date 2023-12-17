@@ -205,15 +205,37 @@ _pumpCompanion-frame() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+_gnuradioCompanion() {
+	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion-experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc &
+	
+	disown -h $!
+	disown -a -h -r
+	disown -a -r
+}
+
 _refresh_anchors() {
-	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
-	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
+	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
+	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
 	
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-frame.bat
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-deframe.bat
 	
 	
-	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame-mega
+	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame-mega
 	cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame-mega.bat
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor ./_gnuradioCompanion
+	#cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_gnuradioCompanion.bat
 }
 

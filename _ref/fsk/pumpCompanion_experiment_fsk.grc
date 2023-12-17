@@ -4,20 +4,14 @@ options:
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
-    comment: 'Apparently cannot change Samples/Symbol without corruption.
-
-
-      Seems like a rather bold assumption.
-
-
-      Header seems to rely on byte aligned tags.'
+    comment: ''
     copyright: ''
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: pumpCompanion_tx_fsk
+    id: pumpCompanion_experiment_fsk
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -34,40 +28,16 @@ options:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 8]
+    coordinate: [16, 16.0]
     rotation: 0
     state: enabled
 
 blocks:
-- name: hdr_format
-  id: variable
-  parameters:
-    comment: header_format_crc
-    value: digital.header_format_crc(len_key, num_key)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [768, 8.0]
-    rotation: 0
-    state: enabled
-- name: interpolation
+- name: access_key
   id: variable
   parameters:
     comment: ''
-    value: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [296, 16.0]
-    rotation: 0
-    state: enabled
-- name: len_key
-  id: variable
-  parameters:
-    comment: ''
-    value: '"packet_len"'
+    value: '''11100001010110101110100010010011'''
   states:
     bus_sink: false
     bus_source: false
@@ -75,16 +45,28 @@ blocks:
     coordinate: [528, 16.0]
     rotation: 0
     state: enabled
-- name: num_key
+- name: hdr_format
   id: variable
   parameters:
-    comment: ''
-    value: '"packet_num"'
+    comment: header_format_default
+    value: digital.header_format_default(access_key, 0)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [640, 16.0]
+    coordinate: [720, 16.0]
+    rotation: 0
+    state: enabled
+- name: interpolation
+  id: variable
+  parameters:
+    comment: ''
+    value: '2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 16.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -103,7 +85,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '2'
+    value: '6'
   states:
     bus_sink: false
     bus_source: false
@@ -123,14 +105,14 @@ blocks:
     minoutbuf: '0'
     offset: '0'
     phase: '0'
-    samp_rate: samp_rate/interpolation
+    samp_rate: samp_rate
     type: complex
     waveform: analog.GR_COS_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [168, 304.0]
+    coordinate: [240, 304.0]
     rotation: 0
     state: true
 - name: analog_sig_source_x_0_0_0
@@ -145,14 +127,14 @@ blocks:
     minoutbuf: '0'
     offset: '0'
     phase: '0'
-    samp_rate: samp_rate/interpolation
+    samp_rate: samp_rate
     type: complex
     waveform: analog.GR_COS_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 304.0]
+    coordinate: [464, 304.0]
     rotation: 0
     state: true
 - name: audio_sink_0
@@ -169,7 +151,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [776, 160.0]
+    coordinate: [848, 160.0]
     rotation: 0
     state: enabled
 - name: blocks_complex_to_float_0
@@ -185,10 +167,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 136.0]
+    coordinate: [632, 136.0]
     rotation: 0
     state: enabled
-- name: blocks_file_sink_0
+- name: blocks_file_sink_0_0
   id: blocks_file_sink
   parameters:
     affinity: ''
@@ -197,16 +179,16 @@ blocks:
     comment: ''
     file: /home/user/Downloads/_diag.rrf
     type: byte
-    unbuffered: 'True'
+    unbuffered: 'False'
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1224, 1872.0]
+    coordinate: [1200, 1136.0]
     rotation: 180
     state: true
-- name: blocks_file_source_0
+- name: blocks_file_source_0_0
   id: blocks_file_source
   parameters:
     affinity: ''
@@ -225,7 +207,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 1416.0]
+    coordinate: [184, 928.0]
     rotation: 180
     state: true
 - name: blocks_multiply_xx_0
@@ -243,7 +225,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [448, 208.0]
+    coordinate: [520, 208.0]
     rotation: 0
     state: true
 - name: blocks_multiply_xx_0_0
@@ -261,7 +243,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [592, 224.0]
+    coordinate: [664, 224.0]
     rotation: 0
     state: true
 - name: blocks_pack_k_bits_bb_0
@@ -277,7 +259,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1264.0, 232]
+    coordinate: [1320.0, 248]
     rotation: 270
     state: true
 - name: blocks_repack_bits_bb_1
@@ -297,7 +279,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1104, 1552.0]
+    coordinate: [1064, 1008.0]
     rotation: 180
     state: enabled
 - name: blocks_repack_bits_bb_1_0
@@ -317,29 +299,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 1744.0]
+    coordinate: [624, 1008.0]
     rotation: 180
     state: enabled
 - name: blocks_stream_to_tagged_stream_0
-  id: blocks_stream_to_tagged_stream
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    len_tag_key: '"packet_len"'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    packet_len: '9'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [24.0, 304]
-    rotation: 90
-    state: true
-- name: blocks_stream_to_tagged_stream_0_0
   id: blocks_stream_to_tagged_stream
   parameters:
     affinity: ''
@@ -355,26 +318,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [512, 1296.0]
-    rotation: 180
-    state: true
-- name: blocks_stream_to_tagged_stream_0_1
-  id: blocks_stream_to_tagged_stream
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    len_tag_key: '"packet_len"'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    packet_len: '8'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1000, 1632.0]
+    coordinate: [584, 848.0]
     rotation: 180
     state: true
 - name: blocks_tag_gate_0
@@ -393,10 +337,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1256.0, 360]
+    coordinate: [1312.0, 384]
     rotation: 270
     state: true
-- name: blocks_tag_gate_0_0
+- name: blocks_tag_gate_0_0_0
   id: blocks_tag_gate
   parameters:
     affinity: ''
@@ -412,7 +356,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [24.0, 512]
+    coordinate: [96.0, 384]
     rotation: 90
     state: true
 - name: blocks_tag_gate_0_0_0_0
@@ -431,7 +375,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [112, 1208.0]
+    coordinate: [128, 760.0]
     rotation: 180
     state: true
 - name: blocks_tag_gate_0_0_0_0_0
@@ -450,10 +394,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1264, 1696.0]
+    coordinate: [1248, 1008.0]
     rotation: 180
     state: true
-- name: blocks_tagged_stream_mux_0_0
+- name: blocks_tag_gate_0_2
+  id: blocks_tag_gate
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    propagate_tags: 'False'
+    single_key: '""'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [888, 312.0]
+    rotation: 0
+    state: enabled
+- name: blocks_tagged_stream_mux_0
   id: blocks_tagged_stream_mux
   parameters:
     affinity: ''
@@ -470,9 +433,28 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [208, 1296.0]
+    coordinate: [176, 840.0]
     rotation: 180
     state: true
+- name: digital_correlate_access_code_xx_ts_0
+  id: digital_correlate_access_code_xx_ts
+  parameters:
+    access_code: ' ''11100001010110101110100010010011'''
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tagname: packet_len
+    threshold: '0'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [808, 1000.0]
+    rotation: 180
+    state: enabled
 - name: digital_gfsk_demod_0
   id: digital_gfsk_demod
   parameters:
@@ -493,7 +475,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1040, 168.0]
+    coordinate: [1112, 168.0]
     rotation: 0
     state: true
 - name: digital_gfsk_mod_0
@@ -514,35 +496,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 200.0]
+    coordinate: [144, 200.0]
     rotation: 0
     state: true
-- name: digital_header_payload_demux_0
-  id: digital_header_payload_demux
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    guard_interval: '0'
-    header_len: '32'
-    header_padding: '0'
-    items_per_symbol: '1'
-    length_tag_key: '"packet_len"'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    output_symbols: 'False'
-    samp_rate: int(samp_rate)
-    special_tags: ()
-    timing_tag_key: '"burst"'
-    trigger_tag_key: '"packet_len"'
-    type: byte
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [728, 1668.0]
-    rotation: 180
-    state: enabled
 - name: digital_protocol_formatter_bb_0
   id: digital_protocol_formatter_bb
   parameters:
@@ -557,25 +513,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 1200.0]
+    coordinate: [392, 784.0]
     rotation: 180
     state: true
-- name: digital_protocol_parser_b_0
-  id: digital_protocol_parser_b
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    format: hdr_format
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [800, 1848.0]
-    rotation: 0
-    state: enabled
 - name: qtgui_sink_x_0
   id: qtgui_sink_x
   parameters:
@@ -602,7 +542,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1040, 304.0]
+    coordinate: [1128, 312.0]
     rotation: 0
     state: enabled
 - name: rational_resampler_xxx_0
@@ -622,7 +562,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [264, 192.0]
+    coordinate: [336, 192.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_0_0
@@ -642,7 +582,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 304.0]
+    coordinate: [712, 328.0]
     rotation: 0
     state: true
 
@@ -650,31 +590,28 @@ connections:
 - [analog_sig_source_x_0_0, '0', blocks_multiply_xx_0, '1']
 - [analog_sig_source_x_0_0_0, '0', blocks_multiply_xx_0_0, '1']
 - [blocks_complex_to_float_0, '0', audio_sink_0, '0']
-- [blocks_file_source_0, '0', blocks_stream_to_tagged_stream_0_0, '0']
+- [blocks_file_source_0_0, '0', blocks_stream_to_tagged_stream_0, '0']
 - [blocks_multiply_xx_0, '0', blocks_complex_to_float_0, '0']
 - [blocks_multiply_xx_0, '0', blocks_multiply_xx_0_0, '0']
-- [blocks_multiply_xx_0, '0', qtgui_sink_x_0, '0']
 - [blocks_multiply_xx_0_0, '0', rational_resampler_xxx_0_0, '0']
 - [blocks_pack_k_bits_bb_0, '0', blocks_tag_gate_0, '0']
-- [blocks_repack_bits_bb_1, '0', blocks_stream_to_tagged_stream_0_1, '0']
-- [blocks_repack_bits_bb_1_0, '0', blocks_file_sink_0, '0']
-- [blocks_stream_to_tagged_stream_0, '0', digital_gfsk_mod_0, '0']
-- [blocks_stream_to_tagged_stream_0_0, '0', blocks_tagged_stream_mux_0_0, '1']
-- [blocks_stream_to_tagged_stream_0_0, '0', digital_protocol_formatter_bb_0, '0']
-- [blocks_stream_to_tagged_stream_0_1, '0', digital_header_payload_demux_0, '0']
+- [blocks_repack_bits_bb_1, '0', digital_correlate_access_code_xx_ts_0, '0']
+- [blocks_repack_bits_bb_1_0, '0', blocks_file_sink_0_0, '0']
+- [blocks_stream_to_tagged_stream_0, '0', blocks_tagged_stream_mux_0, '1']
+- [blocks_stream_to_tagged_stream_0, '0', digital_protocol_formatter_bb_0, '0']
 - [blocks_tag_gate_0, '0', blocks_tag_gate_0_0_0_0_0, '0']
-- [blocks_tag_gate_0_0, '0', blocks_stream_to_tagged_stream_0, '0']
-- [blocks_tag_gate_0_0_0_0, '0', blocks_tag_gate_0_0, '0']
+- [blocks_tag_gate_0_0_0, '0', digital_gfsk_mod_0, '0']
+- [blocks_tag_gate_0_0_0_0, '0', blocks_tag_gate_0_0_0, '0']
 - [blocks_tag_gate_0_0_0_0_0, '0', blocks_repack_bits_bb_1, '0']
-- [blocks_tagged_stream_mux_0_0, '0', blocks_tag_gate_0_0_0_0, '0']
+- [blocks_tag_gate_0_2, '0', digital_gfsk_demod_0, '0']
+- [blocks_tag_gate_0_2, '0', qtgui_sink_x_0, '0']
+- [blocks_tagged_stream_mux_0, '0', blocks_tag_gate_0_0_0_0, '0']
+- [digital_correlate_access_code_xx_ts_0, '0', blocks_repack_bits_bb_1_0, '0']
 - [digital_gfsk_demod_0, '0', blocks_pack_k_bits_bb_0, '0']
 - [digital_gfsk_mod_0, '0', rational_resampler_xxx_0, '0']
-- [digital_header_payload_demux_0, '0', digital_protocol_parser_b_0, '0']
-- [digital_header_payload_demux_0, '1', blocks_repack_bits_bb_1_0, '0']
-- [digital_protocol_formatter_bb_0, '0', blocks_tagged_stream_mux_0_0, '0']
-- [digital_protocol_parser_b_0, info, digital_header_payload_demux_0, header_data]
+- [digital_protocol_formatter_bb_0, '0', blocks_tagged_stream_mux_0, '0']
 - [rational_resampler_xxx_0, '0', blocks_multiply_xx_0, '0']
-- [rational_resampler_xxx_0_0, '0', digital_gfsk_demod_0, '0']
+- [rational_resampler_xxx_0_0, '0', blocks_tag_gate_0_2, '0']
 
 metadata:
   file_format: 1

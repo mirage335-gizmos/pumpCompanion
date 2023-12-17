@@ -43,7 +43,7 @@ from gnuradio import eng_notation
 
 from gnuradio import qtgui
 
-class experiment_fsk(gr.top_block, Qt.QWidget):
+class pumpCompanion_experiment_fsk(gr.top_block, Qt.QWidget):
 
     def __init__(self):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
@@ -66,7 +66,7 @@ class experiment_fsk(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "experiment_fsk")
+        self.settings = Qt.QSettings("GNU Radio", "pumpCompanion_experiment_fsk")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -137,6 +137,10 @@ class experiment_fsk(gr.top_block, Qt.QWidget):
         self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts( '11100001010110101110100010010011',
           0, 'packet_len')
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
+        self.blocks_tag_gate_0_2 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
+        self.blocks_tag_gate_0_2.set_single_key("")
+        self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
+        self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
         self.blocks_tag_gate_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0_0_0_0.set_single_key("")
         self.blocks_tag_gate_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
@@ -168,27 +172,29 @@ class experiment_fsk(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_file_source_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_float_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_multiply_xx_0_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
         self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
-        self.connect((self.blocks_tag_gate_0, 0), (self.blocks_repack_bits_bb_1, 0))
+        self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_gfsk_mod_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
+        self.connect((self.blocks_tag_gate_0_2, 0), (self.digital_gfsk_demod_0, 0))
+        self.connect((self.blocks_tag_gate_0_2, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
         self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
         self.connect((self.digital_gfsk_demod_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
         self.connect((self.digital_gfsk_mod_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_multiply_xx_0, 0))
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.digital_gfsk_demod_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_tag_gate_0_2, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "experiment_fsk")
+        self.settings = Qt.QSettings("GNU Radio", "pumpCompanion_experiment_fsk")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -232,7 +238,7 @@ class experiment_fsk(gr.top_block, Qt.QWidget):
 
 
 
-def main(top_block_cls=experiment_fsk, options=None):
+def main(top_block_cls=pumpCompanion_experiment_fsk, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
