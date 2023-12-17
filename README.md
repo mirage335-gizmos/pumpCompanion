@@ -1,3 +1,6 @@
+<!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q 
+#exit # scriptedIllustrator_markup_uk4uPhB663kVcygT0q 
+# <html style="size: letter;"> <!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 #!/usr/bin/env bash
 
 # Dependencies.
@@ -55,74 +58,207 @@ _document_main() {
 #b
 # NOTICE: DOCUMENT
 #__HEADER_uk4uPhB663kVcygT0q_HEADER__
-_t 'Copyright (C) 2023 mirage335
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Copyright (C) 2023 mirage335
 See the end of the file for license conditions.
 See license.txt for pumpCompanion license conditions.
 
 
-Everyone should be using something like this, as well as maybe not many other related things. But you probably don&#39;t know what this is, so have fun. (ie. rewrite this placeholder text later)'
-_t '
-
-
+Everyone should be using something like this, as well as maybe not many 
+other related things. But you probably don&#39;t know what this is, so have 
+fun. (ie. rewrite this placeholder text later)
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_heading1 'Usage'
-_paragraph_begin
-_o _messagePlain_probe './ubiquitous_bash.sh'
-_paragraph_end
-_paragraph_begin
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Standards'
-_paragraph_begin
-_t 'input.rrf
+ '_heading1' 'Usage'
+if false; then true; # -->
+<!-- # --><h1>Usage</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+ '_o' '_messagePlain_probe' './ubiquitous_bash.sh'
+if false; then true; # -->
+<!-- # --><pre style="-webkit-print-color-adjust: exact;background-color:#848484;margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+<!-- # --><span style="color:#1818b2;background-color:#848484;"> ./ubiquitous_bash.sh</span>
+<!-- # --></pre>
+<!--
+fi
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Standards'
+if false; then true; # -->
+<!-- # --><h1>Standards</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+input.rrf
 framed.rrf
 output.rrf
 
-Any automation of the preprocessing/postprocessing step by &#39;gr-pipe&#39; may use a separate &#39;flowgraph&#39; pointing to &#39;framed.rrf&#39; . Similarly, shell/batch files may perform this step.'
-_paragraph_end
-_t '
-
-
+Any automation of the preprocessing/postprocessing step by 
+&#39;gr-pipe&#39; may use a separate &#39;flowgraph&#39; pointing to 
+&#39;framed.rrf&#39; . Similarly, shell/batch files may perform this step.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Design'
-_paragraph_begin
-_t ' '
-_paragraph_end
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Conclusions'
-_paragraph_begin
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Design'
+if false; then true; # -->
+<!-- # --><h1>Design</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
 _t '
-*) Framing arbitrary size files with stock GNURadio is not possible, due to &#39;Stream to Tagged Stream&#39;, at least with the stock version, blocking output until a multiple of the specified length for tagging.
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;"> 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Conclusions'
+if false; then true; # -->
+<!-- # --><h1>Conclusions</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+*) Framing arbitrary size files with stock GNURadio is not possible, due to 
+&#39;Stream to Tagged Stream&#39;, at least with the stock version, 
+blocking output until a multiple of the specified length for tagging.
 
 *) Cygwin installation of GNURadio may be possible. Possibly also gr-pipe .
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_paragraph_end
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Safety'
-_paragraph_begin
-_t ' '
-_paragraph_end
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Safety'
+if false; then true; # -->
+<!-- # --><h1>Safety</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
 _t '
-
-
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;"> 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Reference'
-_paragraph_begin
-_t 'https://aaronscher.com/GNU_Radio_Companion_Collection/Audio_modem.html
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Reference'
+if false; then true; # -->
+<!-- # --><h1>Reference</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">https://aaronscher.com/GNU_Radio_Companion_Collection/Audio_modem.html
 
 
 
@@ -133,12 +269,18 @@ https://wiki.gnuradio.org/index.php?title=CygwinInstallMain
 
 
 https://wiki.gnuradio.org/index.php/Packet_Communications
-	MAJOR - &#39;Functionally it replaces a &#39;File Source&#39; block and a &#39;Stream to Tagged Stream&#39; block. The advantage of this block is that when the input file size is not an exact multiple of the selected packet length, the remainder at the end of the file is not lost in the &#39;Stream to Tagged Stream&#39; buffer. This precludes the need for a pre-processor such as the text padding program above.&#39;
+	MAJOR - &#39;Functionally it replaces a &#39;File Source&#39; block 
+and a &#39;Stream to Tagged Stream&#39; block. The advantage of this block 
+is that when the input file size is not an exact multiple of the selected 
+packet length, the remainder at the end of the file is not lost in the 
+&#39;Stream to Tagged Stream&#39; buffer. This precludes the need for a 
+pre-processor such as the text padding program above.&#39;
 
 
 
 
-https://raw.githubusercontent.com/gnuradio/gnuradio/master/gr-digital/examples/ofdm/ofdm_loopback.grc
+https://raw.githubusercontent.com/gnuradio/gnuradio/master/gr-digital/exampl
+es/ofdm/ofdm_loopback.grc
 
 
 
@@ -156,14 +298,16 @@ https://wiki.gnuradio.org/images/f/fd/Pkt_7_base_fg.png
 https://wiki.gnuradio.org/images/8/89/Pkt_7_base.grc
  Format Obj.: hdr_format
 
-https://github.com/gnuradio/gnuradio/blob/master/gr-digital/examples/ofdm/tx_ofdm.grc
+https://github.com/gnuradio/gnuradio/blob/master/gr-digital/examples/ofdm/tx
+_ofdm.grc
  Format Obj.: header_formatter.base()
 
 
 
 
 
-https://www.gnuradio.org/doc/doxygen/classgr_1_1digital_1_1packet__header__default.html
+https://www.gnuradio.org/doc/doxygen/classgr_1_1digital_1_1packet__header__d
+efault.html
  &#39;packet_header_default&#39;
 
 
@@ -185,16 +329,36 @@ https://www.youtube.com/watch?v=VR0mej2o-SM
 
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_paragraph_end
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_page
-_heading1 'Copyright'
-_paragraph_begin
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Copyright'
+if false; then true; # -->
+<!-- # --><h1>Copyright</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 This file is part of pumpCompanion.
 
 pumpCompanion is free software: you can redistribute it and/or modify
@@ -209,12 +373,22 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with pumpCompanion.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
-_paragraph_end
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
 _t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
+
+
+
 #__FOOTER_uk4uPhB663kVcygT0q_FOOTER__
 # NOTICE: DOCUMENT
 #y
@@ -417,3 +591,4 @@ exit 0
 __ATTACHMENT_uk4uPhB663kVcygT0q_ATTACHMENT__
 
 
+filename.html # scriptedIllustrator_markup_uk4uPhB663kVcygT0q --> </html>
