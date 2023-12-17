@@ -43,7 +43,7 @@ from gnuradio import eng_notation
 
 from gnuradio import qtgui
 
-class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
+class experiment_fsk(gr.top_block, Qt.QWidget):
 
     def __init__(self):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
@@ -66,7 +66,7 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "pumpCompanion_tx_fsk")
+        self.settings = Qt.QSettings("GNU Radio", "experiment_fsk")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -79,12 +79,11 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.num_key = num_key = "packet_num"
-        self.len_key = len_key = "packet_len"
-        self.samp_sym_rate = samp_sym_rate = 2
+        self.access_key = access_key = '11100001010110101110100010010011'
+        self.samp_sym_rate = samp_sym_rate = 6
         self.samp_rate = samp_rate = 44100
-        self.interpolation = interpolation = 1
-        self.hdr_format = hdr_format = digital.header_format_crc(len_key, num_key)
+        self.interpolation = interpolation = 2
+        self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
 
         ##################################################
         # Blocks
@@ -118,20 +117,7 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
         self.qtgui_sink_x_0.enable_rf_freq(True)
 
         self.top_layout.addWidget(self._qtgui_sink_x_0_win)
-        self.digital_protocol_parser_b_0 = digital.protocol_parser_b(hdr_format)
         self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
-        self.digital_header_payload_demux_0 = digital.header_payload_demux(
-            32,
-            1,
-            0,
-            "packet_len",
-            "packet_len",
-            False,
-            gr.sizeof_char,
-            "burst",
-            int(samp_rate),
-            (),
-            0)
         self.digital_gfsk_mod_0 = digital.gfsk_mod(
             samples_per_symbol=samp_sym_rate,
             sensitivity=(0.75*interpolation),
@@ -148,87 +134,73 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
             freq_error=0.0,
             verbose=False,
             log=False)
-        self.blocks_tagged_stream_mux_0_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
-        self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
+        self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts( '11100001010110101110100010010011',
+          0, 'packet_len')
+        self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
         self.blocks_tag_gate_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0_0_0_0.set_single_key("")
-        self.blocks_tag_gate_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0.set_single_key("")
+        self.blocks_tag_gate_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
+        self.blocks_tag_gate_0_0_0.set_single_key("")
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0.set_single_key("")
-        self.blocks_stream_to_tagged_stream_0_1 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 8, "packet_len")
-        self.blocks_stream_to_tagged_stream_0_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 140, "packet_len")
-        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 9, "packet_len")
+        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 140, "packet_len")
         self.blocks_repack_bits_bb_1_0 = blocks.repack_bits_bb(1, 8, "packet_len", False, gr.GR_MSB_FIRST)
         self.blocks_repack_bits_bb_1 = blocks.repack_bits_bb(8, 1, "", False, gr.GR_MSB_FIRST)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, '/home/user/Downloads/_framed.rrf', False, 0, 0)
-        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/user/Downloads/_diag.rrf', False)
-        self.blocks_file_sink_0.set_unbuffered(True)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/user/Downloads/_framed.rrf', False, 0, 0)
+        self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
+        self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_char*1, '/home/user/Downloads/_diag.rrf', False)
+        self.blocks_file_sink_0_0.set_unbuffered(False)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
         self.audio_sink_0 = audio.sink(samp_rate, 'pulse', True)
-        self.analog_sig_source_x_0_0_0 = analog.sig_source_c((samp_rate/interpolation), analog.GR_COS_WAVE, (-6000), 1, 0, 0)
-        self.analog_sig_source_x_0_0 = analog.sig_source_c((samp_rate/interpolation), analog.GR_COS_WAVE, 6000, 1, 0, 0)
+        self.analog_sig_source_x_0_0_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, (-6000), 1, 0, 0)
+        self.analog_sig_source_x_0_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, 6000, 1, 0, 0)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.digital_protocol_parser_b_0, 'info'), (self.digital_header_payload_demux_0, 'header_data'))
         self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.analog_sig_source_x_0_0_0, 0), (self.blocks_multiply_xx_0_0, 1))
         self.connect((self.blocks_complex_to_float_0, 0), (self.audio_sink_0, 0))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_stream_to_tagged_stream_0_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_float_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_multiply_xx_0_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1, 0), (self.blocks_stream_to_tagged_stream_0_1, 0))
-        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_gfsk_mod_0, 0))
-        self.connect((self.blocks_stream_to_tagged_stream_0_0, 0), (self.blocks_tagged_stream_mux_0_0, 1))
-        self.connect((self.blocks_stream_to_tagged_stream_0_0, 0), (self.digital_protocol_formatter_bb_0, 0))
-        self.connect((self.blocks_stream_to_tagged_stream_0_1, 0), (self.digital_header_payload_demux_0, 0))
-        self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
-        self.connect((self.blocks_tagged_stream_mux_0_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
+        self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
+        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0, 0))
+        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
+        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
+        self.connect((self.blocks_tag_gate_0, 0), (self.blocks_repack_bits_bb_1, 0))
+        self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_gfsk_mod_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
+        self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
+        self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
         self.connect((self.digital_gfsk_demod_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
         self.connect((self.digital_gfsk_mod_0, 0), (self.rational_resampler_xxx_0, 0))
-        self.connect((self.digital_header_payload_demux_0, 1), (self.blocks_repack_bits_bb_1_0, 0))
-        self.connect((self.digital_header_payload_demux_0, 0), (self.digital_protocol_parser_b_0, 0))
-        self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0_0, 0))
+        self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.digital_gfsk_demod_0, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "pumpCompanion_tx_fsk")
+        self.settings = Qt.QSettings("GNU Radio", "experiment_fsk")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
 
         event.accept()
 
-    def get_num_key(self):
-        return self.num_key
+    def get_access_key(self):
+        return self.access_key
 
-    def set_num_key(self, num_key):
-        self.num_key = num_key
-        self.set_hdr_format(digital.header_format_crc(self.len_key, self.num_key))
-
-    def get_len_key(self):
-        return self.len_key
-
-    def set_len_key(self, len_key):
-        self.len_key = len_key
-        self.set_hdr_format(digital.header_format_crc(self.len_key, self.num_key))
+    def set_access_key(self, access_key):
+        self.access_key = access_key
+        self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
     def get_samp_sym_rate(self):
         return self.samp_sym_rate
@@ -241,8 +213,8 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0_0.set_sampling_freq((self.samp_rate/self.interpolation))
-        self.analog_sig_source_x_0_0_0.set_sampling_freq((self.samp_rate/self.interpolation))
+        self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
+        self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate)
         self.qtgui_sink_x_0.set_frequency_range(0, self.samp_rate)
 
     def get_interpolation(self):
@@ -250,8 +222,6 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
 
     def set_interpolation(self, interpolation):
         self.interpolation = interpolation
-        self.analog_sig_source_x_0_0.set_sampling_freq((self.samp_rate/self.interpolation))
-        self.analog_sig_source_x_0_0_0.set_sampling_freq((self.samp_rate/self.interpolation))
 
     def get_hdr_format(self):
         return self.hdr_format
@@ -262,7 +232,7 @@ class pumpCompanion_tx_fsk(gr.top_block, Qt.QWidget):
 
 
 
-def main(top_block_cls=pumpCompanion_tx_fsk, options=None):
+def main(top_block_cls=experiment_fsk, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
