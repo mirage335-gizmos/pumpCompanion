@@ -122,7 +122,13 @@ _t '
 _page
 _heading1 'Reference'
 _paragraph_begin
-_t 'https://wiki.gnuradio.org/index.php?title=CygwinInstallMain
+_t 'https://aaronscher.com/GNU_Radio_Companion_Collection/Audio_modem.html
+
+
+
+
+
+https://wiki.gnuradio.org/index.php?title=CygwinInstallMain
 
 
 
@@ -164,6 +170,16 @@ https://www.gnuradio.org/doc/doxygen/classgr_1_1digital_1_1packet__header__defau
 
 
 
+
+
+
+
+
+
+
+https://www.youtube.com/watch?v=RnAgqGR-D-8
+https://www.youtube.com/watch?v=VR0mej2o-SM
+	Windows... HackRF...
 
 
 
