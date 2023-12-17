@@ -77,11 +77,11 @@ _t '
 _page
 _heading1 'Standards'
 _paragraph_begin
-_t 'input.bin
-framed.bin
-output.bin
+_t 'input.rrf
+framed.rrf
+output.rrf
 
-Any automation of the preprocessing/postprocessing step by &#39;gr-pipe&#39; may use a separate &#39;flowgraph&#39; pointing to &#39;framed.bin&#39; . Similarly, shell/batch files may perform this step.'
+Any automation of the preprocessing/postprocessing step by &#39;gr-pipe&#39; may use a separate &#39;flowgraph&#39; pointing to &#39;framed.rrf&#39; . Similarly, shell/batch files may perform this step.'
 _paragraph_end
 _t '
 
