@@ -217,7 +217,8 @@ _pumpCompanion-frame() {
 
 
 _gnuradioCompanion() {
-	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion-experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc &
+	#/usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc
+	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion-experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc /usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc &
 	
 	disown -h $!
 	disown -a -h -r
