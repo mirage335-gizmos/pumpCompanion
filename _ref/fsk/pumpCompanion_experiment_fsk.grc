@@ -185,7 +185,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 1136.0]
+    coordinate: [1200, 1472.0]
     rotation: 180
     state: true
 - name: blocks_file_source_0_0
@@ -207,7 +207,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 928.0]
+    coordinate: [184, 1264.0]
     rotation: 180
     state: true
 - name: blocks_multiply_xx_0
@@ -279,7 +279,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1064, 1008.0]
+    coordinate: [1064, 1344.0]
     rotation: 180
     state: enabled
 - name: blocks_repack_bits_bb_1_0
@@ -299,7 +299,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [624, 1008.0]
+    coordinate: [624, 1344.0]
     rotation: 180
     state: enabled
 - name: blocks_stream_to_tagged_stream_0
@@ -318,7 +318,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [584, 848.0]
+    coordinate: [584, 1184.0]
     rotation: 180
     state: true
 - name: blocks_tag_gate_0
@@ -375,7 +375,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [128, 760.0]
+    coordinate: [128, 1096.0]
     rotation: 180
     state: true
 - name: blocks_tag_gate_0_0_0_0_0
@@ -394,7 +394,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 1008.0]
+    coordinate: [1264, 1344.0]
     rotation: 180
     state: true
 - name: blocks_tag_gate_0_2
@@ -433,7 +433,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 840.0]
+    coordinate: [176, 1176.0]
     rotation: 180
     state: true
 - name: digital_correlate_access_code_xx_ts_0
@@ -452,7 +452,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [808, 1000.0]
+    coordinate: [808, 1336.0]
     rotation: 180
     state: enabled
 - name: digital_gfsk_demod_0
@@ -513,7 +513,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 784.0]
+    coordinate: [392, 1120.0]
     rotation: 180
     state: true
 - name: qtgui_sink_x_0

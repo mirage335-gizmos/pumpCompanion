@@ -1,0 +1,143 @@
+
+
+
+
+
+
+
+
+
+
+_ QAM16 _
+
+- Explanation -
+
+These are QAM 16 constellation parameters for GNURadio's constellation object used by the constellation modulator and constellation decoder blocks.
+
+Constellation Points = [ (-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]
+Symbol Map = [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]
+
+Please explain what symbol mapping is used, whether it is Gray code, or something else.
+
+Something else ???
+
+Please illustrate a similar grid showing the binary representations for these constellation parameters . ... QAM 64 ...
+
+Something else still ???
+
+
+
+
+
+
+_ QAM64 _
+
+- Constellation Parameters -
+
+These are QAM 16 constellation parameters for GNURadio's constellation object used by the constellation modulator and constellation decoder blocks.
+
+Constellation Points = [ (-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]
+Symbol Map = [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]
+
+Please, as diligently as you are able, calculate constellation parameters for QAM 64 with your choice of either a similar or Gray coded symbol map.
+
+Constellation Points = [ (-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j) ]
+Symbol Map = [0,1,3,7,15,31,63,62,30,60,61,14,28,56,57,29,59,58,6,12,24,48,49,25,51,50,13,27,55,54,26,52,53,2,4,8,16,32,33,17,35,34,9,19,39,38,18,36,37,5,11,23,47,46,22,44,45,10,20,40,41,21,43,42]
+
+
+
+
+
+
+
+
+_ QAM256 _
+
+- Constellation Parameters -
+
+These are QAM 16 constellation parameters for GNURadio's constellation object used by the constellation modulator and constellation decoder blocks.
+
+Constellation Points = [ (-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]
+Symbol Map = [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]
+
+Please, as diligently as you are able, calculate constellation parameters for QAM 256 with your choice of either a similar or Gray coded symbol map.
+
+
+
+import numpy as np
+
+def generate_qam256_constellation(gray_coded=True):
+    """
+    Generate the QAM-256 constellation points and symbol map.
+    
+    Args:
+    gray_coded (bool): If True, generate Gray coded symbol map, otherwise generate similar to QAM-16
+
+    Returns:
+    (list, list): constellation_points, symbol_map
+    """
+    # Creating a 16x16 grid for QAM-256
+    x = np.linspace(-15, 15, 16)
+    y = np.linspace(-15, 15, 16)
+    xv, yv = np.meshgrid(x, y)
+    
+    # Flatten the grid to get the constellation points
+    constellation_points = np.ravel(xv + 1j * yv)
+
+    if gray_coded:
+        # Generate Gray code symbol map
+        def gray_code(n):
+            """ Generate n-bit Gray code. """
+            return n ^ (n >> 1)
+
+        symbol_map = [gray_code(i) for i in range(256)]
+    else:
+        # Generate a symbol map similar to QAM-16
+        symbol_map = list(range(256))
+
+    return constellation_points, symbol_map
+
+# Generate QAM-256 constellation points and symbol map
+qam256_constellation_points, qam256_symbol_map = generate_qam256_constellation(gray_coded=True)
+
+qam256_constellation_points, qam256_symbol_map
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Dubious -
+[(-7-7j), (-7-5j), (-7-3j), (-7-1j), (-7+1j), (-7+3j), (-7+5j), (-7+7j), (-5-7j), (-5-5j), (-5-3j), (-5-1j), (-5+1j), (-5+3j), (-5+5j), (-5+7j), (-3-7j), (-3-5j), (-3-3j), (-3-1j), (-3+1j), (-3+3j), (-3+5j), (-3+7j), (-1-7j), (-1-5j), (-1-3j), (-1-1j), (-1+1j), (-1+3j), (-1+5j), (-1+7j), (1-7j),  (1-5j),  (1-3j),  (1-1j),  (1+1j),  (1+3j),  (1+5j),  (1+7j), (3-7j),  (3-5j),  (3-3j),  (3-1j),  (3+1j),  (3+3j),  (3+5j),  (3+7j), (5-7j),  (5-5j),  (5-3j),  (5-1j),  (5+1j),  (5+3j),  (5+5j),  (5+7j), (7-7j),  (7-5j),  (7-3j),  (7-1j),  (7+1j),  (7+3j),  (7+5j),  (7+7j)]
+
+
+[-7.-7.j, -5.-7.j, -3.-7.j, -1.-7.j,  1.-7.j,  3.-7.j,  5.-7.j,  7.-7.j,
+ -7.-5.j, -5.-5.j, -3.-5.j, -1.-5.j,  1.-5.j,  3.-5.j,  5.-5.j,  7.-5.j,
+ -7.-3.j, -5.-3.j, -3.-3.j, -1.-3.j,  1.-3.j,  3.-3.j,  5.-3.j,  7.-3.j,
+ -7.-1.j, -5.-1.j, -3.-1.j, -1.-1.j,  1.-1.j,  3.-1.j,  5.-1.j,  7.-1.j,
+ -7.+1.j, -5.+1.j, -3.+1.j, -1.+1.j,  1.+1.j,  3.+1.j,  5.+1.j,  7.+1.j,
+ -7.+3.j, -5.+3.j, -3.+3.j, -1.+3.j,  1.+3.j,  3.+3.j,  5.+3.j,  7.+3.j,
+ -7.+5.j, -5.+5.j, -3.+5.j, -1.+5.j,  1.+5.j,  3.+5.j,  5.+5.j,  7.+5.j,
+ -7.+7.j, -5.+7.j, -3.+7.j, -1.+7.j,  1.+7.j,  3.+7.j,  5.+7.j,  7.+7.j]
+
+
+
+
+
+

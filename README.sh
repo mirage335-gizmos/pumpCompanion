@@ -122,7 +122,15 @@ _t '
 _page
 _heading1 'Reference'
 _paragraph_begin
-_t 'https://aaronscher.com/GNU_Radio_Companion_Collection/Audio_modem.html
+_t 'https://github.com/greatscottgadgets/hackrf/issues/1159
+	MAJOR - SEVERE - &#39;Possible solution: at TX startup, have the M4 not run baseband_streaming_enable until the first two 16KB transfers have arrived from the host, meaning that the M0 has a full buffer ready to transmit.&#39;
+
+https://www.reddit.com/r/RTLSDR/comments/o7owrl/hackrf_frequency_drift/
+https://imgur.com/a/ggsuPTm
+
+
+
+https://aaronscher.com/GNU_Radio_Companion_Collection/Audio_modem.html
 
 
 

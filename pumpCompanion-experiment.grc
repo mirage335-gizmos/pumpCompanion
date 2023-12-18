@@ -1,8 +1,8 @@
 options:
   parameters:
-    author: user
+    author: ''
     catch_exceptions: 'True'
-    category: '[GRC Hier Blocks]'
+    category: Custom
     cmake_opt: ''
     comment: ''
     copyright: ''
@@ -22,29 +22,16 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Not titled yet
-    window_size: (1000,1000)
+    title: ''
+    window_size: 2000, 2000
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 8]
+    coordinate: [8, 12.0]
     rotation: 0
     state: enabled
-
-blocks:
-- name: samp_rate
-  id: variable
-  parameters:
-    comment: ''
-    value: '44100'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [184, 12]
-    rotation: 0
-    state: enabled
+blocks: []
 connections: []
 
 metadata:
