@@ -66,7 +66,7 @@ blocks:
     normalization: digital.constellation.AMPLITUDE_NORMALIZATION
     precision: '8'
     rot_sym: '4'
-    soft_dec_lut: '''auto'''
+    soft_dec_lut: None
     sym_map: '[0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10, 16, 20, 28, 24,
       17, 21, 29, 25, 19, 23, 31, 27, 18, 22, 30, 26, 32, 36, 44, 40, 33, 37, 45,
       41, 35, 39, 47, 43, 34, 38, 46, 42, 48, 52, 60, 56, 49, 53, 61, 57, 51, 55,
@@ -225,7 +225,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '1000000'
+    value: '200000'
   states:
     bus_sink: false
     bus_source: false
@@ -474,7 +474,7 @@ blocks:
     bus_structure: null
     coordinate: [528, 816.0]
     rotation: 0
-    state: bypassed
+    state: enabled
 - name: blocks_unpack_k_bits_bb_0_0
   id: blocks_unpack_k_bits_bb
   parameters:

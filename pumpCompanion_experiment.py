@@ -80,11 +80,10 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         ##################################################
         self.constel = constel = digital.constellation_calcdist([(-15-15j),(-13-15j),(-11-15j),(-9-15j),(-7-15j),(-5-15j),(-3-15j),(-1-15j),(1-15j),(3-15j),(5-15j),(7-15j),(9-15j),(11-15j),(13-15j),(15-15j),(-15-13j),(-13-13j),(-11-13j),(-9-13j),(-7-13j),(-5-13j),(-3-13j),(-1-13j),(1-13j),(3-13j),(5-13j),(7-13j),(9-13j),(11-13j),(13-13j),(15-13j),(-15-11j),(-13-11j),(-11-11j),(-9-11j),(-7-11j),(-5-11j),(-3-11j),(-1-11j),(1-11j),(3-11j),(5-11j),(7-11j),(9-11j),(11-11j),(13-11j),(15-11j),(-15-9j),(-13-9j),(-11-9j),(-9-9j),(-7-9j),(-5-9j),(-3-9j),(-1-9j),(1-9j),(3-9j),(5-9j),(7-9j),(9-9j),(11-9j),(13-9j),(15-9j),(-15-7j),(-13-7j),(-11-7j),(-9-7j),(-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(9-7j),(11-7j),(13-7j),(15-7j),(-15-5j),(-13-5j),(-11-5j),(-9-5j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(9-5j),(11-5j),(13-5j),(15-5j),(-15-3j),(-13-3j),(-11-3j),(-9-3j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(9-3j),(11-3j),(13-3j),(15-3j),(-15-1j),(-13-1j),(-11-1j),(-9-1j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(9-1j),(11-1j),(13-1j),(15-1j),(-15+1j),(-13+1j),(-11+1j),(-9+1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(9+1j),(11+1j),(13+1j),(15+1j),(-15+3j),(-13+3j),(-11+3j),(-9+3j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(9+3j),(11+3j),(13+3j),(15+3j),(-15+5j),(-13+5j),(-11+5j),(-9+5j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(9+5j),(11+5j),(13+5j),(15+5j),(-15+7j),(-13+7j),(-11+7j),(-9+7j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j),(9+7j),(11+7j),(13+7j),(15+7j),(-15+9j),(-13+9j),(-11+9j),(-9+9j),(-7+9j),(-5+9j),(-3+9j),(-1+9j),(1+9j),(3+9j),(5+9j),(7+9j),(9+9j),(11+9j),(13+9j),(15+9j),(-15+11j),(-13+11j),(-11+11j),(-9+11j),(-7+11j),(-5+11j),(-3+11j),(-1+11j),(1+11j),(3+11j),(5+11j),(7+11j),(9+11j),(11+11j),(13+11j),(15+11j),(-15+13j),(-13+13j),(-11+13j),(-9+13j),(-7+13j),(-5+13j),(-3+13j),(-1+13j),(1+13j),(3+13j),(5+13j),(7+13j),(9+13j),(11+13j),(13+13j),(15+13j),(-15+15j),(-13+15j),(-11+15j),(-9+15j),(-7+15j),(-5+15j),(-3+15j),(-1+15j),(1+15j),(3+15j),(5+15j),(7+15j),(9+15j),(11+15j),(13+15j),(15+15j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10, 16, 20, 28, 24, 17, 21, 29, 25, 19, 23, 31, 27, 18, 22, 30, 26, 32, 36, 44, 40, 33, 37, 45, 41, 35, 39, 47, 43, 34, 38, 46, 42, 48, 52, 60, 56, 49, 53, 61, 57, 51, 55, 63, 59, 50, 54, 62, 58, 64, 68, 76, 72, 65, 69, 77, 73, 67, 71, 79, 75, 66, 70, 78, 74, 80, 84, 92, 88, 81, 85, 93, 89, 83, 87, 95, 91, 82, 86, 94, 90, 96, 100, 108, 104, 97, 101, 109, 105, 99, 103, 111, 107, 98, 102, 110, 106, 112, 116, 124, 120, 113, 117, 125, 121, 115, 119, 127, 123, 114, 118, 126, 122, 128, 132, 140, 136, 129, 133, 141, 137, 131, 135, 143, 139, 130, 134, 142, 138, 144, 148, 156, 152, 145, 149, 157, 153, 147, 151, 159, 155, 146, 150, 158, 154, 160, 164, 172, 168, 161, 165, 173, 169, 163, 167, 175, 171, 162, 166, 174, 170, 176, 180, 188, 184, 177, 181, 189, 185, 179, 183, 191, 187, 178, 182, 190, 186, 192, 196, 204, 200, 193, 197, 205, 201, 195, 199, 207, 203, 194, 198, 206, 202, 208, 212, 220, 216, 209, 213, 221, 217, 211, 215, 223, 219, 210, 214, 222, 218, 224, 228, 236, 232, 225, 229, 237, 233, 227, 231, 239, 235, 226, 230, 238, 234, 240, 244, 252, 248, 241, 245, 253, 249, 243, 247, 255, 251, 242, 246, 254, 250],
         4, 1, digital.constellation.AMPLITUDE_NORMALIZATION).base()
-        self.constel.gen_soft_dec_lut(8)
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.access_key = access_key = '11100001010110101110100010010011'
         self.sps = sps = 2
-        self.samp_rate = samp_rate = 1000000
+        self.samp_rate = samp_rate = 200000
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
@@ -152,6 +151,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             truncate=False)
         self.digital_constellation_decoder_cb_0_0 = digital.constellation_decoder_cb(constel)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
         self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
@@ -185,9 +185,10 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
         self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
-        self.connect((self.digital_constellation_modulator_0_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
         self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
