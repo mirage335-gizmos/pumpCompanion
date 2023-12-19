@@ -35,6 +35,8 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+from gnuradio.qtgui import Range, RangeWidget
+from PyQt5 import QtCore
 import cmath
 import math
 
@@ -78,34 +80,103 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.constel = constel = digital.constellation_calcdist([(-15-15j),(-13-15j),(-11-15j),(-9-15j),(-7-15j),(-5-15j),(-3-15j),(-1-15j),(1-15j),(3-15j),(5-15j),(7-15j),(9-15j),(11-15j),(13-15j),(15-15j),(-15-13j),(-13-13j),(-11-13j),(-9-13j),(-7-13j),(-5-13j),(-3-13j),(-1-13j),(1-13j),(3-13j),(5-13j),(7-13j),(9-13j),(11-13j),(13-13j),(15-13j),(-15-11j),(-13-11j),(-11-11j),(-9-11j),(-7-11j),(-5-11j),(-3-11j),(-1-11j),(1-11j),(3-11j),(5-11j),(7-11j),(9-11j),(11-11j),(13-11j),(15-11j),(-15-9j),(-13-9j),(-11-9j),(-9-9j),(-7-9j),(-5-9j),(-3-9j),(-1-9j),(1-9j),(3-9j),(5-9j),(7-9j),(9-9j),(11-9j),(13-9j),(15-9j),(-15-7j),(-13-7j),(-11-7j),(-9-7j),(-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(9-7j),(11-7j),(13-7j),(15-7j),(-15-5j),(-13-5j),(-11-5j),(-9-5j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(9-5j),(11-5j),(13-5j),(15-5j),(-15-3j),(-13-3j),(-11-3j),(-9-3j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(9-3j),(11-3j),(13-3j),(15-3j),(-15-1j),(-13-1j),(-11-1j),(-9-1j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(9-1j),(11-1j),(13-1j),(15-1j),(-15+1j),(-13+1j),(-11+1j),(-9+1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(9+1j),(11+1j),(13+1j),(15+1j),(-15+3j),(-13+3j),(-11+3j),(-9+3j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(9+3j),(11+3j),(13+3j),(15+3j),(-15+5j),(-13+5j),(-11+5j),(-9+5j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(9+5j),(11+5j),(13+5j),(15+5j),(-15+7j),(-13+7j),(-11+7j),(-9+7j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j),(9+7j),(11+7j),(13+7j),(15+7j),(-15+9j),(-13+9j),(-11+9j),(-9+9j),(-7+9j),(-5+9j),(-3+9j),(-1+9j),(1+9j),(3+9j),(5+9j),(7+9j),(9+9j),(11+9j),(13+9j),(15+9j),(-15+11j),(-13+11j),(-11+11j),(-9+11j),(-7+11j),(-5+11j),(-3+11j),(-1+11j),(1+11j),(3+11j),(5+11j),(7+11j),(9+11j),(11+11j),(13+11j),(15+11j),(-15+13j),(-13+13j),(-11+13j),(-9+13j),(-7+13j),(-5+13j),(-3+13j),(-1+13j),(1+13j),(3+13j),(5+13j),(7+13j),(9+13j),(11+13j),(13+13j),(15+13j),(-15+15j),(-13+15j),(-11+15j),(-9+15j),(-7+15j),(-5+15j),(-3+15j),(-1+15j),(1+15j),(3+15j),(5+15j),(7+15j),(9+15j),(11+15j),(13+15j),(15+15j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10, 16, 20, 28, 24, 17, 21, 29, 25, 19, 23, 31, 27, 18, 22, 30, 26, 32, 36, 44, 40, 33, 37, 45, 41, 35, 39, 47, 43, 34, 38, 46, 42, 48, 52, 60, 56, 49, 53, 61, 57, 51, 55, 63, 59, 50, 54, 62, 58, 64, 68, 76, 72, 65, 69, 77, 73, 67, 71, 79, 75, 66, 70, 78, 74, 80, 84, 92, 88, 81, 85, 93, 89, 83, 87, 95, 91, 82, 86, 94, 90, 96, 100, 108, 104, 97, 101, 109, 105, 99, 103, 111, 107, 98, 102, 110, 106, 112, 116, 124, 120, 113, 117, 125, 121, 115, 119, 127, 123, 114, 118, 126, 122, 128, 132, 140, 136, 129, 133, 141, 137, 131, 135, 143, 139, 130, 134, 142, 138, 144, 148, 156, 152, 145, 149, 157, 153, 147, 151, 159, 155, 146, 150, 158, 154, 160, 164, 172, 168, 161, 165, 173, 169, 163, 167, 175, 171, 162, 166, 174, 170, 176, 180, 188, 184, 177, 181, 189, 185, 179, 183, 191, 187, 178, 182, 190, 186, 192, 196, 204, 200, 193, 197, 205, 201, 195, 199, 207, 203, 194, 198, 206, 202, 208, 212, 220, 216, 209, 213, 221, 217, 211, 215, 223, 219, 210, 214, 222, 218, 224, 228, 236, 232, 225, 229, 237, 233, 227, 231, 239, 235, 226, 230, 238, 234, 240, 244, 252, 248, 241, 245, 253, 249, 243, 247, 255, 251, 242, 246, 254, 250],
+        self.constel = constel = digital.constellation_calcdist(digital.qam_16()[0], digital.qam_16()[1],
         4, 1, digital.constellation.AMPLITUDE_NORMALIZATION).base()
+        self.constel.gen_soft_dec_lut(8)
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.access_key = access_key = '11100001010110101110100010010011'
+        self.variable_adaptive_algorithm_0 = variable_adaptive_algorithm_0 = digital.adaptive_algorithm_lms( constel, .0001).base()
+        self.timing_loop_bw = timing_loop_bw = 6.28/100.0
+        self.time_offset = time_offset = 1.00
         self.sps = sps = 2
-        self.samp_rate = samp_rate = 200000
+        self.samp_rate = samp_rate = 2000000
+        self.phase_bw = phase_bw = 6.28/100.0
+        self.noise_volt = noise_volt = 0.0001
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
+        self.freq_offset = freq_offset = 0
+        self.eq_gain = eq_gain = 0.01
+        self.delay = delay = 50
         self.arity = arity = modulus
 
         ##################################################
         # Blocks
         ##################################################
 
-        self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
+        self.controls = Qt.QTabWidget()
+        self.controls_widget_0 = Qt.QWidget()
+        self.controls_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.controls_widget_0)
+        self.controls_grid_layout_0 = Qt.QGridLayout()
+        self.controls_layout_0.addLayout(self.controls_grid_layout_0)
+        self.controls.addTab(self.controls_widget_0, 'Channel')
+        self.controls_widget_1 = Qt.QWidget()
+        self.controls_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.controls_widget_1)
+        self.controls_grid_layout_1 = Qt.QGridLayout()
+        self.controls_layout_1.addLayout(self.controls_grid_layout_1)
+        self.controls.addTab(self.controls_widget_1, 'Receiver')
+        self.top_grid_layout.addWidget(self.controls, 0, 0, 1, 2)
+        for r in range(0, 1):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._time_offset_range = Range(0.999, 1.001, 0.0001, 1.00, 200)
+        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, "Timing Offset", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_0.addWidget(self._time_offset_win, 0, 2, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_0.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.controls_grid_layout_0.setColumnStretch(c, 1)
+        self.received = Qt.QTabWidget()
+        self.received_widget_0 = Qt.QWidget()
+        self.received_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.received_widget_0)
+        self.received_grid_layout_0 = Qt.QGridLayout()
+        self.received_layout_0.addLayout(self.received_grid_layout_0)
+        self.received.addTab(self.received_widget_0, 'Constellation')
+        self.received_widget_1 = Qt.QWidget()
+        self.received_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.received_widget_1)
+        self.received_grid_layout_1 = Qt.QGridLayout()
+        self.received_layout_1.addLayout(self.received_grid_layout_1)
+        self.received.addTab(self.received_widget_1, 'Symbols')
+        self.top_grid_layout.addWidget(self.received, 2, 0, 1, 1)
+        for r in range(2, 3):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._noise_volt_range = Range(0, 1, 0.01, 0.0001, 200)
+        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, "Noise Voltage", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.controls_grid_layout_0.setColumnStretch(c, 1)
+        self._freq_offset_range = Range(-0.1, 0.1, 0.001, 0, 200)
+        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, "Frequency Offset", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_0.addWidget(self._freq_offset_win, 0, 1, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_0.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.controls_grid_layout_0.setColumnStretch(c, 1)
+        self._timing_loop_bw_range = Range(0.0, 0.2, 0.01, 6.28/100.0, 200)
+        self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, "Time: BW", "slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_1.addWidget(self._timing_loop_bw_win, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_1.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.controls_grid_layout_1.setColumnStretch(c, 1)
+        self.qtgui_const_sink_x_0_0_0 = qtgui.const_sink_c(
             4096, #size
             "", #name
             1, #number of inputs
             None # parent
         )
-        self.qtgui_const_sink_x_0_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0_0.set_y_axis((-2), 2)
-        self.qtgui_const_sink_x_0_0.set_x_axis((-2), 2)
-        self.qtgui_const_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0_0.enable_grid(False)
-        self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
+        self.qtgui_const_sink_x_0_0_0.set_update_time(0.10)
+        self.qtgui_const_sink_x_0_0_0.set_y_axis((-2), 2)
+        self.qtgui_const_sink_x_0_0_0.set_x_axis((-2), 2)
+        self.qtgui_const_sink_x_0_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
+        self.qtgui_const_sink_x_0_0_0.enable_autoscale(False)
+        self.qtgui_const_sink_x_0_0_0.enable_grid(False)
+        self.qtgui_const_sink_x_0_0_0.enable_axis_labels(True)
 
 
         labels = ['', '', '', '', '',
@@ -123,33 +194,109 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
 
         for i in range(1):
             if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_const_sink_x_0_0_0.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_const_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0_0.set_line_alpha(i, alphas[i])
+                self.qtgui_const_sink_x_0_0_0.set_line_label(i, labels[i])
+            self.qtgui_const_sink_x_0_0_0.set_line_width(i, widths[i])
+            self.qtgui_const_sink_x_0_0_0.set_line_color(i, colors[i])
+            self.qtgui_const_sink_x_0_0_0.set_line_style(i, styles[i])
+            self.qtgui_const_sink_x_0_0_0.set_line_marker(i, markers[i])
+            self.qtgui_const_sink_x_0_0_0.set_line_alpha(i, alphas[i])
 
-        self._qtgui_const_sink_x_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0.qwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_const_sink_x_0_0_win)
+        self._qtgui_const_sink_x_0_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0_0.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_const_sink_x_0_0_0_win)
+        self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
+            4096, #size
+            "", #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_const_sink_x_0.set_update_time(0.10)
+        self.qtgui_const_sink_x_0.set_y_axis((-2), 2)
+        self.qtgui_const_sink_x_0.set_x_axis((-2), 2)
+        self.qtgui_const_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
+        self.qtgui_const_sink_x_0.enable_autoscale(False)
+        self.qtgui_const_sink_x_0.enable_grid(False)
+        self.qtgui_const_sink_x_0.enable_axis_labels(True)
+
+
+        labels = ['', '', '', '', '',
+            '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ["blue", "red", "red", "red", "red",
+            "red", "red", "red", "red", "red"]
+        styles = [0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0]
+        markers = [0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_const_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_const_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_const_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_const_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_const_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_const_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.qwidget(), Qt.QWidget)
+        self.received_grid_layout_0.addWidget(self._qtgui_const_sink_x_0_win, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.received_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.received_grid_layout_0.setColumnStretch(c, 1)
+        self._phase_bw_range = Range(0.0, 1.0, 0.01, 6.28/100.0, 200)
+        self._phase_bw_win = RangeWidget(self._phase_bw_range, self.set_phase_bw, "Phase: Bandwidth", "slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_1.addWidget(self._phase_bw_win, 0, 2, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_1.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.controls_grid_layout_1.setColumnStretch(c, 1)
+        self._eq_gain_range = Range(0.0, 0.1, 0.001, 0.01, 200)
+        self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, "Equalizer: rate", "slider", float, QtCore.Qt.Horizontal)
+        self.controls_grid_layout_1.addWidget(self._eq_gain_win, 0, 1, 1, 1)
+        for r in range(0, 1):
+            self.controls_grid_layout_1.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.controls_grid_layout_1.setColumnStretch(c, 1)
         self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
-        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, (6.28/100.0), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts), nfilts, (nfilts/2), 1.5, 1)
+        self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps, (6.28/100.0*10), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts), nfilts, (nfilts/2*1), (1.5*1000), 1)
         self.digital_map_bb_0 = digital.map_bb(constel.pre_diff_code())
-        self.digital_diff_decoder_bb_0_0 = digital.diff_decoder_bb(modulus, digital.DIFF_DIFFERENTIAL)
+        self.digital_diff_encoder_bb_0 = digital.diff_encoder_bb(modulus, digital.DIFF_DIFFERENTIAL)
+        self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(modulus, digital.DIFF_DIFFERENTIAL)
         self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts( '11100001010110101110100010010011',
           0, 'packet_len')
+        self.digital_constellation_receiver_cb_0 = digital.constellation_receiver_cb(constel, 0.05, 0.0001, 2000)
         self.digital_constellation_modulator_0_0 = digital.generic_mod(
             constellation=constel,
-            differential=True,
+            differential=False,
             samples_per_symbol=sps,
             pre_diff_code=True,
             excess_bw=0.35,
             verbose=False,
             log=False,
             truncate=False)
-        self.digital_constellation_decoder_cb_0_0 = digital.constellation_decoder_cb(constel)
+        self._delay_range = Range(0, 200, 1, 50, 200)
+        self._delay_win = RangeWidget(self._delay_range, self.set_delay, "Delay", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_grid_layout.addWidget(self._delay_win, 1, 0, 1, 1)
+        for r in range(1, 2):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.channels_channel_model_0_0 = channels.channel_model(
+            noise_voltage=noise_volt,
+            frequency_offset=freq_offset,
+            epsilon=time_offset,
+            taps=[1.0 + 1.0j],
+            noise_seed=0,
+            block_tags=False)
+        self.blocks_unpack_k_bits_bb_0_0_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
+        self.blocks_unpack_k_bits_bb_0_0_0 = blocks.unpack_k_bits_bb(8)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
@@ -164,7 +311,13 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 140, "packet_len")
         self.blocks_repack_bits_bb_1_0 = blocks.repack_bits_bb(1, 8, "packet_len", False, gr.GR_MSB_FIRST)
         self.blocks_repack_bits_bb_1 = blocks.repack_bits_bb(8, 1, "", False, gr.GR_MSB_FIRST)
+        self.blocks_pack_k_bits_bb_0_1 = blocks.pack_k_bits_bb(8)
+        self.blocks_pack_k_bits_bb_0_0 = blocks.pack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
+        self.blocks_null_sink_1_1 = blocks.null_sink(gr.sizeof_float*1)
+        self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
+        self.blocks_null_sink_1 = blocks.null_sink(gr.sizeof_float*1)
+        self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
         self.blocks_file_source_0_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/user/Downloads/_framed.rrf', False, 0, 0)
         self.blocks_file_source_0_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, '/home/user/Downloads/_diag.rrf', False)
@@ -176,24 +329,35 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0_0, 0), (self.digital_diff_encoder_bb_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0_1, 0), (self.digital_constellation_modulator_0_0, 0))
         self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
         self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_constellation_modulator_0_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
+        self.connect((self.blocks_unpack_k_bits_bb_0_0_0, 0), (self.blocks_pack_k_bits_bb_0_0, 0))
+        self.connect((self.blocks_unpack_k_bits_bb_0_0_0_0, 0), (self.blocks_pack_k_bits_bb_0_1, 0))
+        self.connect((self.channels_channel_model_0_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
         self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 2), (self.blocks_null_sink_1_0, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 3), (self.blocks_null_sink_1_1, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 0), (self.digital_map_bb_0, 0))
+        self.connect((self.digital_constellation_receiver_cb_0, 4), (self.qtgui_const_sink_x_0_0_0, 0))
         self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
-        self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
-        self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_constellation_decoder_cb_0_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.qtgui_const_sink_x_0_0, 0))
+        self.connect((self.digital_diff_decoder_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
+        self.connect((self.digital_diff_encoder_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0_0, 0))
+        self.connect((self.digital_map_bb_0, 0), (self.digital_diff_decoder_bb_0, 0))
+        self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
+        self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
 
 
@@ -226,12 +390,31 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
+    def get_variable_adaptive_algorithm_0(self):
+        return self.variable_adaptive_algorithm_0
+
+    def set_variable_adaptive_algorithm_0(self, variable_adaptive_algorithm_0):
+        self.variable_adaptive_algorithm_0 = variable_adaptive_algorithm_0
+
+    def get_timing_loop_bw(self):
+        return self.timing_loop_bw
+
+    def set_timing_loop_bw(self, timing_loop_bw):
+        self.timing_loop_bw = timing_loop_bw
+
+    def get_time_offset(self):
+        return self.time_offset
+
+    def set_time_offset(self, time_offset):
+        self.time_offset = time_offset
+        self.channels_channel_model_0_0.set_timing_offset(self.time_offset)
+
     def get_sps(self):
         return self.sps
 
     def set_sps(self, sps):
         self.sps = sps
-        self.digital_pfb_clock_sync_xxx_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, 11*self.sps*self.nfilts))
+        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, 11*self.sps*self.nfilts))
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -240,12 +423,25 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
+    def get_phase_bw(self):
+        return self.phase_bw
+
+    def set_phase_bw(self, phase_bw):
+        self.phase_bw = phase_bw
+
+    def get_noise_volt(self):
+        return self.noise_volt
+
+    def set_noise_volt(self, noise_volt):
+        self.noise_volt = noise_volt
+        self.channels_channel_model_0_0.set_noise_voltage(self.noise_volt)
+
     def get_nfilts(self):
         return self.nfilts
 
     def set_nfilts(self, nfilts):
         self.nfilts = nfilts
-        self.digital_pfb_clock_sync_xxx_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, 11*self.sps*self.nfilts))
+        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, 11*self.sps*self.nfilts))
 
     def get_interpolation(self):
         return self.interpolation
@@ -258,6 +454,25 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
 
     def set_hdr_format(self, hdr_format):
         self.hdr_format = hdr_format
+
+    def get_freq_offset(self):
+        return self.freq_offset
+
+    def set_freq_offset(self, freq_offset):
+        self.freq_offset = freq_offset
+        self.channels_channel_model_0_0.set_frequency_offset(self.freq_offset)
+
+    def get_eq_gain(self):
+        return self.eq_gain
+
+    def set_eq_gain(self, eq_gain):
+        self.eq_gain = eq_gain
+
+    def get_delay(self):
+        return self.delay
+
+    def set_delay(self, delay):
+        self.delay = delay
 
     def get_arity(self):
         return self.arity

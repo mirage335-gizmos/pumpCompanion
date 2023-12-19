@@ -540,6 +540,26 @@ blocks:
     coordinate: [336, 1240.0]
     rotation: 0
     state: enabled
+- name: digital_constellation_receiver_cb_0
+  id: digital_constellation_receiver_cb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    constellation: constel
+    fmax: '2000'
+    fmin: '0.0001'
+    loop_bw: '0.05'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    showports: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [504, 32.0]
+    rotation: 0
+    state: true
 - name: digital_costas_loop_cc_0
   id: digital_costas_loop_cc
   parameters:
@@ -627,7 +647,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [232, 24.0]
+    coordinate: [240, 48.0]
     rotation: 0
     state: true
 - name: digital_linear_equalizer_0
