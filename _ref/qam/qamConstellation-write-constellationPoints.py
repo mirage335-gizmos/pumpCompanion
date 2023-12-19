@@ -36,5 +36,34 @@ qam256_constellation_points, qam256_symbol_map = generate_qam256_constellation(g
 
 qam256_constellation_points, qam256_symbol_map
 
-print(qam256_constellation_points)
- 
+#print(qam256_constellation_points)
+
+
+
+
+
+def format_constellation_points(constellation_points):
+    """
+    Format the constellation points into the requested text format.
+    
+    Args:
+    constellation_points (array): Array of constellation points.
+
+    Returns:
+    str: Formatted string of constellation points.
+    """
+    formatted_points = ['({0.real:.0f}{1:+.0f}j)'.format(point, point.imag) for point in constellation_points]
+    return '[' + ','.join(formatted_points) + ']'
+
+formatted_qam256_constellation_points = format_constellation_points(qam256_constellation_points)
+formatted_qam256_constellation_points
+
+
+
+print(formatted_qam256_constellation_points)
+
+
+
+
+
+
