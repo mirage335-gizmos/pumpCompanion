@@ -80,9 +80,9 @@ class pumpCompanion_experiment_fsk(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.access_key = access_key = '11100001010110101110100010010011'
-        self.samp_sym_rate = samp_sym_rate = 6
+        self.samp_sym_rate = samp_sym_rate = 2
         self.samp_rate = samp_rate = 44100
-        self.interpolation = interpolation = 2
+        self.interpolation = interpolation = 3
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
 
         ##################################################

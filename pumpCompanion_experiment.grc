@@ -1,0 +1,346 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: Custom
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: pumpCompanion_experiment
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: ''
+    window_size: 2000, 2000
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 12.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: G
+  id: variable_ldpc_G_matrix_def
+  parameters:
+    comment: ''
+    filename: gr.prefix() + "/share/gnuradio/fec/ldpc/" + "n_0100_k_0058_gen_matrix.alist"
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [408, 336.0]
+    rotation: 0
+    state: disabled
+- name: dec_rep
+  id: variable_repetition_decoder_def
+  parameters:
+    comment: ''
+    dim1: '4'
+    dim2: '1'
+    framebits: frame_size*8
+    ndim: '0'
+    prob: '0.5'
+    rep: '3'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 184.0]
+    rotation: 0
+    state: disabled
+- name: enc_rep
+  id: variable_repetition_encoder_def
+  parameters:
+    comment: ''
+    dim1: '4'
+    dim2: '1'
+    framebits: frame_size*8
+    ndim: '0'
+    rep: '3'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [96, 192.0]
+    rotation: 0
+    state: disabled
+- name: ldpc_dec_G
+  id: variable_ldpc_bit_flip_decoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    matrix_object: G
+    max_iterations: '100'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 312.0]
+    rotation: 0
+    state: disabled
+- name: ldpc_enc_G
+  id: variable_ldpc_encoder_G_def
+  parameters:
+    G: G
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 336.0]
+    rotation: 0
+    state: disabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '44100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [168, 16.0]
+    rotation: 0
+    state: enabled
+- name: blocks_delay_0
+  id: blocks_delay
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_ports: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [640, 576.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_0_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: /home/user/Downloads/_diag.rrf
+    type: byte
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 1216.0]
+    rotation: 180
+    state: enabled
+- name: blocks_file_source_0_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: /home/user/Downloads/_framed.rrf
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 960.0]
+    rotation: 180
+    state: true
+- name: fec_depuncture_bb_0
+  id: fec_depuncture_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFFFFF'
+    puncsize: '28'
+    sym: '127'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [712, 640.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_decoder_0_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: dec_cc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1232, 520.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_decoder_0_1
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: dec_rep
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1088, 640.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_decoder_0_1_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: polar_decoder_sc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 904.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1_0
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: enc_rep
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [136, 600.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1_0_0
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: polar_encoder_sc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [344, 912.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1_1
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: enc_ccsds
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 488.0]
+    rotation: 0
+    state: disabled
+- name: fec_puncture_xx_0
+  id: fec_puncture_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFFFFF'
+    puncsize: '28'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 640.0]
+    rotation: 0
+    state: disabled
+
+connections:
+- [blocks_delay_0, '0', fec_depuncture_bb_0, '0']
+- [fec_puncture_xx_0, '0', blocks_delay_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.5.1

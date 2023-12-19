@@ -33,6 +33,20 @@ options:
     state: enabled
 
 blocks:
+- name: H
+  id: variable_ldpc_H_matrix_def
+  parameters:
+    comment: ''
+    filename: /usr/share/gnuradio/fec/ldpc/n_0100_k_0023_gap_10.alist
+    gap: '10'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [976, 864.0]
+    rotation: 0
+    state: enabled
 - name: access_key
   id: variable
   parameters:
@@ -48,7 +62,7 @@ blocks:
 - name: constel
   id: variable_constellation
   parameters:
-    comment: ''
+    comment: QAM 64
     const_points: '[ (-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j)
       ]'
     dims: '1'
@@ -62,9 +76,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [848, 156.0]
+    coordinate: [1112, 532.0]
     rotation: 0
     state: disabled
+- name: constel
+  id: variable_constellation
+  parameters:
+    comment: QAM64
+    const_points: '[ (-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j)
+      ]'
+    dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
+    precision: '8'
+    rot_sym: '4'
+    soft_dec_lut: '''auto'''
+    sym_map: '[0,1,3,7,15,31,63,62,30,60,61,14,28,56,57,29,59,58,6,12,24,48,49,25,51,50,13,27,55,54,26,52,53,2,4,8,16,32,33,17,35,34,9,19,39,38,18,36,37,5,11,23,47,46,22,44,45,10,20,40,41,21,43,42]'
+    type: calcdist
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1008, 540.0]
+    rotation: 0
+    state: enabled
 - name: hdr_format
   id: variable
   parameters:
@@ -89,6 +123,45 @@ blocks:
     coordinate: [280, 24.0]
     rotation: 0
     state: enabled
+- name: ldpc_dec_H
+  id: variable_ldpc_bit_flip_decoder_def
+  parameters:
+    comment: 'Seems more effective than other FEC
+
+      provided with GNURadio.
+
+      Yet, still seems not very effective for FEC.
+
+      Discouraged.'
+    dim1: '1'
+    dim2: '1'
+    matrix_object: H
+    max_iterations: '5'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1152, 856.0]
+    rotation: 0
+    state: enabled
+- name: ldpc_enc_H
+  id: variable_ldpc_encoder_H_def
+  parameters:
+    H: H
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [696, 864.0]
+    rotation: 0
+    state: enabled
 - name: nfilts
   id: variable
   parameters:
@@ -98,20 +171,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [720, 288.0]
+    coordinate: [240, 840.0]
     rotation: 0
     state: enabled
 - name: rrc_taps
   id: variable
   parameters:
     comment: ''
-    value: firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(samp_sym_rate), 0.35,
-      11*samp_sym_rate*nfilts)
+    value: firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 296.0]
+    coordinate: [80, 848.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -126,10 +198,10 @@ blocks:
     coordinate: [176, 24.0]
     rotation: 0
     state: enabled
-- name: samp_sym_rate
+- name: sps
   id: variable
   parameters:
-    comment: ''
+    comment: samp_sym_rate
     value: '4'
   states:
     bus_sink: false
@@ -152,7 +224,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [104, 360.0]
+    coordinate: [72, 152.0]
     rotation: 0
     state: true
 - name: blocks_char_to_float_0_0
@@ -169,9 +241,26 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [104, 416.0]
+    coordinate: [72, 208.0]
     rotation: 0
     state: true
+- name: blocks_char_to_float_0_2
+  id: blocks_char_to_float
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    scale: '1'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [792, 1096.0]
+    rotation: 0
+    state: enabled
 - name: blocks_interleaved_char_to_complex_0
   id: blocks_interleaved_char_to_complex
   parameters:
@@ -186,9 +275,89 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [144, 536.0]
+    coordinate: [88, 304.0]
     rotation: 0
     state: true
+- name: blocks_pack_k_bits_bb_0_0
+  id: blocks_pack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [576, 152.0]
+    rotation: 0
+    state: enabled
+- name: blocks_pack_k_bits_bb_0_0_0
+  id: blocks_pack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 1152.0]
+    rotation: 180
+    state: enabled
+- name: blocks_unpack_k_bits_bb_0_0
+  id: blocks_unpack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 152.0]
+    rotation: 0
+    state: enabled
+- name: blocks_unpack_k_bits_bb_0_0_0
+  id: blocks_unpack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [272, 1136.0]
+    rotation: 180
+    state: enabled
+- name: digital_map_bb_0_0_0
+  id: digital_map_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    map: '[-1, 1]'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [672, 1096.0]
+    rotation: 0
+    state: enabled
 - name: digital_pfb_clock_sync_xxx_0
   id: digital_pfb_clock_sync_xxx
   parameters:
@@ -202,14 +371,108 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     osps: '1'
-    sps: samp_sym_rate
+    sps: sps
     taps: rrc_taps
     type: ccf
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 148.0]
+    coordinate: [72, 700.0]
+    rotation: 0
+    state: enabled
+- name: fec_ber_bf_0
+  id: fec_ber_bf
+  parameters:
+    affinity: ''
+    alias: ''
+    berlimit: '-7.0'
+    berminerrors: berminerrs
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    test_mode: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [720, 160.0]
+    rotation: 0
+    state: enabled
+- name: fec_depuncture_bb_0_0
+  id: fec_depuncture_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFF'
+    puncsize: '16'
+    sym: '127'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [688, 992.0]
+    rotation: 0
+    state: enabled
+- name: fec_extended_decoder_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: ldpc_dec_H
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '11'
+    threadtype: ordinary
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 1032.0]
+    rotation: 0
+    state: enabled
+- name: fec_extended_encoder_1
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: ldpc_enc_H
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '11'
+    threadtype: ordinary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [256, 1048.0]
+    rotation: 0
+    state: enabled
+- name: fec_puncture_xx_0_0
+  id: fec_puncture_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFF'
+    puncsize: '16'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [448, 992.0]
     rotation: 0
     state: enabled
 - name: freq_xlating_fft_filter_ccc_0
@@ -230,7 +493,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [96, 144.0]
+    coordinate: [72, 544.0]
     rotation: 0
     state: enabled
 - name: import_cmath
@@ -257,6 +520,69 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [912, 32.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_number_sink_0
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("blue", "red")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: BER
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '10'
+    min: '-10'
+    name: '""'
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [872, 152.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -353,7 +679,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [144, 632.0]
+    coordinate: [88, 400.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0_0
@@ -450,14 +776,24 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [256, 360.0]
+    coordinate: [224, 152.0]
     rotation: 0
     state: true
 
 connections:
 - [blocks_char_to_float_0, '0', qtgui_time_sink_x_0_0, '0']
 - [blocks_char_to_float_0_0, '0', qtgui_time_sink_x_0_0, '1']
+- [blocks_char_to_float_0_2, '0', fec_extended_decoder_0, '0']
 - [blocks_interleaved_char_to_complex_0, '0', qtgui_time_sink_x_0, '0']
+- [blocks_pack_k_bits_bb_0_0, '0', fec_ber_bf_0, '0']
+- [blocks_unpack_k_bits_bb_0_0, '0', blocks_pack_k_bits_bb_0_0, '0']
+- [blocks_unpack_k_bits_bb_0_0_0, '0', fec_extended_encoder_1, '0']
+- [digital_map_bb_0_0_0, '0', blocks_char_to_float_0_2, '0']
+- [fec_ber_bf_0, '0', qtgui_number_sink_0, '0']
+- [fec_depuncture_bb_0_0, '0', digital_map_bb_0_0_0, '0']
+- [fec_extended_decoder_0, '0', blocks_pack_k_bits_bb_0_0_0, '0']
+- [fec_extended_encoder_1, '0', fec_puncture_xx_0_0, '0']
+- [fec_puncture_xx_0_0, '0', fec_depuncture_bb_0_0, '0']
 
 metadata:
   file_format: 1

@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='31464010'
+export ub_setScriptChecksum_contents='2638843194'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -14571,7 +14571,7 @@ _gnuradioCompanion() {
 	#/usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc
 	#/usr/share/gnuradio/examples/fec/fecapi_decoders.grc
 	#/usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc
-	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion-experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc /usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc /usr/share/gnuradio/examples/fec/fecapi_decoders.grc /usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc &
+	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc /usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc /usr/share/gnuradio/examples/fec/fecapi_decoders.grc /usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc /usr/share/gnuradio/examples/digital/mpsk_stage6.grc &
 	
 	disown -h $!
 	disown -a -h -r

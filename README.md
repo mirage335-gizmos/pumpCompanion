@@ -259,11 +259,36 @@ if false; then true; # -->
 fi
 _t '
 scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+https://wiki.gnuradio.org/index.php?title=QPSK_Mod_and_Demod
+	&#39;might have an ambiguity of 90 degrees in the constellation. 
+Luckily, we avoided this problem by transmitting differential symbols.&#39;
+
+https://discuss-gnuradio.gnu.narkive.com/KrFwQ9Fz/why-no-phase-ambiguity-in-
+digital-bert
+	&#39;scrambler/descrambler pair is insensitive to the phase 
+ambiguity&#39;
+
+https://www.gnuradio.org/grcon/grcon17/presentations/building_a_moderately_c
+omplex_mode_with_spare_parts/Dan-CaJacob-Building-a-Moderately-Complex-Modem
+-with-Spare-Parts.pdf
+	&#39;Correlation estimator and 2nd Costas Loop clean up the 
+ambiguity&#39;
+
 https://github.com/greatscottgadgets/hackrf/issues/1159
 	MAJOR - SEVERE - &#39;Possible solution: at TX startup, have the M4 
 not run baseband_streaming_enable until the first two 16KB transfers have 
 arrived from the host, meaning that the M0 has a full buffer ready to 
 transmit.&#39;
+
+https://www.reddit.com/r/RTLSDR/comments/o7owrl/hackrf_frequency_drift/
+https://imgur.com/a/ggsuPTm
+
+
+
+https://stackoverflow.com/questions/54946638/punctured-convolutional-codes-i
+n-gnu-radio
+	&#39;Gnu Radio Puncture pattern&#39; &#39;Puncture size&#39; 
+&#39;Delay values&#39;
 
 
 

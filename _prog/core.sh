@@ -227,7 +227,7 @@ _gnuradioCompanion() {
 	#/usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc
 	#/usr/share/gnuradio/examples/fec/fecapi_decoders.grc
 	#/usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc
-	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion-experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc /usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc /usr/share/gnuradio/examples/fec/fecapi_decoders.grc /usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc &
+	gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc "$scriptAbsoluteFolder"/_ref/fsk/pumpCompanion_experiment_fsk.grc /usr/share/gnuradio/examples/digital/demod/constellation_soft_decoder.grc /usr/share/gnuradio/examples/fec/fecapi_decoders.grc /usr/share/gnuradio/examples/fec/fecapi_ldpc_decoders.grc /usr/share/gnuradio/examples/digital/mpsk_stage6.grc &
 	
 	disown -h $!
 	disown -a -h -r
