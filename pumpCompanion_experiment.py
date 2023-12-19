@@ -78,7 +78,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.constel = constel = digital.constellation_calcdist(digital.qam_16()[0], digital.qam_16()[1],
+        self.constel = constel = digital.constellation_calcdist([ (-7-7j),(-5-7j),(-3-7j),(-1-7j),(1-7j),(3-7j),(5-7j),(7-7j),(-7-5j),(-5-5j),(-3-5j),(-1-5j),(1-5j),(3-5j),(5-5j),(7-5j),(-7-3j),(-5-3j),(-3-3j),(-1-3j),(1-3j),(3-3j),(5-3j),(7-3j),(-7-1j),(-5-1j),(-3-1j),(-1-1j),(1-1j),(3-1j),(5-1j),(7-1j),(-7+1j),(-5+1j),(-3+1j),(-1+1j),(1+1j),(3+1j),(5+1j),(7+1j),(-7+3j),(-5+3j),(-3+3j),(-1+3j),(1+3j),(3+3j),(5+3j),(7+3j),(-7+5j),(-5+5j),(-3+5j),(-1+5j),(1+5j),(3+5j),(5+5j),(7+5j),(-7+7j),(-5+7j),(-3+7j),(-1+7j),(1+7j),(3+7j),(5+7j),(7+7j) ], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10, 16, 20, 28, 24, 17, 21, 29, 25, 19, 23, 31, 27, 18, 22, 30, 26, 32, 36, 44, 40, 33, 37, 45, 41, 35, 39, 47, 43, 34, 38, 46, 42, 48, 52, 60, 56, 49, 53, 61, 57, 51, 55, 63, 59, 50, 54, 62, 58],
         4, 1, digital.constellation.AMPLITUDE_NORMALIZATION).base()
         self.constel.gen_soft_dec_lut(8)
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
