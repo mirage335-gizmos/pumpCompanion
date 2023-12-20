@@ -258,7 +258,21 @@ if false; then true; # -->
 <!--
 fi
 _t '
-scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">https://lists.gnu.org/archive/html/discuss-gnuradio/2017-07/msg00249.html
+
+https://wiki.gnuradio.org/index.php/Correlation_Estimator#:~:text=Correlatio
+n%20Estimator%20The%20Correlation%20Estimator%20block%20correlates%20the,to%
+20get%20a%20time%20and%20phase%20offset%20estimate.
+
+https://dsp.stackexchange.com/questions/68306/16-qam-gnu-radio
+
+
+
+
+
+
+
+
 https://wiki.gnuradio.org/index.php?title=QPSK_Mod_and_Demod
 	&#39;might have an ambiguity of 90 degrees in the constellation. 
 Luckily, we avoided this problem by transmitting differential symbols.&#39;

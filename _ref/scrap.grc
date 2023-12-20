@@ -148,6 +148,18 @@ blocks:
     coordinate: [1096, 396.0]
     rotation: 0
     state: disabled
+- name: constel_0
+  id: variable
+  parameters:
+    comment: ''
+    value: digital.qam_constellation(constellation_points=16, differential=True, mod_code='none').base()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [832, 448.0]
+    rotation: 0
+    state: true
 - name: dec_rep
   id: variable_repetition_decoder_def
   parameters:
