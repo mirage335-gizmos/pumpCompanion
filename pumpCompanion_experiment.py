@@ -27,7 +27,6 @@ import sip
 from gnuradio import analog
 from gnuradio import blocks
 import pmt
-from gnuradio import channels
 from gnuradio import digital
 from gnuradio import filter
 from gnuradio import gr
@@ -37,8 +36,6 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-from gnuradio.qtgui import Range, RangeWidget
-from PyQt5 import QtCore
 import cmath
 import math
 
@@ -85,105 +82,28 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.constel = constel = digital.qam_constellation(constellation_points=256, differential=True, mod_code='none').base()
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.access_key = access_key = '11100001010110101110100010010011'
-        self.variable_adaptive_algorithm_0_0 = variable_adaptive_algorithm_0_0 = digital.adaptive_algorithm_cma( constel, .0001, modulus).base()
-        self.variable_adaptive_algorithm_0 = variable_adaptive_algorithm_0 = digital.adaptive_algorithm_lms( constel, .0001).base()
-        self.timing_loop_bw = timing_loop_bw = 6.28/100.0
-        self.time_offset = time_offset = 1
         self.sps = sps = 2
-        self.samp_rate = samp_rate = 200000
-        self.phase_bw = phase_bw = 6.28/100.0
-        self.noise_volt = noise_volt = 0
+        self.samp_rate = samp_rate = 44100
+        self.packet_size = packet_size = 140
         self.nfilts = nfilts = int(32*(modulus/16))
-        self.interpolation = interpolation = 1
+        self.interpolation = interpolation = 2
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
-        self.freq_offset = freq_offset = 0
-        self.eq_gain = eq_gain = 0.01
-        self.delay = delay = 50
         self.arity = arity = modulus
 
         ##################################################
         # Blocks
         ##################################################
 
-        self.controls = Qt.QTabWidget()
-        self.controls_widget_0 = Qt.QWidget()
-        self.controls_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.controls_widget_0)
-        self.controls_grid_layout_0 = Qt.QGridLayout()
-        self.controls_layout_0.addLayout(self.controls_grid_layout_0)
-        self.controls.addTab(self.controls_widget_0, 'Channel')
-        self.controls_widget_1 = Qt.QWidget()
-        self.controls_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.controls_widget_1)
-        self.controls_grid_layout_1 = Qt.QGridLayout()
-        self.controls_layout_1.addLayout(self.controls_grid_layout_1)
-        self.controls.addTab(self.controls_widget_1, 'Receiver')
-        self.top_grid_layout.addWidget(self.controls, 0, 0, 1, 2)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 2):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.received = Qt.QTabWidget()
-        self.received_widget_0 = Qt.QWidget()
-        self.received_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.received_widget_0)
-        self.received_grid_layout_0 = Qt.QGridLayout()
-        self.received_layout_0.addLayout(self.received_grid_layout_0)
-        self.received.addTab(self.received_widget_0, 'Constellation')
-        self.received_widget_1 = Qt.QWidget()
-        self.received_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.received_widget_1)
-        self.received_grid_layout_1 = Qt.QGridLayout()
-        self.received_layout_1.addLayout(self.received_grid_layout_1)
-        self.received.addTab(self.received_widget_1, 'Symbols')
-        self.top_grid_layout.addWidget(self.received, 2, 0, 1, 1)
-        for r in range(2, 3):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self._noise_volt_range = Range(0, 1, 0.01, 0, 200)
-        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, "Noise Voltage", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.controls_grid_layout_0.setColumnStretch(c, 1)
-        self._freq_offset_range = Range(-0.1, 0.1, 0.001, 0, 200)
-        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, "Frequency Offset", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_0.addWidget(self._freq_offset_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_0.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.controls_grid_layout_0.setColumnStretch(c, 1)
-        self._timing_loop_bw_range = Range(0.0, 0.2, 0.01, 6.28/100.0, 200)
-        self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, "Time: BW", "slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_1.addWidget(self._timing_loop_bw_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_1.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.controls_grid_layout_1.setColumnStretch(c, 1)
-        self._time_offset_range = Range(0.999, 1.001, 0.0001, 1, 200)
-        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, "Timing Offset", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_0.addWidget(self._time_offset_win, 0, 2, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_0.setRowStretch(r, 1)
-        for c in range(2, 3):
-            self.controls_grid_layout_0.setColumnStretch(c, 1)
-        self.single_pole_iir_filter_xx_0 = filter.single_pole_iir_filter_cc(0.5, 1)
-        self.qtgui_sink_x_0_0 = qtgui.sink_c(
-            1024, #fftsize
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            samp_rate, #bw
-            "", #name
-            True, #plotfreq
-            True, #plotwaterfall
-            True, #plottime
-            True, #plotconst
-            None # parent
-        )
-        self.qtgui_sink_x_0_0.set_update_time(1.0/10)
-        self._qtgui_sink_x_0_0_win = sip.wrapinstance(self.qtgui_sink_x_0_0.qwidget(), Qt.QWidget)
-
-        self.qtgui_sink_x_0_0.enable_rf_freq(False)
-
-        self.top_layout.addWidget(self._qtgui_sink_x_0_0_win)
+        self.rational_resampler_xxx_0_0 = filter.rational_resampler_ccc(
+                interpolation=1,
+                decimation=interpolation,
+                taps=[],
+                fractional_bw=0)
+        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
+                interpolation=interpolation,
+                decimation=1,
+                taps=[],
+                fractional_bw=0)
         self.qtgui_sink_x_0 = qtgui.sink_c(
             1024, #fftsize
             window.WIN_BLACKMAN_hARRIS, #wintype
@@ -193,7 +113,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             True, #plotfreq
             True, #plotwaterfall
             True, #plottime
-            True, #plotconst
+            False, #plotconst
             None # parent
         )
         self.qtgui_sink_x_0.set_update_time(1.0/10)
@@ -242,25 +162,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.qwidget(), Qt.QWidget)
-        self.received_grid_layout_0.addWidget(self._qtgui_const_sink_x_0_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.received_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.received_grid_layout_0.setColumnStretch(c, 1)
-        self._phase_bw_range = Range(0.0, 1.0, 0.01, 6.28/100.0, 200)
-        self._phase_bw_win = RangeWidget(self._phase_bw_range, self.set_phase_bw, "Phase: Bandwidth", "slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_1.addWidget(self._phase_bw_win, 0, 2, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_1.setRowStretch(r, 1)
-        for c in range(2, 3):
-            self.controls_grid_layout_1.setColumnStretch(c, 1)
-        self._eq_gain_range = Range(0.0, 0.1, 0.001, 0.01, 200)
-        self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, "Equalizer: rate", "slider", float, QtCore.Qt.Horizontal)
-        self.controls_grid_layout_1.addWidget(self._eq_gain_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.controls_grid_layout_1.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.controls_grid_layout_1.setColumnStretch(c, 1)
+        self.top_layout.addWidget(self._qtgui_const_sink_x_0_win)
         self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps, (6.28/100.0), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts), nfilts, ((nfilts/2)*1), 1.5, 1)
         self.digital_map_bb_0 = digital.map_bb(constel.pre_diff_code())
@@ -279,23 +181,11 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False,
             truncate=False)
-        self._delay_range = Range(0, 200, 1, 50, 200)
-        self._delay_win = RangeWidget(self._delay_range, self.set_delay, "Delay", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.top_grid_layout.addWidget(self._delay_win, 1, 0, 1, 1)
-        for r in range(1, 2):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.channels_channel_model_0_0 = channels.channel_model(
-            noise_voltage=noise_volt,
-            frequency_offset=freq_offset,
-            epsilon=1,
-            taps=[1+0.25j],
-            noise_seed=0,
-            block_tags=False)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
+        self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
+        self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
         self.blocks_tag_gate_0_0_0_1 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1.set_single_key("")
         self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
@@ -306,7 +196,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.blocks_tag_gate_0_0_0.set_single_key("")
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0.set_single_key("")
-        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 140, "packet_len")
+        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_size, "packet_len")
         self.blocks_repack_bits_bb_1_0 = blocks.repack_bits_bb(1, 8, "packet_len", False, gr.GR_MSB_FIRST)
         self.blocks_repack_bits_bb_1 = blocks.repack_bits_bb(8, 1, "", False, gr.GR_MSB_FIRST)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
@@ -314,13 +204,10 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(0.25)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_cc(0.025)
         self.blocks_file_source_0_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/user/Downloads/_framed.rrf', False, 0, 0)
         self.blocks_file_source_0_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, '/home/user/Downloads/_diag.rrf', False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
-        self.blocks_add_xx_0 = blocks.add_vcc(1)
         self.analog_agc_xx_0 = analog.agc_cc((1e-4), 1.0, 1.0)
         self.analog_agc_xx_0.set_max_gain(65536)
 
@@ -329,11 +216,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_agc_xx_0, 0), (self.digital_fll_band_edge_cc_0, 0))
-        self.connect((self.blocks_add_xx_0, 0), (self.analog_agc_xx_0, 0))
-        self.connect((self.blocks_add_xx_0, 0), (self.qtgui_sink_x_0_0, 0))
         self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_xx_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
         self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0_0, 0))
@@ -343,13 +226,13 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_constellation_modulator_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.channels_channel_model_0_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.blocks_tag_gate_0_0_0_1_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.qtgui_sink_x_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
-        self.connect((self.channels_channel_model_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
-        self.connect((self.channels_channel_model_0_0, 0), (self.single_pole_iir_filter_xx_0, 0))
-        self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.digital_constellation_modulator_0_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 2), (self.blocks_null_sink_1_0, 0))
@@ -358,13 +241,13 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_receiver_cb_0, 4), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
-        self.connect((self.digital_costas_loop_cc_0, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_fll_band_edge_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
-        self.connect((self.single_pole_iir_filter_xx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.analog_agc_xx_0, 0))
 
 
     def closeEvent(self, event):
@@ -396,30 +279,6 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
-    def get_variable_adaptive_algorithm_0_0(self):
-        return self.variable_adaptive_algorithm_0_0
-
-    def set_variable_adaptive_algorithm_0_0(self, variable_adaptive_algorithm_0_0):
-        self.variable_adaptive_algorithm_0_0 = variable_adaptive_algorithm_0_0
-
-    def get_variable_adaptive_algorithm_0(self):
-        return self.variable_adaptive_algorithm_0
-
-    def set_variable_adaptive_algorithm_0(self, variable_adaptive_algorithm_0):
-        self.variable_adaptive_algorithm_0 = variable_adaptive_algorithm_0
-
-    def get_timing_loop_bw(self):
-        return self.timing_loop_bw
-
-    def set_timing_loop_bw(self, timing_loop_bw):
-        self.timing_loop_bw = timing_loop_bw
-
-    def get_time_offset(self):
-        return self.time_offset
-
-    def set_time_offset(self, time_offset):
-        self.time_offset = time_offset
-
     def get_sps(self):
         return self.sps
 
@@ -434,20 +293,14 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
         self.qtgui_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_sink_x_0_0.set_frequency_range(0, self.samp_rate)
 
-    def get_phase_bw(self):
-        return self.phase_bw
+    def get_packet_size(self):
+        return self.packet_size
 
-    def set_phase_bw(self, phase_bw):
-        self.phase_bw = phase_bw
-
-    def get_noise_volt(self):
-        return self.noise_volt
-
-    def set_noise_volt(self, noise_volt):
-        self.noise_volt = noise_volt
-        self.channels_channel_model_0_0.set_noise_voltage(self.noise_volt)
+    def set_packet_size(self, packet_size):
+        self.packet_size = packet_size
+        self.blocks_stream_to_tagged_stream_0.set_packet_len(self.packet_size)
+        self.blocks_stream_to_tagged_stream_0.set_packet_len_pmt(self.packet_size)
 
     def get_nfilts(self):
         return self.nfilts
@@ -467,25 +320,6 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
 
     def set_hdr_format(self, hdr_format):
         self.hdr_format = hdr_format
-
-    def get_freq_offset(self):
-        return self.freq_offset
-
-    def set_freq_offset(self, freq_offset):
-        self.freq_offset = freq_offset
-        self.channels_channel_model_0_0.set_frequency_offset(self.freq_offset)
-
-    def get_eq_gain(self):
-        return self.eq_gain
-
-    def set_eq_gain(self, eq_gain):
-        self.eq_gain = eq_gain
-
-    def get_delay(self):
-        return self.delay
-
-    def set_delay(self, delay):
-        self.delay = delay
 
     def get_arity(self):
         return self.arity
