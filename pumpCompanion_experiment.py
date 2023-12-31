@@ -25,6 +25,7 @@ from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
 from gnuradio import analog
+from gnuradio import audio
 from gnuradio import blocks
 import pmt
 from gnuradio import digital
@@ -79,14 +80,14 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.constel = constel = digital.qam_constellation(constellation_points=256, differential=True, mod_code='none').base()
+        self.constel = constel = digital.qam_constellation(constellation_points=64, differential=True, mod_code='none').base()
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.access_key = access_key = '11100001010110101110100010010011'
         self.sps = sps = 2
         self.samp_rate = samp_rate = 44100
         self.packet_size = packet_size = 140
         self.nfilts = nfilts = int(32*(modulus/16))
-        self.interpolation = interpolation = 2
+        self.interpolation = interpolation = 4
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
         self.arity = arity = modulus
 
@@ -113,7 +114,7 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             True, #plotfreq
             True, #plotwaterfall
             True, #plottime
-            False, #plotconst
+            True, #plotconst
             None # parent
         )
         self.qtgui_sink_x_0.set_update_time(1.0/10)
@@ -163,6 +164,12 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_const_sink_x_0_win)
+        self.freq_xlating_fft_filter_ccc_0_0 = filter.freq_xlating_fft_filter_ccc(1, firdes.low_pass(1,samp_rate,samp_rate/(2*1), samp_rate/4), ((1)*(8500)*(2/sps)*(2/interpolation)), samp_rate)
+        self.freq_xlating_fft_filter_ccc_0_0.set_nthreads(1)
+        self.freq_xlating_fft_filter_ccc_0_0.declare_sample_delay(0)
+        self.freq_xlating_fft_filter_ccc_0 = filter.freq_xlating_fft_filter_ccc(1, firdes.low_pass(1,samp_rate,samp_rate/(2*1), samp_rate/4), ((-1)*(8500)*(2/sps)*(2/interpolation)), samp_rate)
+        self.freq_xlating_fft_filter_ccc_0.set_nthreads(1)
+        self.freq_xlating_fft_filter_ccc_0.declare_sample_delay(0)
         self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps, (6.28/100.0), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts), nfilts, ((nfilts/2)*1), 1.5, 1)
         self.digital_map_bb_0 = digital.map_bb(constel.pre_diff_code())
@@ -182,7 +189,6 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             log=False,
             truncate=False)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
         self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
@@ -204,10 +210,13 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
+        self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.blocks_file_source_0_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/user/Downloads/_framed.rrf', False, 0, 0)
         self.blocks_file_source_0_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, '/home/user/Downloads/_diag.rrf', False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
+        self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
+        self.audio_sink_0 = audio.sink(samp_rate, '', True)
         self.analog_agc_xx_0 = analog.agc_cc((1e-4), 1.0, 1.0)
         self.analog_agc_xx_0.set_max_gain(65536)
 
@@ -216,7 +225,10 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_agc_xx_0, 0), (self.digital_fll_band_edge_cc_0, 0))
+        self.connect((self.blocks_complex_to_float_0, 0), (self.audio_sink_0, 0))
+        self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
         self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0_0, 0))
@@ -226,11 +238,9 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_constellation_modulator_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.blocks_tag_gate_0_0_0_1_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.qtgui_sink_x_0, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.freq_xlating_fft_filter_ccc_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
         self.connect((self.digital_constellation_modulator_0_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
@@ -246,7 +256,10 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.blocks_complex_to_float_0, 0))
+        self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.qtgui_sink_x_0, 0))
+        self.connect((self.freq_xlating_fft_filter_ccc_0_0, 0), (self.blocks_tag_gate_0_0_0_1_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.analog_agc_xx_0, 0))
 
 
@@ -285,6 +298,8 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
     def set_sps(self, sps):
         self.sps = sps
         self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, 11*self.sps*self.nfilts))
+        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*(8500)*(2/self.sps)*(2/self.interpolation)))
+        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*(8500)*(2/self.sps)*(2/self.interpolation)))
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -292,6 +307,8 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.freq_xlating_fft_filter_ccc_0.set_taps(firdes.low_pass(1,self.samp_rate,self.samp_rate/(2*1), self.samp_rate/4))
+        self.freq_xlating_fft_filter_ccc_0_0.set_taps(firdes.low_pass(1,self.samp_rate,self.samp_rate/(2*1), self.samp_rate/4))
         self.qtgui_sink_x_0.set_frequency_range(0, self.samp_rate)
 
     def get_packet_size(self):
@@ -314,6 +331,8 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
 
     def set_interpolation(self, interpolation):
         self.interpolation = interpolation
+        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*(8500)*(2/self.sps)*(2/self.interpolation)))
+        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*(8500)*(2/self.sps)*(2/self.interpolation)))
 
     def get_hdr_format(self):
         return self.hdr_format
