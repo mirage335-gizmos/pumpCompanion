@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='2638843194'
+export ub_setScriptChecksum_contents='641517930'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -14341,6 +14341,15 @@ _package() {
 
 
 
+_setup_prog() {
+	sudo -n apt-get install -y dar
+	_getDep dar
+	
+	sudo -n apt-get install -y par2
+	_getDep par2
+}
+
+
 
 ##### Core
 
@@ -14365,7 +14374,7 @@ _pumpCompanion-frame-minimal() {
 	
 	echo >> "$pumpCompanion_framedFile"
 	
-	#'_pumpCompanion-frame 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum
+	#echo '_pumpCompanion-frame 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum
 	#f0d81c2b72c2def16da7e2c9860c03ae
 	echo "f0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03ae" >> "$pumpCompanion_framedFile"
 	
@@ -14373,11 +14382,12 @@ _pumpCompanion-frame-minimal() {
 	
 	#xz -z -e9 -C crc64 --threads=1
 	#lz4 -z --fast=1 - - | cat
-	cat "$pumpCompanion_inFile" | lz4 -z --fast=1 - - | base64 -w 156 >> "$pumpCompanion_framedFile"
+	#base64 -w 156
+	cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' 2> /dev/null | head -c 384 | cat - "$pumpCompanion_inFile" | xz -z -e9 -C crc64 --threads=1 >> "$pumpCompanion_framedFile"
 	
 	echo >> "$pumpCompanion_framedFile"
 	
-	#'echo '_pumpCompanion-frame END 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum'
+	#echo '_pumpCompanion-frame END 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum
 	#2025bae2a82c9792a5c3090075a3902a
 	echo "2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a" >> "$pumpCompanion_framedFile"
 	
@@ -14422,7 +14432,10 @@ _pumpCompanion-deframe() {
 	
 	# ATTRIBUTION: ChatGPT4 2023-12-15 .
 	#xz -d
-	if ! head -c $(($(grep -aobm 1 '2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'f0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03ae' "$pumpCompanion_framedFile" | cut -d: -f1) + 288 + 3)) | base64 -d | lz4 -d -c > "$pumpCompanion_outFile"
+	#lz4 -d -c
+	#base64 -d
+	#tail -c +385
+	if ! head -c $(($(grep -aobm 1 '2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a2025bae2a82c9792a5c3090075a3902a' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'f0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03aef0d81c2b72c2def16da7e2c9860c03ae' "$pumpCompanion_framedFile" | cut -d: -f1) + 288 + 3)) | xz -d | tail -c +385 > "$pumpCompanion_outFile"
 	then
 		_messagePlain_bad 'bad: fail: incomplete: _framed.rrf'
 		#_messageFAIL
@@ -14579,6 +14592,10 @@ _gnuradioCompanion() {
 }
 
 _refresh_anchors() {
+	_setup_prog
+	
+	
+	
 	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
 	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
 	

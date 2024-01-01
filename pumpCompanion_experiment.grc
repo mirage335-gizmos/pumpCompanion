@@ -42,7 +42,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [568, 16.0]
+    coordinate: [792, 16.0]
     rotation: 0
     state: enabled
 - name: arity
@@ -54,7 +54,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1320, 16.0]
+    coordinate: [1544, 16.0]
     rotation: 0
     state: enabled
 - name: constel
@@ -126,7 +126,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 292.0]
+    coordinate: [440, 292.0]
     rotation: 0
     state: disabled
 - name: constel
@@ -189,7 +189,8 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: digital.qam_constellation(constellation_points=64, differential=True, mod_code='none').base()
+    value: digital.qam_constellation(constellation_points=256, differential=True,
+      mod_code='gray').base()
   states:
     bus_sink: false
     bus_source: false
@@ -197,6 +198,18 @@ blocks:
     coordinate: [880, 296.0]
     rotation: 0
     state: enabled
+- name: excess_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: '0.275'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [576, 16.0]
+    rotation: 0
+    state: true
 - name: hdr_format
   id: variable
   parameters:
@@ -206,14 +219,14 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [760, 16.0]
+    coordinate: [984, 16.0]
     rotation: 0
     state: enabled
 - name: interpolation
   id: variable
   parameters:
     comment: ''
-    value: '4'
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
@@ -230,7 +243,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1432, 16.0]
+    coordinate: [1656, 16.0]
     rotation: 0
     state: enabled
 - name: nfilts
@@ -242,19 +255,21 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1208, 16.0]
+    coordinate: [1432, 16.0]
     rotation: 0
     state: enabled
 - name: packet_size
   id: variable
   parameters:
-    comment: ''
+    comment: 'CAUTION: Do NOT
+
+      exceed 140 bytes!'
     value: '140'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [456, 16.0]
+    coordinate: [680, 16.0]
     rotation: 0
     state: true
 - name: samp_rate
@@ -269,11 +284,23 @@ blocks:
     coordinate: [176, 16.0]
     rotation: 0
     state: enabled
+- name: shift_factor
+  id: variable
+  parameters:
+    comment: ''
+    value: ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [464, 16.0]
+    rotation: 0
+    state: true
 - name: sps
   id: variable
   parameters:
     comment: samp_sym_rate
-    value: '2'
+    value: '3'
   states:
     bus_sink: false
     bus_source: false
@@ -287,18 +314,38 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    gain: '1.0'
+    gain: '5'
     max_gain: '65536'
     maxoutbuf: '0'
     minoutbuf: '0'
-    rate: 1e-4
-    reference: '1.0'
+    rate: '0.003'
+    reference: '0.35'
     type: complex
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [520, 1840.0]
+    rotation: 0
+    state: true
+- name: analog_agc_xx_0_0
+  id: analog_agc_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    gain: '2'
+    max_gain: '65536'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rate: '0.002'
+    reference: '1'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1200, 1536.0]
     rotation: 0
     state: true
 - name: audio_sink_0
@@ -315,7 +362,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [568, 920.0]
+    coordinate: [696, 904.0]
     rotation: 0
     state: true
 - name: audio_source_0
@@ -407,6 +454,42 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [1176, 992.0]
+    rotation: 0
+    state: true
+- name: blocks_multiply_const_vxx_0
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '0.35'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 904.0]
+    rotation: 0
+    state: true
+- name: blocks_multiply_const_vxx_0_0
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '0.005'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [840, 1032.0]
     rotation: 0
     state: true
 - name: blocks_null_sink_0
@@ -729,7 +812,7 @@ blocks:
     comment: ''
     constellation: constel
     differential: 'True'
-    excess_bw: '0.35'
+    excess_bw: excess_bw
     log: 'False'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -799,7 +882,7 @@ blocks:
     bus_structure: null
     coordinate: [928, 1792.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: digital_diff_decoder_bb_0_0
   id: digital_diff_decoder_bb
   parameters:
@@ -836,7 +919,7 @@ blocks:
     bus_structure: null
     coordinate: [688, 1824.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: digital_map_bb_0
   id: digital_map_bb
   parameters:
@@ -867,7 +950,7 @@ blocks:
     minoutbuf: '0'
     osps: '1'
     sps: sps
-    taps: firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts)
+    taps: firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, int(11*sps*nfilts))
     type: ccf
   states:
     bus_sink: false
@@ -898,7 +981,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    center_freq: (-1)*(8500)*(2/sps)*(2/interpolation)
+    center_freq: (-1)*((samp_rate*shift_factor)*(1/sps)*(1/interpolation))
     comment: firdes.low_pass(1,samp_rate,samp_rate/(2*decimation), transitionHertz)
     decim: '1'
     maxoutbuf: '0'
@@ -906,12 +989,13 @@ blocks:
     nthreads: '1'
     samp_delay: '0'
     samp_rate: samp_rate
-    taps: firdes.low_pass(1,samp_rate,samp_rate/(2*1), samp_rate/4)
+    taps: firdes.complex_band_pass(1, samp_rate, -samp_rate/(2*(1.0*(4/4))), samp_rate/(2*(1.0*(4/4))),
+      samp_rate/4)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 1136.0]
+    coordinate: [96, 1136.0]
     rotation: 0
     state: enabled
 - name: freq_xlating_fft_filter_ccc_0_0
@@ -919,7 +1003,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    center_freq: (1)*(8500)*(2/sps)*(2/interpolation)
+    center_freq: (1)*((samp_rate*shift_factor)*(1/sps)*(1/interpolation))
     comment: firdes.low_pass(1,samp_rate,samp_rate/(2*decimation), transitionHertz)
     decim: '1'
     maxoutbuf: '0'
@@ -927,7 +1011,8 @@ blocks:
     nthreads: '1'
     samp_delay: '0'
     samp_rate: samp_rate
-    taps: firdes.low_pass(1,samp_rate,samp_rate/(2*1), samp_rate/4)
+    taps: firdes.complex_band_pass(1, samp_rate, -samp_rate/(2*(1.0*(4/4))), samp_rate/(2*(1.0*(4/4))),
+      samp_rate/4)
   states:
     bus_sink: false
     bus_source: false
@@ -945,7 +1030,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 24.0]
+    coordinate: [1280, 24.0]
     rotation: 0
     state: enabled
 - name: import_math
@@ -958,7 +1043,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [968, 24.0]
+    coordinate: [1192, 24.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -1101,7 +1186,7 @@ blocks:
     bus_structure: null
     coordinate: [288, 1376.0]
     rotation: 0
-    state: true
+    state: bypassed
 - name: rational_resampler_xxx_0_0
   id: rational_resampler_xxx
   parameters:
@@ -1119,17 +1204,21 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [344, 1840.0]
+    coordinate: [352, 1840.0]
     rotation: 0
-    state: true
+    state: bypassed
 
 connections:
 - [analog_agc_xx_0, '0', digital_fll_band_edge_cc_0, '0']
+- [analog_agc_xx_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
+- [analog_agc_xx_0_0, '0', digital_constellation_receiver_cb_0, '0']
 - [audio_source_0, '0', blocks_float_to_complex_0, '0']
-- [blocks_complex_to_float_0, '0', audio_sink_0, '0']
-- [blocks_complex_to_float_0, '0', blocks_float_to_complex_0, '0']
+- [blocks_complex_to_float_0, '0', blocks_multiply_const_vxx_0, '0']
 - [blocks_file_source_0_0_0, '0', blocks_stream_to_tagged_stream_0, '0']
 - [blocks_float_to_complex_0, '0', freq_xlating_fft_filter_ccc_0_0, '0']
+- [blocks_multiply_const_vxx_0, '0', audio_sink_0, '0']
+- [blocks_multiply_const_vxx_0, '0', blocks_multiply_const_vxx_0_0, '0']
+- [blocks_multiply_const_vxx_0_0, '0', blocks_float_to_complex_0, '0']
 - [blocks_pack_k_bits_bb_0, '0', blocks_tag_gate_0, '0']
 - [blocks_repack_bits_bb_1, '0', digital_correlate_access_code_xx_ts_0, '0']
 - [blocks_repack_bits_bb_1_0, '0', blocks_file_sink_0_0_0, '0']
@@ -1155,8 +1244,9 @@ connections:
 - [digital_costas_loop_cc_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
 - [digital_diff_decoder_bb_0_0, '0', digital_map_bb_0, '0']
 - [digital_fll_band_edge_cc_0, '0', digital_costas_loop_cc_0, '0']
+- [digital_fll_band_edge_cc_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
 - [digital_map_bb_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
-- [digital_pfb_clock_sync_xxx_0_0, '0', digital_constellation_receiver_cb_0, '0']
+- [digital_pfb_clock_sync_xxx_0_0, '0', analog_agc_xx_0_0, '0']
 - [digital_protocol_formatter_bb_0, '0', blocks_tagged_stream_mux_0, '0']
 - [freq_xlating_fft_filter_ccc_0, '0', blocks_complex_to_float_0, '0']
 - [freq_xlating_fft_filter_ccc_0, '0', qtgui_sink_x_0, '0']
