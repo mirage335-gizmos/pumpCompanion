@@ -107,6 +107,11 @@ _compile_bash_installation_prog() {
 
 _compile_bash_program_prog() {	
 	export includeScriptList
+	
+	includeScriptList+=( build-special.sh )
+	
+	includeScriptList+=( features.sh )
+	
 	true
 }
 

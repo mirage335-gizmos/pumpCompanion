@@ -604,6 +604,8 @@ _default() {
 	"$scriptAbsoluteFolder"/"$currentScriptBasename".html _test
 	
 	[[ "$current_deleteScriptLocal" == "true" ]] && rmdir "$scriptLocal"
+	
+	cp -f "$scriptAbsoluteFolder"/README.pdf "$scriptAbsoluteFolder"/README-installer.pdf
 }
 
 # NOTICE: Overrides ( 'ops.sh' equivalent ).
