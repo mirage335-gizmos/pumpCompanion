@@ -644,7 +644,7 @@ export anchorName=$(basename "$anchorScriptAbsoluteLocation" | sed 's/\.bat$//g'
 
 
 export anchorSourceDir="pumpCompanion"
-export anchorSource="ubiquitous_bash.sh"
+export anchorSource="pumpCompanion-lean.sh"
 export anchorSourcePath="$anchorSourceDir"/"$anchorSource"
 
 export anchorLabName=anchorLabName
@@ -1394,7 +1394,7 @@ SET "MSWanchorName=%~n0"
 REM Typically set automatically by '_anchor' function.
 SET "MSWanchorSourceDir=pumpCompanion"
 
-SET "MSWanchorSource=lean.sh"
+SET "MSWanchorSource=pumpCompanion-lean.sh"
 
 if not "%MSWanchorSourceDir%"=="ubiquitous_bash" (
 	if "%MSWanchorSource%"=="lean.sh" (
