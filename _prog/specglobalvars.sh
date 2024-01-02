@@ -9,6 +9,7 @@ fi
 
 export pumpCompanion_inFile="$pumpCompanion_directory"/_in.rrf
 export pumpCompanion_outFile="$pumpCompanion_directory"/_out.rrf
+export pumpCompanion_encodedFile="$pumpCompanion_directory"/_encoded.rrf
 export pumpCompanion_framedFile="$pumpCompanion_directory"/_framed.rrf
 
 
