@@ -428,7 +428,7 @@ _pumpCompanion-frame() {
 
 
 
-_gnuradioCompanion() {
+_gnuradioCompanion-dev() {
 	# Beware for direct electrical connections most noise will be jitter from DAC/ADC hardware, quantization error, etc.
 	# Forward Error Correction of any kind may not be useful, especially if not Burst Error Correction .
 	# Any FEC used should be punctured down to minimal overhead to get the exponential benefit of any correction at all without wasting bandwidth.
@@ -444,6 +444,42 @@ _gnuradioCompanion() {
 	disown -a -h -r
 	disown -a -r
 }
+
+
+
+_gnuradioCompanion() {
+	# CAUTION: Complexity must be kept to a minimum.
+	
+	if ! _if_cygwin
+	then
+		gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc &
+		
+		disown -h $!
+		disown -a -h -r
+		disown -a -r
+	else
+		local currentHomePathMSW
+		currentHomePathMSW=$(cygpath -D | sed 's/\/Desktop$//')
+		
+		#_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
+		
+		cd "$currentHomePathMSW"
+		
+		#os.path.join(os.environ['HOME'], 'Downloads', '_diag.rrf') if os.name == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_diag.rrf')
+		
+		#&
+		#_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
+		_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc
+		
+		#disown -h $!
+		#disown -a -h -r
+		#disown -a -r
+	fi
+	
+	sleep 2
+}
+
+
 
 _refresh_anchors() {
 	_setup_prog
@@ -470,6 +506,12 @@ _refresh_anchors() {
 
 _anchor_special() {
 	_anchor_configure
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor ./_gnuradioCompanion
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_gnuradioCompanion
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_gnuradioCompanion.bat
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_gnuradioCompanion.bat
+	
 	
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-frame.bat
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-deframe.bat

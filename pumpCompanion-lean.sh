@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='4258109316'
+export ub_setScriptChecksum_contents='4047377232'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -14791,7 +14791,7 @@ _pumpCompanion-frame() {
 
 
 
-_gnuradioCompanion() {
+_gnuradioCompanion-dev() {
 	# Beware for direct electrical connections most noise will be jitter from DAC/ADC hardware, quantization error, etc.
 	# Forward Error Correction of any kind may not be useful, especially if not Burst Error Correction .
 	# Any FEC used should be punctured down to minimal overhead to get the exponential benefit of any correction at all without wasting bandwidth.
@@ -14807,6 +14807,39 @@ _gnuradioCompanion() {
 	disown -a -h -r
 	disown -a -r
 }
+
+
+
+_gnuradioCompanion() {
+	# CAUTION: Complexity must be kept to a minimum.
+	
+	if ! _if_cygwin
+	then
+		gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc "$scriptAbsoluteFolder"/_ref/scrap.grc "$scriptAbsoluteFolder"/_ref/scratch.grc &
+		
+		disown -h $!
+		disown -a -h -r
+		disown -a -r
+	else
+		local currentHomePathMSW
+		currentHomePathMSW=$(cygpath -D | sed 's/\/Desktop$//')
+		
+		#_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
+		
+		cd "$currentHomePathMSW"
+		
+		#&
+		_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
+		
+		#disown -h $!
+		#disown -a -h -r
+		#disown -a -r
+	fi
+	
+	sleep 2
+}
+
+
 
 _refresh_anchors() {
 	_setup_prog
@@ -14833,6 +14866,12 @@ _refresh_anchors() {
 
 _anchor_special() {
 	_anchor_configure
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor ./_gnuradioCompanion
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_gnuradioCompanion
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_gnuradioCompanion.bat
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_gnuradioCompanion.bat
+	
 	
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-frame.bat
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-deframe.bat

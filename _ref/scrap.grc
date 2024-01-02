@@ -50,13 +50,25 @@ blocks:
 - name: access_key
   id: variable
   parameters:
-    comment: ''
-    value: '''11100001010110101110100010010011'''
+    comment: 'Default:
+
+      ''1110 0001 0101 1010 1110 1000 1001 0011''
+
+      ''11100001010110101110100010010011''
+
+      Alt:
+
+      ''1111 1111 1111 1111 1111 0000 0000 0011''
+
+      ''11111111111111111111000000000011''
+
+      Unusual:   1 0000 1   1 1111 1   0011 11'
+    value: '''11111111111111111111000000000011'''
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 16.0]
+    coordinate: [784, 8.0]
     rotation: 0
     state: enabled
 - name: arity
@@ -68,7 +80,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1312, 16.0]
+    coordinate: [1536, 8.0]
     rotation: 0
     state: enabled
 - name: constel
@@ -194,6 +206,18 @@ blocks:
     coordinate: [104, 1408.0]
     rotation: 0
     state: enabled
+- name: excess_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: '0.275'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [568, 8.0]
+    rotation: 0
+    state: true
 - name: hdr_format
   id: variable
   parameters:
@@ -203,7 +227,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [752, 16.0]
+    coordinate: [976, 8.0]
     rotation: 0
     state: enabled
 - name: interpolation
@@ -215,7 +239,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [256, 16.0]
+    coordinate: [256, 8.0]
     rotation: 0
     state: enabled
 - name: ldpc_dec_H
@@ -266,7 +290,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424, 16.0]
+    coordinate: [1648, 8.0]
     rotation: 0
     state: enabled
 - name: nfilts
@@ -278,19 +302,21 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 16.0]
+    coordinate: [1424, 8.0]
     rotation: 0
     state: enabled
 - name: packet_size
   id: variable
   parameters:
-    comment: ''
+    comment: 'CAUTION: Do NOT
+
+      exceed 140 bytes!'
     value: '140'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [448, 16.0]
+    coordinate: [672, 8.0]
     rotation: 0
     state: true
 - name: repetitions
@@ -305,40 +331,40 @@ blocks:
     coordinate: [1568, 1568.0]
     rotation: 0
     state: enabled
-- name: rrc_taps
-  id: variable
-  parameters:
-    comment: ''
-    value: firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, 11*sps*nfilts)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [80, 848.0]
-    rotation: 0
-    state: enabled
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '200000'
+    value: '44100'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [168, 16.0]
+    coordinate: [168, 8.0]
     rotation: 0
     state: enabled
+- name: shift_factor
+  id: variable
+  parameters:
+    comment: ''
+    value: ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [456, 8.0]
+    rotation: 0
+    state: true
 - name: sps
   id: variable
   parameters:
     comment: samp_sym_rate
-    value: '2'
+    value: '3'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 16.0]
+    coordinate: [368, 8.0]
     rotation: 0
     state: enabled
 - name: blocks_char_to_float_0
@@ -355,7 +381,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 152.0]
+    coordinate: [400, 256.0]
     rotation: 0
     state: true
 - name: blocks_char_to_float_0_0
@@ -372,7 +398,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 208.0]
+    coordinate: [400, 312.0]
     rotation: 0
     state: true
 - name: blocks_char_to_float_0_2
@@ -463,7 +489,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 304.0]
+    coordinate: [96, 192.0]
     rotation: 0
     state: true
 - name: blocks_pack_k_bits_bb_0_0
@@ -479,7 +505,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [576, 152.0]
+    coordinate: [904, 256.0]
     rotation: 0
     state: enabled
 - name: blocks_pack_k_bits_bb_0_0_0
@@ -698,7 +724,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 152.0]
+    coordinate: [760, 256.0]
     rotation: 0
     state: enabled
 - name: blocks_unpack_k_bits_bb_0_0_0
@@ -800,29 +826,6 @@ blocks:
     coordinate: [1064, 1728.0]
     rotation: 180
     state: enabled
-- name: digital_pfb_clock_sync_xxx_0
-  id: digital_pfb_clock_sync_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    filter_size: nfilts
-    init_phase: nfilts/2
-    loop_bw: 6.28/100.0
-    max_dev: '1.5'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    osps: '1'
-    sps: sps
-    taps: rrc_taps
-    type: ccf
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [72, 700.0]
-    rotation: 0
-    state: enabled
 - name: digital_protocol_formatter_bb_0
   id: digital_protocol_formatter_bb
   parameters:
@@ -855,7 +858,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [720, 160.0]
+    coordinate: [1048, 264.0]
     rotation: 0
     state: enabled
 - name: fec_depuncture_bb_0_0
@@ -972,27 +975,6 @@ blocks:
     coordinate: [296, 1000.0]
     rotation: 0
     state: enabled
-- name: freq_xlating_fft_filter_ccc_0
-  id: freq_xlating_fft_filter_ccc
-  parameters:
-    affinity: ''
-    alias: ''
-    center_freq: '6000'
-    comment: firdes.low_pass(1,samp_rate,samp_rate/(2*decimation), transitionHertz)
-    decim: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    nthreads: '1'
-    samp_delay: '0'
-    samp_rate: samp_rate
-    taps: firdes.low_pass(1,samp_rate,samp_rate/(2*1), samp_rate/4)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [72, 544.0]
-    rotation: 0
-    state: enabled
 - name: import_cmath
   id: import
   parameters:
@@ -1003,7 +985,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1048, 24.0]
+    coordinate: [1272, 16.0]
     rotation: 0
     state: enabled
 - name: import_math
@@ -1016,7 +998,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [960, 24.0]
+    coordinate: [1184, 16.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_0
@@ -1079,7 +1061,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [872, 152.0]
+    coordinate: [1200, 256.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -1176,7 +1158,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 400.0]
+    coordinate: [96, 288.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0_0
@@ -1273,7 +1255,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [224, 152.0]
+    coordinate: [552, 256.0]
     rotation: 0
     state: true
 
