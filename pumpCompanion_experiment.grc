@@ -364,7 +364,8 @@ blocks:
     alias: ''
     begin_tag: pmt.PMT_NIL
     comment: ''
-    file: /home/user/Downloads/_framed.rrf
+    file: os.path.join(os.environ['HOME'], 'Downloads', '_framed.rrf') if os.name
+      == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_framed.rrf')
     length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'

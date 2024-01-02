@@ -345,7 +345,8 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: /home/user/Downloads/_framed.rrf
+    file: os.path.join(os.environ['HOME'], 'Downloads', '_framed.rrf') if os.name
+      == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_framed.rrf')
     type: byte
     unbuffered: 'False'
     vlen: '1'
@@ -363,7 +364,8 @@ blocks:
     alias: ''
     begin_tag: pmt.PMT_NIL
     comment: ''
-    file: /home/user/Downloads/_framed.rrf
+    file: os.path.join(os.environ['HOME'], 'Downloads', '_framed.rrf') if os.name
+      == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_framed.rrf')
     length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -958,6 +960,19 @@ blocks:
     coordinate: [1704, 1136.0]
     rotation: 0
     state: enabled
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import os
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1816, 16.0]
+    rotation: 0
+    state: true
 - name: import_cmath
   id: import
   parameters:
