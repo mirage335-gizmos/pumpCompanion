@@ -450,17 +450,49 @@ _refresh_anchors() {
 	
 	
 	
-	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
-	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
+	##cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
+	##cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe
 	
-	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-frame.bat
-	cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-deframe.bat
+	#cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-frame.bat
+	#cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_pumpCompanion-deframe.bat
 	
 	
 	# May need an expensively fast SDR .
-	#cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame-giga.bat
+	##cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame-giga.bat
 	
-	cp -a "$scriptAbsoluteFolder"/_anchor ./_gnuradioCompanion
-	#cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_gnuradioCompanion.bat
+	#cp -a "$scriptAbsoluteFolder"/_anchor ./_gnuradioCompanion
+	##cp -a "$scriptAbsoluteFolder"/_anchor.bat ./_gnuradioCompanion.bat
 }
 
+
+
+
+
+_anchor_special() {
+	_anchor_configure
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-frame.bat
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_pumpCompanion-deframe.bat
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_pumpCompanion-frame.bat
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_pumpCompanion-deframe.bat
+	
+
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_bin.bat
+	"$scriptAbsoluteFolder"/ubiquitous_bash.sh _anchor_configure "$scriptAbsoluteFolder"/_bin.bat
+
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_bin_rotten.bat
+	"$scriptAbsoluteFolder"/pumpCompanion.sh _anchor_configure "$scriptAbsoluteFolder"/_bin_rotten.bat
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_true.bat
+	"$scriptAbsoluteFolder"/pumpCompanion.sh _anchor_configure "$scriptAbsoluteFolder"/_true.bat
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_false.bat
+	"$scriptAbsoluteFolder"/pumpCompanion.sh _anchor_configure "$scriptAbsoluteFolder"/_false.bat
+
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_test.bat
+	"$scriptAbsoluteFolder"/pumpCompanion-lean.sh _anchor_configure "$scriptAbsoluteFolder"/_test.bat
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_test_rotten.bat
+	"$scriptAbsoluteFolder"/pumpCompanion.sh _anchor_configure "$scriptAbsoluteFolder"/_test_rotten.bat
+}
