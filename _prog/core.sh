@@ -357,7 +357,7 @@ _pumpCompanion-frame-fec() {
 	# Parity before data prevents reaching the data then subsequently inappropriately reading supposed parity from the data, if the parity header/footer somehow exists in the data .
 	# Data before parity may be helpful if there is a significant chance data has already been correctly received or may be used before any subsequent parity .
 	mv -f "$pumpCompanion_encodedFile".parity.rrf "$pumpCompanion_encodedFile"
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 2100 >> "$pumpCompanion_framedFile"
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 380 >> "$pumpCompanion_framedFile"
 	echo >> "$pumpCompanion_framedFile"
 	_pumpCompanion-frame-minimal "$@"
 	
@@ -418,15 +418,16 @@ _pumpCompanion-frame-mega() {
 	# 
 	# ...
 	# 
-	# 72kbits * (45) to bytes == 405000
+	# 72kbits * (25) to bytes == 405000
 	# 117.6kbits * (45) to bytes == 661500
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 400100 > "$pumpCompanion_framedFile"
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 220100 > "$pumpCompanion_framedFile"
 	
 	_pumpCompanion-frame-fec "$@"
 	#_pumpCompanion-data-encode
 	#_pumpCompanion-frame-minimal "$@"
 	
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 48100 >> "$pumpCompanion_framedFile"
+	#48100
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 380 >> "$pumpCompanion_framedFile"
 	
 	_messagePlain_nominal 'done: _pumpCompanion-frame'
 	#_messageNormal '_pumpCompanion-frame: done'

@@ -216,7 +216,7 @@ blocks:
       (or >>1/3 of pattern
 
       after footer)'
-    value: '8192'
+    value: '140'
   states:
     bus_sink: false
     bus_source: false
