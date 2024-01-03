@@ -81,14 +81,14 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.constel = constel = digital.qam_constellation(constellation_points=64, differential=True, mod_code='gray').base()
+        self.points = points = 64
+        self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
         self.sps = sps = 4
         self.samp_rate = samp_rate = 48000
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.excess_bw = excess_bw = 0.35
-        self.access_key = access_key = '11111111111111111111000000000011'
+        self.access_key = access_key = '11100001010110101110100010010011'
         self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
-        self.points = points = 64
         self.packet_size = packet_size = 8192
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
@@ -262,6 +262,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False,
             truncate=False)
+        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(8, gr.GR_MSB_FIRST)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
         self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
@@ -277,14 +278,13 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0.set_single_key("")
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_size, "packet_len")
-        self.blocks_repack_bits_bb_1_0 = blocks.repack_bits_bb(1, 8, "packet_len", False, gr.GR_MSB_FIRST)
-        self.blocks_repack_bits_bb_1 = blocks.repack_bits_bb(8, 1, "", False, gr.GR_MSB_FIRST)
+        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_null_sink_1_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_ff(0.05)
+        self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_ff(0.1)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_ff(0.35)
         self.blocks_float_to_complex_1 = blocks.float_to_complex(1)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
@@ -295,6 +295,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.audio_sink_0 = audio.sink(samp_rate, '', True)
+        self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_cc((-28), (1e-4), (int(samp_rate*0.75)), True)
         self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*1.2), 1.25, 1.05)
         self.analog_agc_xx_0.set_max_gain(65536)
 
@@ -303,29 +304,30 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_agc_xx_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
+        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.blocks_float_to_complex_1, 0))
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
         self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.analog_pwr_squelch_xx_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_sink_x_0_1, 0))
         self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_char_to_float_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0_0, 0))
+        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
         self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_constellation_modulator_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.freq_xlating_fft_filter_ccc_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.analog_agc_xx_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_char_to_float_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0_0_0, 0))
         self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
@@ -333,7 +335,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_receiver_cb_0, 3), (self.blocks_null_sink_1_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 4), (self.qtgui_const_sink_x_0_0, 0))
-        self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
+        self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
         self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
@@ -351,6 +353,13 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.wait()
 
         event.accept()
+
+    def get_points(self):
+        return self.points
+
+    def set_points(self, points):
+        self.points = points
+        self.set_constel(digital.qam_constellation(constellation_points=self.points, differential=True, mod_code='gray').base())
 
     def get_constel(self):
         return self.constel
@@ -419,12 +428,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.shift_factor = shift_factor
         self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
-    def get_points(self):
-        return self.points
-
-    def set_points(self, points):
-        self.points = points
 
     def get_packet_size(self):
         return self.packet_size

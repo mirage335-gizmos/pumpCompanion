@@ -251,6 +251,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.audio_source_0 = audio.source(samp_rate, '', True)
+        self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_cc((-28), (1e-4), (int(samp_rate*0.75)), True)
         self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*1.2), 1.25, 1.05)
         self.analog_agc_xx_0.set_max_gain(65536)
 
@@ -259,9 +260,10 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_agc_xx_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
+        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
         self.connect((self.audio_source_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.blocks_float_to_complex_1, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.analog_pwr_squelch_xx_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_sink_x_0_1, 0))
         self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_float_to_complex_0, 0))

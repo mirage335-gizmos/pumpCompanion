@@ -376,6 +376,26 @@ blocks:
     coordinate: [616, 1752.0]
     rotation: 0
     state: true
+- name: analog_pwr_squelch_xx_0
+  id: analog_pwr_squelch_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha: 1e-4
+    comment: ''
+    gate: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ramp: int(samp_rate*0.75)
+    threshold: '-28'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1544, 1144.0]
+    rotation: 0
+    state: true
 - name: audio_sink_0
   id: audio_sink
   parameters:
@@ -618,7 +638,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    const: '0.05'
+    const: '0.10'
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
@@ -1426,13 +1446,14 @@ blocks:
 
 connections:
 - [analog_agc_xx_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
+- [analog_pwr_squelch_xx_0, '0', freq_xlating_fft_filter_ccc_0_0, '0']
 - [audio_source_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [audio_source_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [blocks_char_to_float_0, '0', blocks_float_to_complex_1, '0']
 - [blocks_complex_to_float_0, '0', blocks_multiply_const_vxx_0, '0']
 - [blocks_complex_to_float_0, '0', blocks_multiply_const_vxx_0_0_0, '0']
 - [blocks_file_source_0_0_0, '0', blocks_stream_to_tagged_stream_0, '0']
-- [blocks_float_to_complex_0, '0', freq_xlating_fft_filter_ccc_0_0, '0']
+- [blocks_float_to_complex_0, '0', analog_pwr_squelch_xx_0, '0']
 - [blocks_float_to_complex_0, '0', qtgui_sink_x_0_1, '0']
 - [blocks_float_to_complex_1, '0', qtgui_sink_x_1, '0']
 - [blocks_multiply_const_vxx_0, '0', audio_sink_0, '0']
