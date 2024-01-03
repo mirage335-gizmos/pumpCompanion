@@ -82,16 +82,18 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.constel = constel = digital.qam_constellation(constellation_points=64, differential=True, mod_code='gray').base()
-        self.samp_rate = samp_rate = 44100
+        self.sps = sps = 4
+        self.samp_rate = samp_rate = 48000
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
-        self.excess_bw = excess_bw = 0.275
+        self.excess_bw = excess_bw = 0.35
         self.access_key = access_key = '11111111111111111111000000000011'
-        self.sps = sps = 3
         self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
-        self.packet_size = packet_size = 140
+        self.points = points = 64
+        self.packet_size = packet_size = 8192
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
+        self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
         self.arity = arity = modulus
 
         ##################################################
@@ -293,7 +295,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.audio_sink_0 = audio.sink(samp_rate, '', True)
-        self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*4), 1.25, 1.05)
+        self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*1.2), 1.25, 1.05)
         self.analog_agc_xx_0.set_max_gain(65536)
 
 
@@ -356,13 +358,25 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
     def set_constel(self, constel):
         self.constel = constel
 
+    def get_sps(self):
+        return self.sps
+
+    def set_sps(self, sps):
+        self.sps = sps
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
+        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
+        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
+        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
+        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
+
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
         self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*4))
+        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
         self.freq_xlating_fft_filter_ccc_0.set_taps(firdes.complex_band_pass(1, self.samp_rate, -self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/4))
         self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
@@ -379,8 +393,9 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
     def set_modulus(self, modulus):
         self.modulus = modulus
         self.set_arity(self.modulus)
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
         self.set_nfilts(int(32*(self.modulus/16)))
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*4))
+        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.digital_pfb_clock_sync_xxx_0_0.set_loop_bandwidth((((math.sqrt(self.modulus)*3.14)/100)))
 
     def get_excess_bw(self):
@@ -397,16 +412,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
-    def get_sps(self):
-        return self.sps
-
-    def set_sps(self, sps):
-        self.sps = sps
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*4))
-        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
-        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
     def get_shift_factor(self):
         return self.shift_factor
 
@@ -414,6 +419,12 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.shift_factor = shift_factor
         self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
+
+    def get_points(self):
+        return self.points
+
+    def set_points(self, points):
+        self.points = points
 
     def get_packet_size(self):
         return self.packet_size
@@ -435,7 +446,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
 
     def set_interpolation(self, interpolation):
         self.interpolation = interpolation
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*4))
+        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
 
@@ -444,6 +455,12 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
 
     def set_hdr_format(self, hdr_format):
         self.hdr_format = hdr_format
+
+    def get_bitrate(self):
+        return self.bitrate
+
+    def set_bitrate(self, bitrate):
+        self.bitrate = bitrate
 
     def get_arity(self):
         return self.arity

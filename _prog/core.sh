@@ -418,14 +418,15 @@ _pumpCompanion-frame-mega() {
 	# 
 	# ...
 	# 
-	# 72kbits * (120+15) to bytes == 1350000
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 1350100 > "$pumpCompanion_framedFile"
+	# 72kbits * (45) to bytes == 405000
+	# 117.6kbits * (45) to bytes == 661500
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 400100 > "$pumpCompanion_framedFile"
 	
 	_pumpCompanion-frame-fec "$@"
 	#_pumpCompanion-data-encode
 	#_pumpCompanion-frame-minimal "$@"
 	
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 32100 >> "$pumpCompanion_framedFile"
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 48100 >> "$pumpCompanion_framedFile"
 	
 	_messagePlain_nominal 'done: _pumpCompanion-frame'
 	#_messageNormal '_pumpCompanion-frame: done'

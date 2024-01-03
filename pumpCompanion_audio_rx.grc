@@ -66,14 +66,18 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1544, 16.0]
+    coordinate: [1616, 16.0]
     rotation: 0
     state: enabled
 - name: bitrate
   id: variable
   parameters:
-    comment: ''
-    value: 48000/4*(1.442695041 * math.log(modulus))
+    comment: 'Get a fiber optic SPDIF ADC if
+
+      sound card input can only
+
+      receive ~72kbit/s .'
+    value: samp_rate/sps*(1.442695041 * math.log(modulus))
   states:
     bus_sink: false
     bus_source: false
@@ -85,7 +89,8 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: digital.qam_constellation(constellation_points=64, differential=True, mod_code='gray').base()
+    value: digital.qam_constellation(constellation_points=points, differential=True,
+      mod_code='gray').base()
   states:
     bus_sink: false
     bus_source: false
@@ -104,7 +109,31 @@ blocks:
     bus_structure: null
     coordinate: [576, 16.0]
     rotation: 0
-    state: true
+    state: disabled
+- name: excess_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: '0.35'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1592, 216.0]
+    rotation: 0
+    state: enabled
+- name: excess_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: '0.275'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1592, 288.0]
+    rotation: 0
+    state: disabled
 - name: hdr_format
   id: variable
   parameters:
@@ -128,7 +157,31 @@ blocks:
     bus_structure: null
     coordinate: [264, 16.0]
     rotation: 0
+    state: disabled
+- name: interpolation
+  id: variable
+  parameters:
+    comment: ''
+    value: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1424, 216.0]
+    rotation: 0
     state: enabled
+- name: interpolation
+  id: variable
+  parameters:
+    comment: ''
+    value: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1424, 288.0]
+    rotation: 0
+    state: disabled
 - name: modulus
   id: variable
   parameters:
@@ -138,7 +191,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1656, 16.0]
+    coordinate: [1688, 16.0]
     rotation: 0
     state: enabled
 - name: nfilts
@@ -150,7 +203,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1432, 16.0]
+    coordinate: [1544, 16.0]
     rotation: 0
     state: enabled
 - name: packet_size
@@ -158,8 +211,12 @@ blocks:
   parameters:
     comment: 'CAUTION: Do NOT
 
-      exceed 140 bytes!'
-    value: '140'
+      exceed 140 bytes!
+
+      (or >>1/3 of pattern
+
+      after footer)'
+    value: '8192'
   states:
     bus_sink: false
     bus_source: false
@@ -167,6 +224,54 @@ blocks:
     coordinate: [680, 16.0]
     rotation: 0
     state: true
+- name: points
+  id: variable
+  parameters:
+    comment: ''
+    value: '256'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1680, 288.0]
+    rotation: 0
+    state: disabled
+- name: points
+  id: variable
+  parameters:
+    comment: ''
+    value: '64'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1680, 216.0]
+    rotation: 0
+    state: enabled
+- name: points
+  id: variable
+  parameters:
+    comment: ''
+    value: '64'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1448, 16.0]
+    rotation: 0
+    state: disabled
+- name: points
+  id: variable
+  parameters:
+    comment: ''
+    value: '16'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1680, 144.0]
+    rotation: 0
+    state: disabled
 - name: samp_rate
   id: variable
   parameters:
@@ -178,7 +283,31 @@ blocks:
     bus_structure: null
     coordinate: [176, 16.0]
     rotation: 0
+    state: disabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '48000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1336, 216.0]
+    rotation: 0
     state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '44100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1336, 288.0]
+    rotation: 0
+    state: disabled
 - name: shift_factor
   id: variable
   parameters:
@@ -202,7 +331,31 @@ blocks:
     bus_structure: null
     coordinate: [376, 16.0]
     rotation: 0
+    state: disabled
+- name: sps
+  id: variable
+  parameters:
+    comment: ''
+    value: '4'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1528, 216.0]
+    rotation: 0
     state: enabled
+- name: sps
+  id: variable
+  parameters:
+    comment: ''
+    value: '3'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1528, 288.0]
+    rotation: 0
+    state: disabled
 - name: analog_agc_xx_0
   id: analog_agc_xx
   parameters:
@@ -256,7 +409,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1752, 352.0]
+    coordinate: [1760, 456.0]
     rotation: 0
     state: disabled
 - name: audio_sink_0_0_0_0

@@ -21,7 +21,6 @@ if __name__ == '__main__':
             print("Warning: failed to XInitThreads()")
 
 from PyQt5 import Qt
-from gnuradio import eng_notation
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
@@ -36,6 +35,7 @@ import sys
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
+from gnuradio import eng_notation
 import cmath
 import math
 import os
@@ -80,19 +80,19 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.constel = constel = digital.qam_constellation(constellation_points=64, differential=True, mod_code='gray').base()
+        self.points = points = 64
+        self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
         self.sps = sps = 4
         self.samp_rate = samp_rate = 48000
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.excess_bw = excess_bw = 0.35
         self.access_key = access_key = '11100001010110101110100010010011'
-        self.variable_qtgui_label_0 = variable_qtgui_label_0 = (samp_rate/sps*(1.442695041 * math.log(16)))
-        self.variable_0 = variable_0 = 0
         self.shift_factor = shift_factor = ((575/samp_rate)*4)+(0.5)+(excess_bw*0.5)
-        self.packet_size = packet_size = 140
+        self.packet_size = packet_size = 8192
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
+        self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
         self.arity = arity = modulus
 
         ##################################################
@@ -126,17 +126,6 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.qtgui_tab_widget_0_layout_4.addLayout(self.qtgui_tab_widget_0_grid_layout_4)
         self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_4, 'TX')
         self.top_layout.addWidget(self.qtgui_tab_widget_0)
-        self._variable_qtgui_label_0_tool_bar = Qt.QToolBar(self)
-
-        if None:
-            self._variable_qtgui_label_0_formatter = None
-        else:
-            self._variable_qtgui_label_0_formatter = lambda x: eng_notation.num_to_str(x)
-
-        self._variable_qtgui_label_0_tool_bar.addWidget(Qt.QLabel("kbits"))
-        self._variable_qtgui_label_0_label = Qt.QLabel(str(self._variable_qtgui_label_0_formatter(self.variable_qtgui_label_0)))
-        self._variable_qtgui_label_0_tool_bar.addWidget(self._variable_qtgui_label_0_label)
-        self.qtgui_tab_widget_0_layout_1.addWidget(self._variable_qtgui_label_0_tool_bar)
         self.qtgui_sink_x_1 = qtgui.sink_c(
             1024, #fftsize
             window.WIN_BLACKMAN_hARRIS, #wintype
@@ -306,6 +295,13 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
 
         event.accept()
 
+    def get_points(self):
+        return self.points
+
+    def set_points(self, points):
+        self.points = points
+        self.set_constel(digital.qam_constellation(constellation_points=self.points, differential=True, mod_code='gray').base())
+
     def get_constel(self):
         return self.constel
 
@@ -317,7 +313,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
 
     def set_sps(self, sps):
         self.sps = sps
-        self.set_variable_qtgui_label_0((self.samp_rate/self.sps*(1.442695041 * math.log(16))))
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
         self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
@@ -327,8 +323,8 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
         self.set_shift_factor(((575/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
-        self.set_variable_qtgui_label_0((self.samp_rate/self.sps*(1.442695041 * math.log(16))))
         self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.freq_xlating_fft_filter_ccc_0_0.set_taps(firdes.complex_band_pass(1, self.samp_rate, -self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/4))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
@@ -342,6 +338,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
     def set_modulus(self, modulus):
         self.modulus = modulus
         self.set_arity(self.modulus)
+        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
         self.set_nfilts(int(32*(self.modulus/16)))
         self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.digital_pfb_clock_sync_xxx_0_0.set_loop_bandwidth((((math.sqrt(self.modulus)*3.14)/100)))
@@ -359,19 +356,6 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
     def set_access_key(self, access_key):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
-
-    def get_variable_qtgui_label_0(self):
-        return self.variable_qtgui_label_0
-
-    def set_variable_qtgui_label_0(self, variable_qtgui_label_0):
-        self.variable_qtgui_label_0 = variable_qtgui_label_0
-        Qt.QMetaObject.invokeMethod(self._variable_qtgui_label_0_label, "setText", Qt.Q_ARG("QString", str(self._variable_qtgui_label_0_formatter(self.variable_qtgui_label_0))))
-
-    def get_variable_0(self):
-        return self.variable_0
-
-    def set_variable_0(self, variable_0):
-        self.variable_0 = variable_0
 
     def get_shift_factor(self):
         return self.shift_factor
@@ -406,6 +390,12 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
 
     def set_hdr_format(self, hdr_format):
         self.hdr_format = hdr_format
+
+    def get_bitrate(self):
+        return self.bitrate
+
+    def set_bitrate(self, bitrate):
+        self.bitrate = bitrate
 
     def get_arity(self):
         return self.arity
