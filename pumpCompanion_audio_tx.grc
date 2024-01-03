@@ -73,8 +73,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: digital.qam_constellation(constellation_points=256, differential=True,
-      mod_code='gray').base()
+    value: digital.qam_constellation(constellation_points=64, differential=True, mod_code='gray').base()
   states:
     bus_sink: false
     bus_source: false
@@ -202,7 +201,7 @@ blocks:
     max_gain: '65536'
     maxoutbuf: '0'
     minoutbuf: '0'
-    rate: (((1/(modulus))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*12
+    rate: (((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*4
     reference: '1.25'
     type: complex
   states:
@@ -356,7 +355,7 @@ blocks:
     bus_structure: null
     coordinate: [1192, 4576.0]
     rotation: 180
-    state: disabled
+    state: enabled
 - name: blocks_file_source_0_0_0
   id: blocks_file_source
   parameters:
