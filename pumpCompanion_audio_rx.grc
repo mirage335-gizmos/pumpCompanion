@@ -312,7 +312,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: ((575/samp_rate)*4)+(0.5)+(excess_bw*0.5)
+    value: ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
   states:
     bus_sink: false
     bus_source: false
@@ -734,46 +734,25 @@ blocks:
     coordinate: [1816, 1616.0]
     rotation: 0
     state: true
-- name: blocks_repack_bits_bb_1
-  id: blocks_repack_bits_bb
+- name: blocks_packed_to_unpacked_xx_0
+  id: blocks_packed_to_unpacked_xx
   parameters:
     affinity: ''
     alias: ''
-    align_output: 'False'
+    bits_per_chunk: '1'
     comment: ''
     endianness: gr.GR_MSB_FIRST
-    k: '8'
-    l: '1'
-    len_tag_key: '""'
     maxoutbuf: '0'
     minoutbuf: '0'
+    num_ports: '1'
+    type: byte
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [1056, 4448.0]
     rotation: 180
-    state: enabled
-- name: blocks_repack_bits_bb_1_0
-  id: blocks_repack_bits_bb
-  parameters:
-    affinity: ''
-    alias: ''
-    align_output: 'False'
-    comment: ''
-    endianness: gr.GR_MSB_FIRST
-    k: '1'
-    l: '8'
-    len_tag_key: '"packet_len"'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [616, 4448.0]
-    rotation: 180
-    state: enabled
+    state: true
 - name: blocks_stream_to_tagged_stream_0
   id: blocks_stream_to_tagged_stream
   parameters:
@@ -962,6 +941,25 @@ blocks:
     coordinate: [1672, 1616.0]
     rotation: 0
     state: enabled
+- name: blocks_unpacked_to_packed_xx_0
+  id: blocks_unpacked_to_packed_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    bits_per_chunk: '8'
+    comment: ''
+    endianness: gr.GR_MSB_FIRST
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_ports: '1'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [624, 4448.0]
+    rotation: 180
+    state: true
 - name: digital_constellation_modulator_0_0
   id: digital_constellation_modulator
   parameters:
@@ -1461,20 +1459,20 @@ connections:
 - [blocks_multiply_const_vxx_0_0, '0', blocks_float_to_complex_0, '0']
 - [blocks_multiply_const_vxx_0_0_0, '0', blocks_float_to_complex_0, '0']
 - [blocks_pack_k_bits_bb_0, '0', blocks_tag_gate_0, '0']
-- [blocks_repack_bits_bb_1, '0', digital_correlate_access_code_xx_ts_0, '0']
-- [blocks_repack_bits_bb_1_0, '0', blocks_char_to_float_0, '0']
-- [blocks_repack_bits_bb_1_0, '0', blocks_file_sink_0_0_0, '0']
+- [blocks_packed_to_unpacked_xx_0, '0', digital_correlate_access_code_xx_ts_0, '0']
 - [blocks_stream_to_tagged_stream_0, '0', blocks_tagged_stream_mux_0, '1']
 - [blocks_stream_to_tagged_stream_0, '0', digital_protocol_formatter_bb_0, '0']
 - [blocks_tag_gate_0, '0', blocks_tag_gate_0_0_0_0_0, '0']
 - [blocks_tag_gate_0_0_0, '0', digital_constellation_modulator_0_0, '0']
 - [blocks_tag_gate_0_0_0_0, '0', blocks_tag_gate_0_0_0, '0']
-- [blocks_tag_gate_0_0_0_0_0, '0', blocks_repack_bits_bb_1, '0']
+- [blocks_tag_gate_0_0_0_0_0, '0', blocks_packed_to_unpacked_xx_0, '0']
 - [blocks_tag_gate_0_0_0_1, '0', freq_xlating_fft_filter_ccc_0, '0']
 - [blocks_tag_gate_0_0_0_1_0, '0', analog_agc_xx_0, '0']
 - [blocks_tagged_stream_mux_0, '0', blocks_tag_gate_0_0_0_0, '0']
 - [blocks_throttle_0, '0', blocks_tag_gate_0_0_0_1, '0']
 - [blocks_unpack_k_bits_bb_0_0, '0', blocks_pack_k_bits_bb_0, '0']
+- [blocks_unpacked_to_packed_xx_0, '0', blocks_char_to_float_0, '0']
+- [blocks_unpacked_to_packed_xx_0, '0', blocks_file_sink_0_0_0, '0']
 - [digital_constellation_modulator_0_0, '0', blocks_throttle_0, '0']
 - [digital_constellation_receiver_cb_0, '0', blocks_null_sink_0, '0']
 - [digital_constellation_receiver_cb_0, '0', digital_diff_decoder_bb_0_0, '0']
@@ -1482,7 +1480,7 @@ connections:
 - [digital_constellation_receiver_cb_0, '2', blocks_null_sink_1_0, '0']
 - [digital_constellation_receiver_cb_0, '3', blocks_null_sink_1_1, '0']
 - [digital_constellation_receiver_cb_0, '4', qtgui_const_sink_x_0_0, '0']
-- [digital_correlate_access_code_xx_ts_0, '0', blocks_repack_bits_bb_1_0, '0']
+- [digital_correlate_access_code_xx_ts_0, '0', blocks_unpacked_to_packed_xx_0, '0']
 - [digital_diff_decoder_bb_0_0, '0', digital_map_bb_0, '0']
 - [digital_map_bb_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
 - [digital_pfb_clock_sync_xxx_0_0, '0', digital_constellation_receiver_cb_0, '0']

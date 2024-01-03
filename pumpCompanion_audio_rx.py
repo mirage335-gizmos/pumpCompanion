@@ -87,7 +87,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.excess_bw = excess_bw = 0.35
         self.access_key = access_key = '11100001010110101110100010010011'
-        self.shift_factor = shift_factor = ((575/samp_rate)*4)+(0.5)+(excess_bw*0.5)
+        self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
         self.packet_size = packet_size = 8192
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
@@ -230,6 +230,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts(access_key,
           0, 'packet_len')
         self.digital_constellation_receiver_cb_0 = digital.constellation_receiver_cb(constel, ((2*3.14)/100), ((1/modulus)*(0.02/math.sqrt(modulus))), (int((samp_rate*(200/1000000))+5+((samp_rate*shift_factor)*(200/1000000)))))
+        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(8, gr.GR_MSB_FIRST)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
@@ -237,8 +238,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0.set_single_key("")
-        self.blocks_repack_bits_bb_1_0 = blocks.repack_bits_bb(1, 8, "packet_len", False, gr.GR_MSB_FIRST)
-        self.blocks_repack_bits_bb_1 = blocks.repack_bits_bb(8, 1, "", False, gr.GR_MSB_FIRST)
+        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_null_sink_1_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
@@ -268,20 +268,20 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_char_to_float_0, 0))
-        self.connect((self.blocks_repack_bits_bb_1_0, 0), (self.blocks_file_sink_0_0_0, 0))
+        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_repack_bits_bb_1, 0))
+        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.analog_agc_xx_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_char_to_float_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0_0_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 2), (self.blocks_null_sink_1_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 3), (self.blocks_null_sink_1_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 4), (self.qtgui_const_sink_x_0_0, 0))
-        self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_repack_bits_bb_1_0, 0))
+        self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
         self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
@@ -326,7 +326,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
-        self.set_shift_factor(((575/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
+        self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
         self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.freq_xlating_fft_filter_ccc_0_0.set_taps(firdes.complex_band_pass(1, self.samp_rate, -self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/4))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
@@ -350,7 +350,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
 
     def set_excess_bw(self, excess_bw):
         self.excess_bw = excess_bw
-        self.set_shift_factor(((575/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
+        self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
 
     def get_access_key(self):
         return self.access_key
