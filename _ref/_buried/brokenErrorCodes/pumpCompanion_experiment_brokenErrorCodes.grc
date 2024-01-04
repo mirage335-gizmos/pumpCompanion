@@ -1,0 +1,1179 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: Custom
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: pumpCompanion_experiment
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: ''
+    window_size: 2000, 2000
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 12.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: G
+  id: variable_ldpc_G_matrix_def
+  parameters:
+    comment: ''
+    filename: gr.prefix() + "/share/gnuradio/fec/ldpc/" + "n_0100_k_0058_gen_matrix.alist"
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [408, 336.0]
+    rotation: 0
+    state: disabled
+- name: H
+  id: variable_ldpc_H_matrix_def
+  parameters:
+    comment: ''
+    filename: /usr/share/gnuradio/fec/ldpc/n_0100_k_0023_gap_10.alist
+    gap: '10'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 64.0]
+    rotation: 0
+    state: enabled
+- name: block_size
+  id: variable
+  parameters:
+    comment: 'codeword size of polar codes.
+
+
+      MUST be a power of 2!
+
+      MUST be greater than ''frame_size''.'
+    value: '512'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 2560.0]
+    rotation: 0
+    state: enabled
+- name: dec_cc
+  id: variable_cc_decoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '4'
+    framebits: frame_size*8
+    k: k
+    mode: fec.CC_TAILBITING
+    ndim: '0'
+    padding: 'False'
+    polys: polys
+    rate: rate
+    state_end: '-1'
+    state_start: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1200, 212.0]
+    rotation: 0
+    state: enabled
+- name: dec_rep
+  id: variable_repetition_decoder_def
+  parameters:
+    comment: ''
+    dim1: '4'
+    dim2: '1'
+    framebits: frame_size*8
+    ndim: '0'
+    prob: '0.5'
+    rep: '3'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 184.0]
+    rotation: 0
+    state: disabled
+- name: enc_ccsds
+  id: variable_ccsds_encoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '4'
+    framebits: frame_size*8
+    mode: fec.CC_TAILBITING
+    ndim: '0'
+    state_start: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1216, 80.0]
+    rotation: 0
+    state: enabled
+- name: enc_rep
+  id: variable_repetition_encoder_def
+  parameters:
+    comment: ''
+    dim1: '4'
+    dim2: '1'
+    framebits: frame_size*8
+    ndim: '0'
+    rep: '3'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [96, 192.0]
+    rotation: 0
+    state: disabled
+- name: k
+  id: variable
+  parameters:
+    comment: ''
+    value: '7'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 80.0]
+    rotation: 0
+    state: enabled
+- name: ldpc_dec
+  id: variable_ldpc_decoder_def
+  parameters:
+    comment: ''
+    dim1: '4'
+    dim2: '4'
+    file: /usr/share/gnuradio/fec/ldpc/n_0500_k_0127_gap_21.alist
+    max_iter: '100'
+    ndim: '0'
+    sigma: '0.5'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [720, 456.0]
+    rotation: 0
+    state: enabled
+- name: ldpc_dec_G
+  id: variable_ldpc_bit_flip_decoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    matrix_object: G
+    max_iterations: '100'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 312.0]
+    rotation: 0
+    state: disabled
+- name: ldpc_dec_H
+  id: variable_ldpc_bit_flip_decoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    matrix_object: H
+    max_iterations: '5'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [872, 72.0]
+    rotation: 0
+    state: enabled
+- name: ldpc_enc
+  id: variable_ldpc_encoder_def
+  parameters:
+    comment: ''
+    dim1: '1'
+    dim2: '4'
+    file: /usr/share/gnuradio/fec/ldpc/n_0100_k_0023_gap_10.alist
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 488.0]
+    rotation: 0
+    state: enabled
+- name: ldpc_enc_G
+  id: variable_ldpc_encoder_G_def
+  parameters:
+    G: G
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 336.0]
+    rotation: 0
+    state: disabled
+- name: ldpc_enc_H
+  id: variable_ldpc_encoder_H_def
+  parameters:
+    H: H
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    ndim: '0'
+    value: '"ok"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [312, 64.0]
+    rotation: 0
+    state: enabled
+- name: polar_config
+  id: variable_polar_code_configurator
+  parameters:
+    block_size: block_size
+    channel: polar.CHANNEL_TYPE_BEC
+    comment: 'Block is used to configure polar encoders and decoders.
+
+
+      returns dictionary with requested configuration.
+
+
+      most important dict values: ''values'' and ''positions'''
+    design_snr: '0.0'
+    mu: '32'
+    num_info_bits: frame_size * 8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 2560.0]
+    rotation: 0
+    state: enabled
+- name: polar_decoder_sc
+  id: variable_polar_decoder_sc_def
+  parameters:
+    block_size: block_size
+    comment: 'Standard ''Successive Cancellation'' decoder.
+
+
+      performs better with greater block size.
+
+      This is due to stronger polarization at higher block sizes.'
+    dim1: '1'
+    dim2: '1'
+    frozen_bit_positions: polar_config['positions']
+    frozen_bit_values: polar_config['values']
+    ndim: '0'
+    num_info_bits: frame_size * 8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [200, 2704.0]
+    rotation: 0
+    state: enabled
+- name: polar_decoder_scl
+  id: variable_polar_decoder_sc_list_def
+  parameters:
+    block_size: block_size
+    comment: 'Advanced ''Successive Cancellation List'' decoder
+
+
+      Greater list size usually results in better decoding performance.
+
+      But it is computationally more heavy.'
+    dim1: '1'
+    dim2: '1'
+    frozen_bit_positions: polar_config['positions']
+    frozen_bit_values: polar_config['values']
+    max_list_size: '8'
+    ndim: '0'
+    num_info_bits: frame_size * 8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [568, 2708.0]
+    rotation: 0
+    state: enabled
+- name: polar_encoder_sc
+  id: variable_polar_encoder_def
+  parameters:
+    block_size: block_size
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    frozen_bit_positions: polar_config['positions']
+    frozen_bit_values: polar_config['values']
+    is_packed: 'False'
+    ndim: '0'
+    num_info_bits: frame_size * 8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [200, 2564.0]
+    rotation: 0
+    state: enabled
+- name: polar_encoder_scl
+  id: variable_polar_encoder_def
+  parameters:
+    block_size: block_size
+    comment: ''
+    dim1: '1'
+    dim2: '1'
+    frozen_bit_positions: polar_config['positions']
+    frozen_bit_values: polar_config['values']
+    is_packed: 'False'
+    ndim: '0'
+    num_info_bits: frame_size * 8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [568, 2564.0]
+    rotation: 0
+    state: enabled
+- name: polys
+  id: variable
+  parameters:
+    comment: ''
+    value: '[109, 79]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1120, 144.0]
+    rotation: 0
+    state: enabled
+- name: rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1144, 80.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '44100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [168, 16.0]
+    rotation: 0
+    state: enabled
+- name: blocks_char_to_float_0_2
+  id: blocks_char_to_float
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    scale: '1'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 840.0]
+    rotation: 0
+    state: enabled
+- name: blocks_delay_0
+  id: blocks_delay
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_ports: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [640, 576.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_0_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: /home/user/Downloads/_diag.rrf
+    type: byte
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 1216.0]
+    rotation: 180
+    state: enabled
+- name: blocks_file_source_0_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: /home/user/Downloads/_framed.rrf
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 960.0]
+    rotation: 180
+    state: true
+- name: blocks_pack_k_bits_bb_0
+  id: blocks_pack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [912, 656.0]
+    rotation: 0
+    state: bypassed
+- name: blocks_pack_k_bits_bb_0_0
+  id: blocks_pack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1208, 1072.0]
+    rotation: 180
+    state: enabled
+- name: blocks_stream_to_tagged_stream_0
+  id: blocks_stream_to_tagged_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    len_tag_key: '"packet_len"'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    packet_len: '32'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 1648.0]
+    rotation: 0
+    state: disabled
+- name: blocks_stream_to_tagged_stream_0_0
+  id: blocks_stream_to_tagged_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    len_tag_key: '"packet_len"'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    packet_len: '30'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 1424.0]
+    rotation: 0
+    state: disabled
+- name: blocks_stream_to_vector_0
+  id: blocks_stream_to_vector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: '1'
+    type: byte
+    vlen: (8*(239-51))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [192, 2136.0]
+    rotation: 0
+    state: disabled
+- name: blocks_stream_to_vector_0_0
+  id: blocks_stream_to_vector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: '1'
+    type: byte
+    vlen: (8*(255-51))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [816, 2144.0]
+    rotation: 0
+    state: disabled
+- name: blocks_tag_gate_0
+  id: blocks_tag_gate
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    propagate_tags: 'False'
+    single_key: '""'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 1648.0]
+    rotation: 0
+    state: disabled
+- name: blocks_tag_gate_0_0
+  id: blocks_tag_gate
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    propagate_tags: 'False'
+    single_key: '""'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 1424.0]
+    rotation: 0
+    state: disabled
+- name: blocks_unpack_k_bits_bb_0
+  id: blocks_unpack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 680.0]
+    rotation: 0
+    state: bypassed
+- name: blocks_unpack_k_bits_bb_0_0
+  id: blocks_unpack_k_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    k: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 888.0]
+    rotation: 0
+    state: enabled
+- name: blocks_vector_to_stream_0_0
+  id: blocks_vector_to_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: '1'
+    type: byte
+    vlen: (8*(255-51))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 2136.0]
+    rotation: 0
+    state: disabled
+- name: blocks_vector_to_stream_0_0_0
+  id: blocks_vector_to_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: '1'
+    type: byte
+    vlen: (8*(239-51))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1200, 2144.0]
+    rotation: 0
+    state: disabled
+- name: digital_map_bb_0_0_0
+  id: digital_map_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    map: '[-1, 1]'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 840.0]
+    rotation: 0
+    state: enabled
+- name: dtv_dvbt_reed_solomon_dec_0
+  id: dtv_dvbt_reed_solomon_dec
+  parameters:
+    affinity: ''
+    alias: ''
+    blocks: '8'
+    comment: ''
+    gfpoly: '0x11d'
+    k: '239'
+    m: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n: '255'
+    p: '2'
+    s: '51'
+    t: '8'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 2092.0]
+    rotation: 0
+    state: disabled
+- name: dtv_dvbt_reed_solomon_enc_0
+  id: dtv_dvbt_reed_solomon_enc
+  parameters:
+    affinity: ''
+    alias: ''
+    blocks: '8'
+    comment: ''
+    gfpoly: '0x11d'
+    k: '239'
+    m: '8'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n: '255'
+    p: '2'
+    s: '51'
+    t: '8'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [384, 2068.0]
+    rotation: 0
+    state: disabled
+- name: fec_depuncture_bb_0
+  id: fec_depuncture_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFFFFF'
+    puncsize: '28'
+    sym: '127'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [712, 640.0]
+    rotation: 0
+    state: disabled
+- name: fec_depuncture_bb_0_0
+  id: fec_depuncture_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFF'
+    puncsize: '16'
+    sym: '127'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [720, 736.0]
+    rotation: 0
+    state: enabled
+- name: fec_extended_decoder_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: ldpc_dec_H
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: ordinary
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 784.0]
+    rotation: 0
+    state: enabled
+- name: fec_extended_decoder_0_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: dec_cc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1232, 520.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_decoder_0_1
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: dec_rep
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1088, 640.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_decoder_0_1_0
+  id: fec_extended_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    ann: None
+    comment: ''
+    decoder_list: polar_decoder_sc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: none
+    value: fec_extended_decoder
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 904.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: ldpc_enc_H
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: ordinary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [224, 792.0]
+    rotation: 0
+    state: enabled
+- name: fec_extended_encoder_1_0
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: enc_rep
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [136, 600.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1_0_0
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: polar_encoder_sc
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [344, 912.0]
+    rotation: 0
+    state: disabled
+- name: fec_extended_encoder_1_1
+  id: fec_extended_encoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    encoder_list: enc_ccsds
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: puncpat
+    threadtype: capillary
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 488.0]
+    rotation: 0
+    state: disabled
+- name: fec_puncture_xx_0
+  id: fec_puncture_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFFFFF'
+    puncsize: '28'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 640.0]
+    rotation: 0
+    state: disabled
+- name: fec_puncture_xx_0_0
+  id: fec_puncture_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    delay: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    puncpat: '0xFEFF'
+    puncsize: '16'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [480, 736.0]
+    rotation: 0
+    state: enabled
+- name: frame_size
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Frame Size
+    short_id: ''
+    type: intx
+    value: '30'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 480.0]
+    rotation: 0
+    state: enabled
+- name: pdu_pdu_to_tagged_stream_0
+  id: pdu_pdu_to_tagged_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tag: packet_len
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 1736.0]
+    rotation: 0
+    state: disabled
+- name: pdu_pdu_to_tagged_stream_0_0
+  id: pdu_pdu_to_tagged_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tag: packet_len
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [816, 1512.0]
+    rotation: 0
+    state: disabled
+- name: pdu_tagged_stream_to_pdu_0
+  id: pdu_tagged_stream_to_pdu
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tag: packet_len
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 1736.0]
+    rotation: 0
+    state: disabled
+- name: pdu_tagged_stream_to_pdu_0_0
+  id: pdu_tagged_stream_to_pdu
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tag: packet_len
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 1512.0]
+    rotation: 0
+    state: disabled
+- name: puncpat
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: ''
+    value: '''11'''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 496.0]
+    rotation: 0
+    state: enabled
+- name: satellites_decode_rs_0
+  id: satellites_decode_rs
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fcr: '1'
+    gfpoly: '285'
+    interleave: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nroots: '1'
+    nsym: '8'
+    prim: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [600, 1472.0]
+    rotation: 0
+    state: disabled
+- name: satellites_encode_rs_0
+  id: satellites_encode_rs
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fcr: '1'
+    gfpoly: '285'
+    interleave: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nroots: '1'
+    nsym: '8'
+    prim: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 1696.0]
+    rotation: 0
+    state: disabled
+
+connections:
+- [blocks_char_to_float_0_2, '0', fec_extended_decoder_0, '0']
+- [blocks_char_to_float_0_2, '0', fec_extended_decoder_0_0, '0']
+- [blocks_char_to_float_0_2, '0', fec_extended_decoder_0_1, '0']
+- [blocks_char_to_float_0_2, '0', fec_extended_decoder_0_1_0, '0']
+- [blocks_delay_0, '0', fec_depuncture_bb_0, '0']
+- [blocks_file_source_0_0, '0', blocks_stream_to_tagged_stream_0, '0']
+- [blocks_file_source_0_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
+- [blocks_pack_k_bits_bb_0, '0', blocks_stream_to_tagged_stream_0_0, '0']
+- [blocks_pack_k_bits_bb_0, '0', digital_map_bb_0_0_0, '0']
+- [blocks_pack_k_bits_bb_0_0, '0', blocks_file_sink_0_0, '0']
+- [blocks_stream_to_tagged_stream_0, '0', pdu_tagged_stream_to_pdu_0, '0']
+- [blocks_stream_to_tagged_stream_0_0, '0', pdu_tagged_stream_to_pdu_0_0, '0']
+- [blocks_stream_to_vector_0, '0', dtv_dvbt_reed_solomon_enc_0, '0']
+- [blocks_stream_to_vector_0_0, '0', dtv_dvbt_reed_solomon_dec_0, '0']
+- [blocks_tag_gate_0, '0', blocks_unpack_k_bits_bb_0, '0']
+- [blocks_tag_gate_0_0, '0', blocks_file_sink_0_0, '0']
+- [blocks_unpack_k_bits_bb_0, '0', fec_puncture_xx_0, '0']
+- [blocks_unpack_k_bits_bb_0, '0', fec_puncture_xx_0_0, '0']
+- [blocks_unpack_k_bits_bb_0_0, '0', fec_extended_encoder_1, '0']
+- [blocks_unpack_k_bits_bb_0_0, '0', fec_extended_encoder_1_0, '0']
+- [blocks_unpack_k_bits_bb_0_0, '0', fec_extended_encoder_1_0_0, '0']
+- [blocks_unpack_k_bits_bb_0_0, '0', fec_extended_encoder_1_1, '0']
+- [digital_map_bb_0_0_0, '0', blocks_char_to_float_0_2, '0']
+- [dtv_dvbt_reed_solomon_dec_0, '0', blocks_vector_to_stream_0_0_0, '0']
+- [dtv_dvbt_reed_solomon_enc_0, '0', blocks_vector_to_stream_0_0, '0']
+- [fec_depuncture_bb_0, '0', blocks_pack_k_bits_bb_0, '0']
+- [fec_depuncture_bb_0_0, '0', blocks_pack_k_bits_bb_0, '0']
+- [fec_extended_decoder_0, '0', blocks_pack_k_bits_bb_0_0, '0']
+- [fec_extended_decoder_0_0, '0', blocks_pack_k_bits_bb_0_0, '0']
+- [fec_extended_decoder_0_1, '0', blocks_pack_k_bits_bb_0_0, '0']
+- [fec_extended_decoder_0_1_0, '0', blocks_pack_k_bits_bb_0_0, '0']
+- [fec_extended_encoder_1, '0', blocks_unpack_k_bits_bb_0, '0']
+- [fec_extended_encoder_1_0, '0', blocks_unpack_k_bits_bb_0, '0']
+- [fec_extended_encoder_1_0_0, '0', blocks_unpack_k_bits_bb_0, '0']
+- [fec_extended_encoder_1_1, '0', blocks_unpack_k_bits_bb_0, '0']
+- [fec_puncture_xx_0, '0', blocks_delay_0, '0']
+- [fec_puncture_xx_0_0, '0', fec_depuncture_bb_0_0, '0']
+- [pdu_pdu_to_tagged_stream_0, '0', blocks_tag_gate_0, '0']
+- [pdu_pdu_to_tagged_stream_0_0, '0', blocks_tag_gate_0_0, '0']
+- [pdu_tagged_stream_to_pdu_0, pdus, satellites_encode_rs_0, in]
+- [pdu_tagged_stream_to_pdu_0_0, pdus, satellites_decode_rs_0, in]
+- [satellites_decode_rs_0, out, pdu_pdu_to_tagged_stream_0_0, pdus]
+- [satellites_encode_rs_0, out, pdu_pdu_to_tagged_stream_0, pdus]
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.5.1
