@@ -76,7 +76,7 @@ blocks:
 
       sound card input can only
 
-      receive ~72kbit/s .'
+      clearly receive <117.6kbit/s .'
     value: samp_rate/sps*(1.442695041 * math.log(modulus))
   states:
     bus_sink: false
@@ -223,7 +223,7 @@ blocks:
     bus_structure: null
     coordinate: [376, 336.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: points
   id: variable
   parameters:
@@ -235,7 +235,7 @@ blocks:
     bus_structure: null
     coordinate: [376, 264.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: points
   id: variable
   parameters:

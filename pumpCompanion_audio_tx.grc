@@ -76,7 +76,7 @@ blocks:
 
       sound card input can only
 
-      receive ~72kbit/s .'
+      clearly receive <117.6kbit/s .'
     value: samp_rate/sps*(1.442695041 * math.log(modulus))
   states:
     bus_sink: false

@@ -103,13 +103,23 @@ _pumpCompanion-deframe() {
 	currentExitStatus_deframeEncoded="$?"
 	
 	
+	
 	# ###
 	#if false
 	#then
 	#base64 -d
+	rm -f "$pumpCompanion_encodedFile".parity.r6.par2
+	! head -c $(($(grep -aobm 1 'pU146iMS3A' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'yueWIqxaFQ' "$pumpCompanion_framedFile" | cut -d: -f1) + 10 + 3)) > "$pumpCompanion_encodedFile".parity.r6.par2 && _messagePlain_warn 'warn: missing: parity r6'
+	#fi
+	# ###
+	
+	# ###
+	if false
+	then
+	#base64 -d
 	rm -f "$pumpCompanion_encodedFile".parity.r3.par2
 	! head -c $(($(grep -aobm 1 'IxkFyUCBLg' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'u/kDyWI8wQ' "$pumpCompanion_framedFile" | cut -d: -f1) + 10 + 3)) > "$pumpCompanion_encodedFile".parity.r3.par2 && _messagePlain_warn 'warn: missing: parity r3'
-	#fi
+	fi
 	# ###
 	
 	# ###
@@ -128,7 +138,7 @@ _pumpCompanion-deframe() {
 	
 	mv -f "$pumpCompanion_encodedFile" "$pumpCompanion_encodedFile".parity.rrf
 	#"$pumpCompanion_encodedFile".parity.r3.par2 "$pumpCompanion_encodedFile".parity.r11.par2 "$pumpCompanion_encodedFile".parity.r15.par2
-	par2 repair -p "$pumpCompanion_encodedFile".parity.rrf "$pumpCompanion_encodedFile".parity.rrf.par2 "$pumpCompanion_encodedFile".parity.r3.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
+	par2 repair -p "$pumpCompanion_encodedFile".parity.rrf "$pumpCompanion_encodedFile".parity.rrf.par2 "$pumpCompanion_encodedFile".parity.r6.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
 	currentExitStatus_deframeRepaired="$?"
 	
 	[[ "$currentExitStatus_deframeRepaired" != "0" ]] && _messagePlain_warn 'warn: bad: parity'
@@ -158,6 +168,7 @@ _pumpCompanion-deframe() {
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	rm -f "$pumpCompanion_encodedFile".parity.r_default.par2
 	rm -f "$pumpCompanion_encodedFile".parity.r3.par2
+	rm -f "$pumpCompanion_encodedFile".parity.r6.par2
 	rm -f "$pumpCompanion_encodedFile".parity.r15.par2
 	
 	_messagePlain_nominal 'done: _pumpCompanion-deframe'
@@ -223,7 +234,7 @@ _pumpCompanion-frame-fec() {
 	#then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
-	par2 create -s1792 -n1 -r3 -f1 "$pumpCompanion_encodedFile".parity.rrf
+	par2 create -s1792 -n1 -r6 -f1 "$pumpCompanion_encodedFile".parity.rrf
 	#rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
 	
@@ -271,6 +282,38 @@ _pumpCompanion-frame-fec() {
 	#then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
+	par2 create -s1792 -n1 -r6 -f16384 "$pumpCompanion_encodedFile".parity.rrf
+	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
+	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r6.par2
+	
+	#echo '_pumpCompanion-frame PARITY-par2-r6 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum
+	#cae79622ac5a1575de722ee8d699da6e
+	echo >> "$pumpCompanion_framedFile"
+	echo "yueWIqxaFQ" >> "$pumpCompanion_framedFile"
+	echo >> "$pumpCompanion_framedFile"
+	
+	#base64 -w 156
+	cat "$pumpCompanion_encodedFile".parity.r6.par2 >> "$pumpCompanion_framedFile"
+	rm -f "$pumpCompanion_encodedFile".parity.r6.par2
+	
+	#echo '_pumpCompanion-frame END PARITY-par2-r6 0.3183098862 3.1415926535897932384626433832795028841971693993751058209749445923078164 06286208998628034825342117067' | md5sum
+	#231905c940812e875e79ceb7506941bf
+	echo >> "$pumpCompanion_framedFile"
+	echo "pU146iMS3A" >> "$pumpCompanion_framedFile"
+	echo >> "$pumpCompanion_framedFile"
+	
+	#fi
+	# ###
+	
+	
+	
+	# Additional separate parity files may be included if there is some advantage to this, or if more parity is necessary, or if filtering out unnecessary amounts of parity information by header/footer may be useful.
+	
+	# ###
+	if false
+	then
+	
+	rm -f "$pumpCompanion_encodedFile".parity.*.par2
 	par2 create -s1792 -n1 -r3 -f16384 "$pumpCompanion_encodedFile".parity.rrf
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r3.par2
@@ -291,7 +334,7 @@ _pumpCompanion-frame-fec() {
 	echo "IxkFyUCBLg" >> "$pumpCompanion_framedFile"
 	echo >> "$pumpCompanion_framedFile"
 	
-	#fi
+	fi
 	# ###
 	
 	

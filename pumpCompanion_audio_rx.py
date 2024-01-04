@@ -80,7 +80,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.points = points = 256
+        self.points = points = 64
         self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
         self.sps = sps = 3
         self.samp_rate = samp_rate = 44100
@@ -88,7 +88,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.excess_bw = excess_bw = 0.275
         self.access_key = access_key = '11100001010110101110100010010011'
         self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
-        self.packet_size = packet_size = 140
+        self.packet_size = packet_size = 384
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
