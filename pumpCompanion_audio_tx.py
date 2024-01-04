@@ -29,7 +29,6 @@ from gnuradio import blocks
 import pmt
 from gnuradio import channels
 from gnuradio import digital
-from gnuradio import fec
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio.fft import window
@@ -89,14 +88,9 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.excess_bw = excess_bw = 0.275
         self.access_key = access_key = '11100001010110101110100010010011'
-        self.H = H = fec.ldpc_H_matrix('/usr/share/gnuradio/fec/ldpc/n_0500_k_0127_gap_21.alist', 21)
-        self.variable_cc_encoder_def_0 = variable_cc_encoder_def_0 = fec.cc_encoder_make(2048,7, 2, [79,109], 0, fec.CC_STREAMING, False)
-        self.variable_cc_decoder_def_0 = variable_cc_decoder_def_0 = fec.cc_decoder.make(2048,7, 2, [79,109], 0, (-1), fec.CC_STREAMING, False)
         self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
         self.packet_size = packet_size = 1000
         self.nfilts = nfilts = int(32*(modulus/16))
-        self.ldpc_enc_H = ldpc_enc_H = list(map((lambda a: fec.ldpc_par_mtrx_encoder_make_H(H)),range(0,1)))
-        self.ldpc_dec_H = ldpc_dec_H = list(map((lambda a: fec.ldpc_bit_flip_decoder.make(H.get_base_sptr(), 100)),range(0,1)))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
         self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
@@ -252,11 +246,8 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.freq_xlating_fft_filter_ccc_0 = filter.freq_xlating_fft_filter_ccc(1, firdes.complex_band_pass(1, samp_rate, -samp_rate/(2*(1.0*(4/4))), samp_rate/(2*(1.0*(4/4))), samp_rate/4), ((-1)*((samp_rate*shift_factor)*(1/sps)*(1/interpolation))), samp_rate)
         self.freq_xlating_fft_filter_ccc_0.set_nthreads(1)
         self.freq_xlating_fft_filter_ccc_0.declare_sample_delay(0)
-        self.fec_extended_encoder_1_0_0 = fec.extended_encoder(encoder_obj_list=variable_cc_encoder_def_0, threading='capillary', puncpat='11')
-        self.fec_extended_decoder_0_1_0 = fec.extended_decoder(decoder_obj_list=variable_cc_decoder_def_0, threading='capillary', ann=None, puncpat='11', integration_period=10000)
         self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps, (((math.sqrt(modulus)*3.14)/100)), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, int(11*sps*nfilts)), nfilts, ((((nfilts/2)*1)*1)+0), (((1/modulus)*16)), 1)
-        self.digital_map_bb_0_0_0_0 = digital.map_bb([-1, 1])
         self.digital_map_bb_0 = digital.map_bb(constel.pre_diff_code())
         self.digital_diff_decoder_bb_0_0 = digital.diff_decoder_bb(modulus, digital.DIFF_DIFFERENTIAL)
         self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts(access_key,
@@ -272,25 +263,19 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
             log=False,
             truncate=False)
         self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=0.00125,
+            noise_voltage=0.0015,
             frequency_offset=0.0,
             epsilon=1.0,
             taps=[1.0],
             noise_seed=0,
             block_tags=False)
         self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
-        self.blocks_unpack_k_bits_bb_0_0_0_1 = blocks.unpack_k_bits_bb(8)
-        self.blocks_unpack_k_bits_bb_0_0_0_0 = blocks.unpack_k_bits_bb(8)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
         self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
         self.blocks_tag_gate_0_0_0_1 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1.set_single_key("")
-        self.blocks_tag_gate_0_0_0_0_1 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0_1.set_single_key("")
-        self.blocks_tag_gate_0_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0_0_0.set_single_key("")
         self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
         self.blocks_tag_gate_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
@@ -301,8 +286,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.blocks_tag_gate_0.set_single_key("")
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_size, "packet_len")
         self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
-        self.blocks_pack_k_bits_bb_0_0_0_1 = blocks.pack_k_bits_bb(8)
-        self.blocks_pack_k_bits_bb_0_0_0_0 = blocks.pack_k_bits_bb(8)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_null_sink_1_1 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
@@ -316,7 +299,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, os.path.join(os.environ['HOME'], 'Downloads', '_diag.rrf') if os.name == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_diag.rrf'), False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
-        self.blocks_char_to_float_0_2_0 = blocks.char_to_float(1, 1)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_cc((-28), (1e-4), (int(samp_rate*0.75)), True)
         self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*1.2), 1.25, 1.05)
@@ -329,16 +311,12 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.analog_agc_xx_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
         self.connect((self.analog_pwr_squelch_xx_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.blocks_float_to_complex_1, 0))
-        self.connect((self.blocks_char_to_float_0_2_0, 0), (self.fec_extended_decoder_0_1_0, 0))
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
-        self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0_1, 0))
+        self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0_0_0_0, 0), (self.blocks_file_sink_0_0_0, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0_0_0_1, 0), (self.blocks_tag_gate_0_0_0_0_1, 0))
         self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_correlate_access_code_xx_ts_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
@@ -346,15 +324,12 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tag_gate_0_0_0, 0), (self.digital_constellation_modulator_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_0_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_1, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.freq_xlating_fft_filter_ccc_0, 0))
         self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.analog_agc_xx_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
-        self.connect((self.blocks_unpack_k_bits_bb_0_0_0_0, 0), (self.digital_map_bb_0_0_0_0, 0))
-        self.connect((self.blocks_unpack_k_bits_bb_0_0_0_1, 0), (self.fec_extended_encoder_1_0_0, 0))
-        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_tag_gate_0_0_0_0_0_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_char_to_float_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0_0_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.analog_pwr_squelch_xx_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_sink_x_0_1, 0))
         self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
@@ -367,12 +342,9 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.digital_correlate_access_code_xx_ts_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
         self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
-        self.connect((self.digital_map_bb_0_0_0_0, 0), (self.blocks_char_to_float_0_2_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.qtgui_sink_x_0_0, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
-        self.connect((self.fec_extended_decoder_0_1_0, 0), (self.blocks_pack_k_bits_bb_0_0_0_0, 0))
-        self.connect((self.fec_extended_encoder_1_0_0, 0), (self.blocks_pack_k_bits_bb_0_0_0_1, 0))
         self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.blocks_complex_to_float_0, 0))
         self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.freq_xlating_fft_filter_ccc_0_0, 0), (self.blocks_tag_gate_0_0_0_1_0, 0))
@@ -453,24 +425,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
-    def get_H(self):
-        return self.H
-
-    def set_H(self, H):
-        self.H = H
-
-    def get_variable_cc_encoder_def_0(self):
-        return self.variable_cc_encoder_def_0
-
-    def set_variable_cc_encoder_def_0(self, variable_cc_encoder_def_0):
-        self.variable_cc_encoder_def_0 = variable_cc_encoder_def_0
-
-    def get_variable_cc_decoder_def_0(self):
-        return self.variable_cc_decoder_def_0
-
-    def set_variable_cc_decoder_def_0(self, variable_cc_decoder_def_0):
-        self.variable_cc_decoder_def_0 = variable_cc_decoder_def_0
-
     def get_shift_factor(self):
         return self.shift_factor
 
@@ -493,18 +447,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
     def set_nfilts(self, nfilts):
         self.nfilts = nfilts
         self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
-
-    def get_ldpc_enc_H(self):
-        return self.ldpc_enc_H
-
-    def set_ldpc_enc_H(self, ldpc_enc_H):
-        self.ldpc_enc_H = ldpc_enc_H
-
-    def get_ldpc_dec_H(self):
-        return self.ldpc_dec_H
-
-    def set_ldpc_dec_H(self, ldpc_dec_H):
-        self.ldpc_dec_H = ldpc_dec_H
 
     def get_interpolation(self):
         return self.interpolation
