@@ -20,26 +20,20 @@ if __name__ == '__main__':
         except:
             print("Warning: failed to XInitThreads()")
 
-from PyQt5 import Qt
-from gnuradio import qtgui
-from gnuradio.filter import firdes
-import sip
-from gnuradio import analog
 from gnuradio import blocks
 import pmt
-from gnuradio import channels
 from gnuradio import digital
-from gnuradio import fec
-from gnuradio import filter
 from gnuradio import gr
+from gnuradio.filter import firdes
 from gnuradio.fft import window
 import sys
 import signal
+from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-import cmath
-import math
+from gnuradio import trellis
+from gnuradio import trellis, digital
 import os
 
 
@@ -80,286 +74,41 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
             pass
 
         ##################################################
-        # Variables
-        ##################################################
-        self.points = points = 256
-        self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
-        self.sps = sps = 3
-        self.samp_rate = samp_rate = 44100
-        self.modulus = modulus = pow(2,constel.bits_per_symbol())
-        self.excess_bw = excess_bw = 0.275
-        self.access_key = access_key = '11100001010110101110100010010011'
-        self.H = H = fec.ldpc_H_matrix('/usr/share/gnuradio/fec/ldpc/n_0500_k_0127_gap_21.alist', 21)
-        self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
-        self.packet_size = packet_size = 1000
-        self.nfilts = nfilts = int(32*(modulus/16))
-        self.ldpc_enc_H = ldpc_enc_H = list(map((lambda a: fec.ldpc_par_mtrx_encoder_make_H(H)),range(0,1)))
-        self.ldpc_dec_H = ldpc_dec_H = list(map((lambda a: fec.ldpc_bit_flip_decoder.make(H.get_base_sptr(), 100)),range(0,1)))
-        self.interpolation = interpolation = 1
-        self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
-        self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
-        self.arity = arity = modulus
-
-        ##################################################
         # Blocks
         ##################################################
 
-        self.qtgui_tab_widget_0 = Qt.QTabWidget()
-        self.qtgui_tab_widget_0_widget_0 = Qt.QWidget()
-        self.qtgui_tab_widget_0_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.qtgui_tab_widget_0_widget_0)
-        self.qtgui_tab_widget_0_grid_layout_0 = Qt.QGridLayout()
-        self.qtgui_tab_widget_0_layout_0.addLayout(self.qtgui_tab_widget_0_grid_layout_0)
-        self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_0, 'Modem')
-        self.qtgui_tab_widget_0_widget_1 = Qt.QWidget()
-        self.qtgui_tab_widget_0_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.qtgui_tab_widget_0_widget_1)
-        self.qtgui_tab_widget_0_grid_layout_1 = Qt.QGridLayout()
-        self.qtgui_tab_widget_0_layout_1.addLayout(self.qtgui_tab_widget_0_grid_layout_1)
-        self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_1, 'Analog')
-        self.qtgui_tab_widget_0_widget_2 = Qt.QWidget()
-        self.qtgui_tab_widget_0_layout_2 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.qtgui_tab_widget_0_widget_2)
-        self.qtgui_tab_widget_0_grid_layout_2 = Qt.QGridLayout()
-        self.qtgui_tab_widget_0_layout_2.addLayout(self.qtgui_tab_widget_0_grid_layout_2)
-        self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_2, 'Clock')
-        self.qtgui_tab_widget_0_widget_3 = Qt.QWidget()
-        self.qtgui_tab_widget_0_layout_3 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.qtgui_tab_widget_0_widget_3)
-        self.qtgui_tab_widget_0_grid_layout_3 = Qt.QGridLayout()
-        self.qtgui_tab_widget_0_layout_3.addLayout(self.qtgui_tab_widget_0_grid_layout_3)
-        self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_3, 'File')
-        self.qtgui_tab_widget_0_widget_4 = Qt.QWidget()
-        self.qtgui_tab_widget_0_layout_4 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.qtgui_tab_widget_0_widget_4)
-        self.qtgui_tab_widget_0_grid_layout_4 = Qt.QGridLayout()
-        self.qtgui_tab_widget_0_layout_4.addLayout(self.qtgui_tab_widget_0_grid_layout_4)
-        self.qtgui_tab_widget_0.addTab(self.qtgui_tab_widget_0_widget_4, 'TX')
-        self.top_layout.addWidget(self.qtgui_tab_widget_0)
-        self.qtgui_sink_x_1 = qtgui.sink_c(
-            1024, #fftsize
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            samp_rate, #bw
-            "", #name
-            True, #plotfreq
-            True, #plotwaterfall
-            True, #plottime
-            True, #plotconst
-            None # parent
-        )
-        self.qtgui_sink_x_1.set_update_time(1.0/10)
-        self._qtgui_sink_x_1_win = sip.wrapinstance(self.qtgui_sink_x_1.qwidget(), Qt.QWidget)
-
-        self.qtgui_sink_x_1.enable_rf_freq(False)
-
-        self.qtgui_tab_widget_0_layout_3.addWidget(self._qtgui_sink_x_1_win)
-        self.qtgui_sink_x_0_1 = qtgui.sink_c(
-            1024, #fftsize
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            samp_rate, #bw
-            "", #name
-            True, #plotfreq
-            True, #plotwaterfall
-            True, #plottime
-            True, #plotconst
-            None # parent
-        )
-        self.qtgui_sink_x_0_1.set_update_time(1.0/10)
-        self._qtgui_sink_x_0_1_win = sip.wrapinstance(self.qtgui_sink_x_0_1.qwidget(), Qt.QWidget)
-
-        self.qtgui_sink_x_0_1.enable_rf_freq(False)
-
-        self.qtgui_tab_widget_0_layout_1.addWidget(self._qtgui_sink_x_0_1_win)
-        self.qtgui_sink_x_0_0 = qtgui.sink_c(
-            1024, #fftsize
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            samp_rate, #bw
-            "", #name
-            True, #plotfreq
-            True, #plotwaterfall
-            True, #plottime
-            True, #plotconst
-            None # parent
-        )
-        self.qtgui_sink_x_0_0.set_update_time(1.0/10)
-        self._qtgui_sink_x_0_0_win = sip.wrapinstance(self.qtgui_sink_x_0_0.qwidget(), Qt.QWidget)
-
-        self.qtgui_sink_x_0_0.enable_rf_freq(False)
-
-        self.qtgui_tab_widget_0_layout_2.addWidget(self._qtgui_sink_x_0_0_win)
-        self.qtgui_sink_x_0 = qtgui.sink_c(
-            1024, #fftsize
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            samp_rate, #bw
-            "", #name
-            True, #plotfreq
-            True, #plotwaterfall
-            True, #plottime
-            True, #plotconst
-            None # parent
-        )
-        self.qtgui_sink_x_0.set_update_time(1.0/10)
-        self._qtgui_sink_x_0_win = sip.wrapinstance(self.qtgui_sink_x_0.qwidget(), Qt.QWidget)
-
-        self.qtgui_sink_x_0.enable_rf_freq(False)
-
-        self.qtgui_tab_widget_0_layout_4.addWidget(self._qtgui_sink_x_0_win)
-        self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
-            8192, #size
-            "", #name
-            1, #number of inputs
-            None # parent
-        )
-        self.qtgui_const_sink_x_0_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0_0.set_y_axis((-1.25), 1.25)
-        self.qtgui_const_sink_x_0_0.set_x_axis((-1.25), 1.25)
-        self.qtgui_const_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0_0.enable_grid(True)
-        self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
-
-
-        labels = ['', '', '', '', '',
-            '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1]
-        colors = ["blue", "red", "red", "red", "red",
-            "red", "red", "red", "red", "red"]
-        styles = [0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0]
-        markers = [0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in range(1):
-            if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_const_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_const_sink_x_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0.qwidget(), Qt.QWidget)
-        self.qtgui_tab_widget_0_layout_0.addWidget(self._qtgui_const_sink_x_0_0_win)
-        self.freq_xlating_fft_filter_ccc_0_0 = filter.freq_xlating_fft_filter_ccc(1, firdes.complex_band_pass(1, samp_rate, -samp_rate/(2*(1.0*(4/4))), samp_rate/(2*(1.0*(4/4))), samp_rate/4), ((1)*((samp_rate*shift_factor)*(1/sps)*(1/interpolation))), samp_rate)
-        self.freq_xlating_fft_filter_ccc_0_0.set_nthreads(1)
-        self.freq_xlating_fft_filter_ccc_0_0.declare_sample_delay(0)
-        self.freq_xlating_fft_filter_ccc_0 = filter.freq_xlating_fft_filter_ccc(1, firdes.complex_band_pass(1, samp_rate, -samp_rate/(2*(1.0*(4/4))), samp_rate/(2*(1.0*(4/4))), samp_rate/4), ((-1)*((samp_rate*shift_factor)*(1/sps)*(1/interpolation))), samp_rate)
-        self.freq_xlating_fft_filter_ccc_0.set_nthreads(1)
-        self.freq_xlating_fft_filter_ccc_0.declare_sample_delay(0)
-        self.fec_extended_encoder_1_0_0 = fec.extended_encoder(encoder_obj_list=ldpc_enc_H, threading='capillary', puncpat='11')
-        self.fec_extended_decoder_0_1_0 = fec.extended_decoder(decoder_obj_list=ldpc_dec_H, threading='capillary', ann=None, puncpat='11', integration_period=10000)
-        self.digital_protocol_formatter_bb_0 = digital.protocol_formatter_bb(hdr_format, "packet_len")
-        self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps, (((math.sqrt(modulus)*3.14)/100)), firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), 0.35, int(11*sps*nfilts)), nfilts, ((((nfilts/2)*1)*1)+0), (((1/modulus)*16)), 1)
-        self.digital_map_bb_0 = digital.map_bb(constel.pre_diff_code())
-        self.digital_diff_decoder_bb_0_0 = digital.diff_decoder_bb(modulus, digital.DIFF_DIFFERENTIAL)
-        self.digital_constellation_receiver_cb_0 = digital.constellation_receiver_cb(constel, ((2*3.14)/100), ((1/modulus)*(0.02/math.sqrt(modulus))), (int((samp_rate*(200/1000000))+5+((samp_rate*shift_factor)*(200/1000000)))))
-        self.digital_constellation_modulator_0_0 = digital.generic_mod(
-            constellation=constel,
-            differential=True,
-            samples_per_symbol=sps,
-            pre_diff_code=True,
-            excess_bw=excess_bw,
-            verbose=False,
-            log=False,
-            truncate=False)
-        self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=0.00125,
-            frequency_offset=0.0,
-            epsilon=1.0,
-            taps=[1.0],
-            noise_seed=0,
-            block_tags=False)
-        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
+        self.trellis_viterbi_combined_xx_0 = trellis.viterbi_combined_fb(trellis.fsm("/usr/share/gnuradio/examples/trellis/fsm_files/awgn1o2_4.fsm"), 512, 0, (-1), 2, [1, 0, 0, 1, 0, -1, -1, 0], digital.TRELLIS_EUCLIDEAN)
+        self.trellis_encoder_xx_0 =  trellis.encoder_bb(trellis.fsm("/usr/share/gnuradio/examples/trellis/fsm_files/awgn1o2_4.fsm"), 0, 0) if False else trellis.encoder_bb(trellis.fsm("/usr/share/gnuradio/examples/trellis/fsm_files/awgn1o2_4.fsm"), 0)
+        self.digital_chunks_to_symbols_xx_0 = digital.chunks_to_symbols_bf([1, 0, 0, 1, 0, -1, -1, 0], 2)
+        self.blocks_unpacked_to_packed_xx_0_0 = blocks.unpacked_to_packed_bb(2, gr.GR_MSB_FIRST)
+        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(8, gr.GR_LSB_FIRST)
         self.blocks_unpack_k_bits_bb_0_0_0_1 = blocks.unpack_k_bits_bb(8)
-        self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
-        self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
-        self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
-        self.blocks_tag_gate_0_0_0_1 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
-        self.blocks_tag_gate_0_0_0_1.set_single_key("")
-        self.blocks_tag_gate_0_0_0_0_1 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0_1.set_single_key("")
-        self.blocks_tag_gate_0_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0_0.set_single_key("")
-        self.blocks_tag_gate_0_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0_0.set_single_key("")
-        self.blocks_tag_gate_0_0_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0_0_0.set_single_key("")
-        self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
-        self.blocks_tag_gate_0.set_single_key("")
-        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_size, "packet_len")
-        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
-        self.blocks_pack_k_bits_bb_0_0_0_1 = blocks.pack_k_bits_bb(8)
-        self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
-        self.blocks_null_sink_1_1 = blocks.null_sink(gr.sizeof_float*1)
-        self.blocks_null_sink_1_0 = blocks.null_sink(gr.sizeof_float*1)
-        self.blocks_null_sink_1 = blocks.null_sink(gr.sizeof_float*1)
-        self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_ff(0.1)
-        self.blocks_float_to_complex_1 = blocks.float_to_complex(1)
-        self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
+        self.blocks_packed_to_unpacked_xx_0_0 = blocks.packed_to_unpacked_bb(2, gr.GR_MSB_FIRST)
+        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(8, gr.GR_LSB_FIRST)
+        self.blocks_pack_k_bits_bb_0_0_0_0 = blocks.pack_k_bits_bb(8)
+        self.blocks_float_to_char_0 = blocks.float_to_char(1, 1)
         self.blocks_file_source_0_0_0 = blocks.file_source(gr.sizeof_char*1, os.path.join(os.environ['HOME'], 'Downloads', '_framed.rrf') if os.name == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_framed.rrf'), False, 0, 0)
         self.blocks_file_source_0_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, os.path.join(os.environ['HOME'], 'Downloads', '_diag.rrf') if os.name == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_diag.rrf'), False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
-        self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
-        self.blocks_char_to_float_0_2_0 = blocks.char_to_float(1, 1)
-        self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
-        self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_cc((-28), (1e-4), (int(samp_rate*0.75)), True)
-        self.analog_agc_xx_0 = analog.agc_cc(((((1/(modulus+96))/sps/interpolation+(((samp_rate/48000)*0.0005))/sps/interpolation))*1.2), 1.25, 1.05)
-        self.analog_agc_xx_0.set_max_gain(65536)
+        self.blocks_char_to_float_0_2_0_0 = blocks.char_to_float(1, 1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_agc_xx_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
-        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.freq_xlating_fft_filter_ccc_0_0, 0))
-        self.connect((self.blocks_char_to_float_0, 0), (self.blocks_float_to_complex_1, 0))
-        self.connect((self.blocks_char_to_float_0_2_0, 0), (self.fec_extended_decoder_0_1_0, 0))
-        self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
-        self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.channels_channel_model_0, 0))
-        self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
-        self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0_0_0_1, 0), (self.blocks_tag_gate_0_0_0_0_1, 0))
-        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
-        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_mux_0, 1))
-        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_protocol_formatter_bb_0, 0))
-        self.connect((self.blocks_tag_gate_0, 0), (self.blocks_tag_gate_0_0_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0_1, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0, 0), (self.blocks_tag_gate_0_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_0_1, 0), (self.digital_constellation_modulator_0_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_1, 0), (self.freq_xlating_fft_filter_ccc_0, 0))
-        self.connect((self.blocks_tag_gate_0_0_0_1_0, 0), (self.analog_agc_xx_0, 0))
-        self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_tag_gate_0_0_0_0, 0))
-        self.connect((self.blocks_unpack_k_bits_bb_0_0_0_1, 0), (self.fec_extended_encoder_1_0_0, 0))
-        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0_0_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.analog_pwr_squelch_xx_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.qtgui_sink_x_0_1, 0))
-        self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 2), (self.blocks_null_sink_1_0, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 3), (self.blocks_null_sink_1_1, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
-        self.connect((self.digital_constellation_receiver_cb_0, 4), (self.qtgui_const_sink_x_0_0, 0))
-        self.connect((self.digital_diff_decoder_bb_0_0, 0), (self.digital_map_bb_0, 0))
-        self.connect((self.digital_map_bb_0, 0), (self.blocks_char_to_float_0_2_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_constellation_receiver_cb_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.qtgui_sink_x_0_0, 0))
-        self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_tagged_stream_mux_0, 0))
-        self.connect((self.fec_extended_decoder_0_1_0, 0), (self.blocks_char_to_float_0, 0))
-        self.connect((self.fec_extended_decoder_0_1_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
-        self.connect((self.fec_extended_encoder_1_0_0, 0), (self.blocks_pack_k_bits_bb_0_0_0_1, 0))
-        self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.blocks_complex_to_float_0, 0))
-        self.connect((self.freq_xlating_fft_filter_ccc_0, 0), (self.qtgui_sink_x_0, 0))
-        self.connect((self.freq_xlating_fft_filter_ccc_0_0, 0), (self.blocks_tag_gate_0_0_0_1_0, 0))
+        self.connect((self.blocks_char_to_float_0_2_0_0, 0), (self.trellis_viterbi_combined_xx_0, 0))
+        self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_unpack_k_bits_bb_0_0_0_1, 0))
+        self.connect((self.blocks_float_to_char_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0_0_0_0, 0), (self.blocks_file_sink_0_0_0, 0))
+        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.blocks_char_to_float_0_2_0_0, 0))
+        self.connect((self.blocks_packed_to_unpacked_xx_0_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
+        self.connect((self.blocks_unpack_k_bits_bb_0_0_0_1, 0), (self.trellis_encoder_xx_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
+        self.connect((self.blocks_unpacked_to_packed_xx_0_0, 0), (self.blocks_packed_to_unpacked_xx_0_0, 0))
+        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.blocks_float_to_char_0, 0))
+        self.connect((self.trellis_encoder_xx_0, 0), (self.blocks_unpacked_to_packed_xx_0_0, 0))
+        self.connect((self.trellis_viterbi_combined_xx_0, 0), (self.blocks_pack_k_bits_bb_0_0_0_0, 0))
 
 
     def closeEvent(self, event):
@@ -369,141 +118,6 @@ class pumpCompanion_experiment(gr.top_block, Qt.QWidget):
         self.wait()
 
         event.accept()
-
-    def get_points(self):
-        return self.points
-
-    def set_points(self, points):
-        self.points = points
-        self.set_constel(digital.qam_constellation(constellation_points=self.points, differential=True, mod_code='gray').base())
-
-    def get_constel(self):
-        return self.constel
-
-    def set_constel(self, constel):
-        self.constel = constel
-
-    def get_sps(self):
-        return self.sps
-
-    def set_sps(self, sps):
-        self.sps = sps
-        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
-        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
-        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
-    def get_samp_rate(self):
-        return self.samp_rate
-
-    def set_samp_rate(self, samp_rate):
-        self.samp_rate = samp_rate
-        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
-        self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.freq_xlating_fft_filter_ccc_0.set_taps(firdes.complex_band_pass(1, self.samp_rate, -self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/4))
-        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.freq_xlating_fft_filter_ccc_0_0.set_taps(firdes.complex_band_pass(1, self.samp_rate, -self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/(2*(1.0*(4/4))), self.samp_rate/4))
-        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.qtgui_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_sink_x_0_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_sink_x_0_1.set_frequency_range(0, self.samp_rate)
-        self.qtgui_sink_x_1.set_frequency_range(0, self.samp_rate)
-
-    def get_modulus(self):
-        return self.modulus
-
-    def set_modulus(self, modulus):
-        self.modulus = modulus
-        self.set_arity(self.modulus)
-        self.set_bitrate(self.samp_rate/self.sps*(1.442695041 * math.log(self.modulus)))
-        self.set_nfilts(int(32*(self.modulus/16)))
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
-        self.digital_pfb_clock_sync_xxx_0_0.set_loop_bandwidth((((math.sqrt(self.modulus)*3.14)/100)))
-
-    def get_excess_bw(self):
-        return self.excess_bw
-
-    def set_excess_bw(self, excess_bw):
-        self.excess_bw = excess_bw
-        self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
-
-    def get_access_key(self):
-        return self.access_key
-
-    def set_access_key(self, access_key):
-        self.access_key = access_key
-        self.set_hdr_format(digital.header_format_default(self.access_key, 0))
-
-    def get_H(self):
-        return self.H
-
-    def set_H(self, H):
-        self.H = H
-
-    def get_shift_factor(self):
-        return self.shift_factor
-
-    def set_shift_factor(self, shift_factor):
-        self.shift_factor = shift_factor
-        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
-    def get_packet_size(self):
-        return self.packet_size
-
-    def set_packet_size(self, packet_size):
-        self.packet_size = packet_size
-        self.blocks_stream_to_tagged_stream_0.set_packet_len(self.packet_size)
-        self.blocks_stream_to_tagged_stream_0.set_packet_len_pmt(self.packet_size)
-
-    def get_nfilts(self):
-        return self.nfilts
-
-    def set_nfilts(self, nfilts):
-        self.nfilts = nfilts
-        self.digital_pfb_clock_sync_xxx_0_0.update_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), 0.35, int(11*self.sps*self.nfilts)))
-
-    def get_ldpc_enc_H(self):
-        return self.ldpc_enc_H
-
-    def set_ldpc_enc_H(self, ldpc_enc_H):
-        self.ldpc_enc_H = ldpc_enc_H
-
-    def get_ldpc_dec_H(self):
-        return self.ldpc_dec_H
-
-    def set_ldpc_dec_H(self, ldpc_dec_H):
-        self.ldpc_dec_H = ldpc_dec_H
-
-    def get_interpolation(self):
-        return self.interpolation
-
-    def set_interpolation(self, interpolation):
-        self.interpolation = interpolation
-        self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
-        self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-        self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
-    def get_hdr_format(self):
-        return self.hdr_format
-
-    def set_hdr_format(self, hdr_format):
-        self.hdr_format = hdr_format
-
-    def get_bitrate(self):
-        return self.bitrate
-
-    def set_bitrate(self, bitrate):
-        self.bitrate = bitrate
-
-    def get_arity(self):
-        return self.arity
-
-    def set_arity(self, arity):
-        self.arity = arity
 
 
 
