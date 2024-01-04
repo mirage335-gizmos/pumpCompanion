@@ -420,7 +420,7 @@ _pumpCompanion-frame-mega() {
 	# 
 	# 72kbits * (25) to bytes == 405000
 	# 117.6kbits * (45) to bytes == 661500
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 220100 > "$pumpCompanion_framedFile"
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 400100 > "$pumpCompanion_framedFile"
 	
 	_pumpCompanion-frame-fec "$@"
 	#_pumpCompanion-data-encode
@@ -591,4 +591,10 @@ _anchor_special() {
 	
 	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_test_rotten.bat
 	"$scriptAbsoluteFolder"/pumpCompanion.sh _anchor_configure "$scriptAbsoluteFolder"/_test_rotten.bat
+	
+	
+	
+	
+	cp -a "$scriptAbsoluteFolder"/_anchor.bat "$scriptAbsoluteFolder"/_bash.bat
+	"$scriptAbsoluteFolder"/ubiquitous_bash.sh _anchor_configure "$scriptAbsoluteFolder"/_bash.bat
 }
