@@ -82,7 +82,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1808, 136.0]
+    coordinate: [16, 112.0]
     rotation: 0
     state: true
 - name: constel
@@ -95,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 144.0]
+    coordinate: [1544, 200.0]
     rotation: 0
     state: enabled
 - name: excess_bw
@@ -119,7 +119,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1592, 216.0]
+    coordinate: [288, 264.0]
     rotation: 0
     state: disabled
 - name: excess_bw
@@ -131,7 +131,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1592, 288.0]
+    coordinate: [288, 336.0]
     rotation: 0
     state: enabled
 - name: hdr_format
@@ -167,7 +167,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424, 216.0]
+    coordinate: [120, 264.0]
     rotation: 0
     state: disabled
 - name: interpolation
@@ -179,7 +179,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424, 288.0]
+    coordinate: [120, 336.0]
     rotation: 0
     state: enabled
 - name: modulus
@@ -233,7 +233,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1680, 288.0]
+    coordinate: [376, 336.0]
     rotation: 0
     state: enabled
 - name: points
@@ -245,7 +245,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1680, 144.0]
+    coordinate: [376, 192.0]
     rotation: 0
     state: disabled
 - name: points
@@ -257,7 +257,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1680, 216.0]
+    coordinate: [376, 264.0]
     rotation: 0
     state: disabled
 - name: points
@@ -293,7 +293,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 216.0]
+    coordinate: [32, 264.0]
     rotation: 0
     state: disabled
 - name: samp_rate
@@ -305,7 +305,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 288.0]
+    coordinate: [32, 336.0]
     rotation: 0
     state: enabled
 - name: shift_factor
@@ -341,7 +341,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 216.0]
+    coordinate: [224, 264.0]
     rotation: 0
     state: disabled
 - name: sps
@@ -353,7 +353,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 288.0]
+    coordinate: [224, 336.0]
     rotation: 0
     state: enabled
 - name: analog_agc_xx_0
@@ -1441,7 +1441,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [24, 248.0]
+    coordinate: [1560, 300.0]
     rotation: 0
     state: true
 

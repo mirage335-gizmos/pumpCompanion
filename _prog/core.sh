@@ -104,20 +104,20 @@ _pumpCompanion-deframe() {
 	
 	
 	# ###
-	if false
-	then
+	#if false
+	#then
 	#base64 -d
 	rm -f "$pumpCompanion_encodedFile".parity.r3.par2
 	! head -c $(($(grep -aobm 1 'IxkFyUCBLg' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'u/kDyWI8wQ' "$pumpCompanion_framedFile" | cut -d: -f1) + 10 + 3)) > "$pumpCompanion_encodedFile".parity.r3.par2 && _messagePlain_warn 'warn: missing: parity r3'
-	fi
+	#fi
 	# ###
 	
 	# ###
-	#if false
-	#then
+	if false
+	then
 	rm -f "$pumpCompanion_encodedFile".parity.r15.par2
 	! head -c $(($(grep -aobm 1 'RZBbiTaiPg' "$pumpCompanion_framedFile" | cut -d: -f1) + 0 - 1)) "$pumpCompanion_framedFile" | tail -c +$(($(grep -aobm 1 'XNHhnDH10Q' "$pumpCompanion_framedFile" | cut -d: -f1) + 10 + 3)) > "$pumpCompanion_encodedFile".parity.r15.par2 && _messagePlain_warn 'warn: missing: parity r15'
-	#fi
+	fi
 	# ###
 	
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
@@ -128,7 +128,7 @@ _pumpCompanion-deframe() {
 	
 	mv -f "$pumpCompanion_encodedFile" "$pumpCompanion_encodedFile".parity.rrf
 	#"$pumpCompanion_encodedFile".parity.r3.par2 "$pumpCompanion_encodedFile".parity.r11.par2 "$pumpCompanion_encodedFile".parity.r15.par2
-	par2 repair -p "$pumpCompanion_encodedFile".parity.rrf "$pumpCompanion_encodedFile".parity.rrf.par2 "$pumpCompanion_encodedFile".parity.r15.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
+	par2 repair -p "$pumpCompanion_encodedFile".parity.rrf "$pumpCompanion_encodedFile".parity.rrf.par2 "$pumpCompanion_encodedFile".parity.r3.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
 	currentExitStatus_deframeRepaired="$?"
 	
 	[[ "$currentExitStatus_deframeRepaired" != "0" ]] && _messagePlain_warn 'warn: bad: parity'
@@ -223,7 +223,7 @@ _pumpCompanion-frame-fec() {
 	#then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
-	par2 create -s8192 -n1 -r6 -f1 "$pumpCompanion_encodedFile".parity.rrf
+	par2 create -s1792 -n1 -r3 -f1 "$pumpCompanion_encodedFile".parity.rrf
 	#rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r_default.par2
 	
@@ -267,11 +267,11 @@ _pumpCompanion-frame-fec() {
 	# Additional separate parity files may be included if there is some advantage to this, or if more parity is necessary, or if filtering out unnecessary amounts of parity information by header/footer may be useful.
 	
 	# ###
-	if false
-	then
+	#if false
+	#then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
-	par2 create -s8192 -n1 -r3 -f16384 "$pumpCompanion_encodedFile".parity.rrf
+	par2 create -s1792 -n1 -r3 -f16384 "$pumpCompanion_encodedFile".parity.rrf
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r3.par2
 	
@@ -291,7 +291,7 @@ _pumpCompanion-frame-fec() {
 	echo "IxkFyUCBLg" >> "$pumpCompanion_framedFile"
 	echo >> "$pumpCompanion_framedFile"
 	
-	fi
+	#fi
 	# ###
 	
 	
@@ -300,7 +300,7 @@ _pumpCompanion-frame-fec() {
 	then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
-	par2 create -s8192 -n1 -r11 -f16384 "$pumpCompanion_encodedFile".parity.rrf
+	par2 create -s1792 -n1 -r11 -f16384 "$pumpCompanion_encodedFile".parity.rrf
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r11.par2
 	
@@ -325,11 +325,11 @@ _pumpCompanion-frame-fec() {
 	
 	
 	# ###
-	#if false
-	#then
+	if false
+	then
 	
 	rm -f "$pumpCompanion_encodedFile".parity.*.par2
-	par2 create -s8192 -n1 -r15 -f16384 "$pumpCompanion_encodedFile".parity.rrf
+	par2 create -s1792 -n1 -r15 -f16384 "$pumpCompanion_encodedFile".parity.rrf
 	rm -f "$pumpCompanion_encodedFile".parity.rrf.par2
 	mv -f "$pumpCompanion_encodedFile".parity.rrf.*.par2 "$pumpCompanion_encodedFile".parity.r15.par2
 	
@@ -349,7 +349,7 @@ _pumpCompanion-frame-fec() {
 	echo "RZBbiTaiPg" >> "$pumpCompanion_framedFile"
 	echo >> "$pumpCompanion_framedFile"
 	
-	#fi
+	fi
 	# ###
 	
 	
@@ -427,7 +427,11 @@ _pumpCompanion-frame-mega() {
 	#_pumpCompanion-frame-minimal "$@"
 	
 	#48100
-	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 380 >> "$pumpCompanion_framedFile"
+	#380
+	#700
+	#1400
+	#18100
+	(while true ; do echo -n '0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0wthe quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 0123456789 37a0w3wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww70w0w0w0w0w0w0w0w0w0w0w0w0w0w0w0w' ; done) | head -c 18100 >> "$pumpCompanion_framedFile"
 	
 	_messagePlain_nominal 'done: _pumpCompanion-frame'
 	#_messageNormal '_pumpCompanion-frame: done'
@@ -519,7 +523,7 @@ _gnuradioCompanion() {
 		
 		#&
 		#_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
-		_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc
+		_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
 		
 		#disown -h $!
 		#disown -a -h -r
