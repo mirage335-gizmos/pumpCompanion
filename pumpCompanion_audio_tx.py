@@ -82,19 +82,22 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.points = points = 256
+        self.points = points = 64
         self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
         self.sps = sps = 3
         self.samp_rate = samp_rate = 44100
-        self.modulus = modulus = pow(2,constel.bits_per_symbol())
-        self.excess_bw = excess_bw = 0.275
-        self.access_key = access_key = '11100001010110101110100010010011'
-        self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
         self.packet_size = packet_size = 384
+        self.modulus = modulus = pow(2,constel.bits_per_symbol())
+        self.par2_redundancy = par2_redundancy = 0.06+0.06
+        self.overhead = overhead = 4/(packet_size)
+        self.excess_bw = excess_bw = 0.275
+        self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
+        self.access_key = access_key = '11100001010110101110100010010011'
+        self.throughput = throughput = int(bitrate*(1-par2_redundancy-overhead))
+        self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
         self.nfilts = nfilts = int(32*(modulus/16))
         self.interpolation = interpolation = 1
         self.hdr_format = hdr_format = digital.header_format_default(access_key, 0)
-        self.bitrate = bitrate = samp_rate/sps*(1.442695041 * math.log(modulus))
         self.arity = arity = modulus
 
         ##################################################
@@ -397,6 +400,15 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.qtgui_sink_x_0_1.set_frequency_range(0, self.samp_rate)
         self.qtgui_sink_x_1.set_frequency_range(0, self.samp_rate)
 
+    def get_packet_size(self):
+        return self.packet_size
+
+    def set_packet_size(self, packet_size):
+        self.packet_size = packet_size
+        self.set_overhead(4/(self.packet_size))
+        self.blocks_stream_to_tagged_stream_0.set_packet_len(self.packet_size)
+        self.blocks_stream_to_tagged_stream_0.set_packet_len_pmt(self.packet_size)
+
     def get_modulus(self):
         return self.modulus
 
@@ -408,12 +420,33 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.analog_agc_xx_0.set_rate(((((1/(self.modulus+96))/self.sps/self.interpolation+(((self.samp_rate/48000)*0.0005))/self.sps/self.interpolation))*1.2))
         self.digital_pfb_clock_sync_xxx_0_0.set_loop_bandwidth((((math.sqrt(self.modulus)*3.14)/100)))
 
+    def get_par2_redundancy(self):
+        return self.par2_redundancy
+
+    def set_par2_redundancy(self, par2_redundancy):
+        self.par2_redundancy = par2_redundancy
+        self.set_throughput(int(self.bitrate*(1-self.par2_redundancy-self.overhead)))
+
+    def get_overhead(self):
+        return self.overhead
+
+    def set_overhead(self, overhead):
+        self.overhead = overhead
+        self.set_throughput(int(self.bitrate*(1-self.par2_redundancy-self.overhead)))
+
     def get_excess_bw(self):
         return self.excess_bw
 
     def set_excess_bw(self, excess_bw):
         self.excess_bw = excess_bw
         self.set_shift_factor(((325/self.samp_rate)*4)+(0.5)+(self.excess_bw*0.5))
+
+    def get_bitrate(self):
+        return self.bitrate
+
+    def set_bitrate(self, bitrate):
+        self.bitrate = bitrate
+        self.set_throughput(int(self.bitrate*(1-self.par2_redundancy-self.overhead)))
 
     def get_access_key(self):
         return self.access_key
@@ -422,6 +455,12 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.access_key = access_key
         self.set_hdr_format(digital.header_format_default(self.access_key, 0))
 
+    def get_throughput(self):
+        return self.throughput
+
+    def set_throughput(self, throughput):
+        self.throughput = throughput
+
     def get_shift_factor(self):
         return self.shift_factor
 
@@ -429,14 +468,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.shift_factor = shift_factor
         self.freq_xlating_fft_filter_ccc_0.set_center_freq(((-1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
         self.freq_xlating_fft_filter_ccc_0_0.set_center_freq(((1)*((self.samp_rate*self.shift_factor)*(1/self.sps)*(1/self.interpolation))))
-
-    def get_packet_size(self):
-        return self.packet_size
-
-    def set_packet_size(self, packet_size):
-        self.packet_size = packet_size
-        self.blocks_stream_to_tagged_stream_0.set_packet_len(self.packet_size)
-        self.blocks_stream_to_tagged_stream_0.set_packet_len_pmt(self.packet_size)
 
     def get_nfilts(self):
         return self.nfilts
@@ -459,12 +490,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
 
     def set_hdr_format(self, hdr_format):
         self.hdr_format = hdr_format
-
-    def get_bitrate(self):
-        return self.bitrate
-
-    def set_bitrate(self, bitrate):
-        self.bitrate = bitrate
 
     def get_arity(self):
         return self.arity

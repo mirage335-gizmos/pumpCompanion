@@ -194,6 +194,18 @@ blocks:
     coordinate: [1544, 16.0]
     rotation: 0
     state: enabled
+- name: overhead
+  id: variable
+  parameters:
+    comment: ''
+    value: 4/(packet_size)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [256, 440.0]
+    rotation: 0
+    state: enabled
 - name: packet_size
   id: variable
   parameters:
@@ -212,6 +224,18 @@ blocks:
     coordinate: [680, 16.0]
     rotation: 0
     state: true
+- name: par2_redundancy
+  id: variable
+  parameters:
+    comment: ''
+    value: 0.06+0.06
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [136, 440.0]
+    rotation: 0
+    state: enabled
 - name: points
   id: variable
   parameters:
@@ -223,7 +247,7 @@ blocks:
     bus_structure: null
     coordinate: [376, 336.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: points
   id: variable
   parameters:
@@ -247,7 +271,7 @@ blocks:
     bus_structure: null
     coordinate: [376, 264.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: points
   id: variable
   parameters:
@@ -356,6 +380,18 @@ blocks:
     coordinate: [224, 336.0]
     rotation: 0
     state: enabled
+- name: throughput
+  id: variable
+  parameters:
+    comment: ''
+    value: int(bitrate*(1-par2_redundancy-overhead))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [24, 440.0]
+    rotation: 0
+    state: true
 - name: analog_agc_xx_0
   id: analog_agc_xx
   parameters:
