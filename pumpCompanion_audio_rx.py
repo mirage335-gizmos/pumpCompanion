@@ -80,12 +80,12 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.points = points = 64
+        self.points = points = 256
         self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
-        self.sps = sps = 4
-        self.samp_rate = samp_rate = 48000
+        self.sps = sps = 3
+        self.samp_rate = samp_rate = 44100
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
-        self.excess_bw = excess_bw = 0.35
+        self.excess_bw = excess_bw = 0.275
         self.access_key = access_key = '11100001010110101110100010010011'
         self.shift_factor = shift_factor = ((325/samp_rate)*4)+(0.5)+(excess_bw*0.5)
         self.packet_size = packet_size = 140
@@ -230,7 +230,7 @@ class pumpCompanion_audio_rx(gr.top_block, Qt.QWidget):
         self.digital_correlate_access_code_xx_ts_0 = digital.correlate_access_code_bb_ts(access_key,
           0, 'packet_len')
         self.digital_constellation_receiver_cb_0 = digital.constellation_receiver_cb(constel, ((2*3.14)/100), ((1/modulus)*(0.02/math.sqrt(modulus))), (int((samp_rate*(200/1000000))+5+((samp_rate*shift_factor)*(200/1000000)))))
-        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(8, gr.GR_MSB_FIRST)
+        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_tag_gate_0_0_0_1_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
         self.blocks_tag_gate_0_0_0_1_0.set_single_key("")
