@@ -263,13 +263,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False,
             truncate=False)
-        self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=0.0012,
-            frequency_offset=0.0,
-            epsilon=1.0,
-            taps=[1.0],
-            noise_seed=0,
-            block_tags=False)
         self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(constel.bits_per_symbol())
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_char*1, 'packet_len', 0)
@@ -317,7 +310,8 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
         self.connect((self.blocks_file_source_0_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.channels_channel_model_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.analog_pwr_squelch_xx_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_sink_x_0_1, 0))
         self.connect((self.blocks_float_to_complex_1, 0), (self.qtgui_sink_x_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_float_to_complex_0, 0))
@@ -335,8 +329,6 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
         self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0_0_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.analog_pwr_squelch_xx_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.qtgui_sink_x_0_1, 0))
         self.connect((self.digital_constellation_modulator_0_0, 0), (self.blocks_tag_gate_0_0_0_1, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.digital_constellation_receiver_cb_0, 1), (self.blocks_null_sink_1, 0))
