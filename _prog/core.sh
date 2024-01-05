@@ -563,12 +563,19 @@ _gnuradioCompanion() {
 		##_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
 		##ProgramData ?
 		
+		# WARNING: Paths other than "/cygdrive/c/ProgramData" and "$currentHomePathMSW" are NOT really officially compatible and should NOT be used .
 		##if type -p radioconda > /dev/null 2>&1
 		if [[ -e "/cygdrive/c/ProgramData/radioconda/python.exe" ]]
 		then
 			##current_path_radioconda=$(_getAbsoluteFolder type -p radioconda > /dev/null 2>&1)
 			##current_path_radioconda="$current_path_radioconda"/..
-			current_path_radioconda="/cygdrive/c/ProgramData/radioconda/python.exe"
+			current_path_radioconda="/cygdrive/c/ProgramData"
+		elif [[ -e "/cygdrive/d/ProgramData/radioconda/python.exe" ]]
+		then
+			current_path_radioconda="/cygdrive/d/ProgramData"
+		elif [[ -e "/cygdrive/e/ProgramData/radioconda/python.exe" ]]
+		then
+			current_path_radioconda="/cygdrive/e/ProgramData"
 		else
 			current_path_radioconda="$currentHomePathMSW"
 		fi
@@ -581,7 +588,7 @@ _gnuradioCompanion() {
 		
 		#&
 		#_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
-		_userMSW cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
+		_userMSW _messagePlain_probe_cmd cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
 		
 		#disown -h $!
 		#disown -a -h -r

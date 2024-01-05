@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='4161088462'
+export ub_setScriptChecksum_contents='2636833811'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -44858,12 +44858,19 @@ _gnuradioCompanion() {
 		##_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
 		##ProgramData ?
 		
+		# WARNING: Paths other than "/cygdrive/c/ProgramData" and "$currentHomePathMSW" are NOT really officially compatible and should NOT be used .
 		##if type -p radioconda > /dev/null 2>&1
 		if [[ -e "/cygdrive/c/ProgramData/radioconda/python.exe" ]]
 		then
 			##current_path_radioconda=$(_getAbsoluteFolder type -p radioconda > /dev/null 2>&1)
 			##current_path_radioconda="$current_path_radioconda"/..
-			current_path_radioconda="/cygdrive/c/ProgramData/radioconda/python.exe"
+			current_path_radioconda="/cygdrive/c/ProgramData"
+		elif [[ -e "/cygdrive/d/ProgramData/radioconda/python.exe" ]]
+		then
+			current_path_radioconda="/cygdrive/d/ProgramData"
+		elif [[ -e "/cygdrive/e/ProgramData/radioconda/python.exe" ]]
+		then
+			current_path_radioconda="/cygdrive/e/ProgramData"
 		else
 			current_path_radioconda="$currentHomePathMSW"
 		fi
@@ -44876,7 +44883,7 @@ _gnuradioCompanion() {
 		
 		#&
 		#_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
-		_userMSW cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
+		_userMSW _messagePlain_probe_cmd cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
 		
 		#disown -h $!
 		#disown -a -h -r
