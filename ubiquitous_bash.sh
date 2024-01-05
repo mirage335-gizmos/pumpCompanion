@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='141613483'
+export ub_setScriptChecksum_contents='1092559196'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -35415,6 +35415,11 @@ export pumpCompanion_encodedFile="$pumpCompanion_directory"/_encoded.rrf
 export pumpCompanion_framedFile="$pumpCompanion_directory"/_framed.rrf
 
 
+export pumpCompanion_zipFile="$pumpCompanion_directory"/_in.zip
+
+export pumpCompanion_tarFile="$pumpCompanion_directory"/_in.tar
+export pumpCompanion_xzFile="$pumpCompanion_directory"/_in.tar.xz
+export pumpCompanion_gzFile="$pumpCompanion_directory"/_in.tar.gz
 
 
 
@@ -44297,6 +44302,12 @@ _setup_install() {
 
 
 _pumpCompanion-data-encode() {
+	[[ -e "$pumpCompanion_zipFile" ]] && mv -f "$pumpCompanion_zipFile" "$pumpCompanion_inFile"
+	
+	[[ -e "$pumpCompanion_tarFile" ]] && mv -f "$pumpCompanion_tarFile" "$pumpCompanion_inFile"
+	[[ -e "$pumpCompanion_xzFile" ]] && mv -f "$pumpCompanion_xzFile" "$pumpCompanion_inFile"
+	[[ -e "$pumpCompanion_gzFile" ]] && mv -f "$pumpCompanion_gzFile" "$pumpCompanion_inFile"
+	
 	#xz -z -e9 -C crc64 --threads=1
 	#lz4 -z --fast=1 - - | cat
 	#tr 'A-Za-z' 'N-ZA-Mn-za-m'

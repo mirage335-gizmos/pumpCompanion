@@ -13,5 +13,10 @@ export pumpCompanion_encodedFile="$pumpCompanion_directory"/_encoded.rrf
 export pumpCompanion_framedFile="$pumpCompanion_directory"/_framed.rrf
 
 
+export pumpCompanion_zipFile="$pumpCompanion_directory"/_in.zip
+
+export pumpCompanion_tarFile="$pumpCompanion_directory"/_in.tar
+export pumpCompanion_xzFile="$pumpCompanion_directory"/_in.tar.xz
+export pumpCompanion_gzFile="$pumpCompanion_directory"/_in.tar.gz
 
 

@@ -2,6 +2,12 @@
 
 
 _pumpCompanion-data-encode() {
+	[[ -e "$pumpCompanion_zipFile" ]] && mv -f "$pumpCompanion_zipFile" "$pumpCompanion_inFile"
+	
+	[[ -e "$pumpCompanion_tarFile" ]] && mv -f "$pumpCompanion_tarFile" "$pumpCompanion_inFile"
+	[[ -e "$pumpCompanion_xzFile" ]] && mv -f "$pumpCompanion_xzFile" "$pumpCompanion_inFile"
+	[[ -e "$pumpCompanion_gzFile" ]] && mv -f "$pumpCompanion_gzFile" "$pumpCompanion_inFile"
+	
 	#xz -z -e9 -C crc64 --threads=1
 	#lz4 -z --fast=1 - - | cat
 	#tr 'A-Za-z' 'N-ZA-Mn-za-m'
