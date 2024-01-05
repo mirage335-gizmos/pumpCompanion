@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='2636833811'
+export ub_setScriptChecksum_contents='141613483'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -44838,19 +44838,8 @@ _gnuradioCompanion-dev() {
 }
 
 
-
-_gnuradioCompanion() {
-	# CAUTION: Complexity must be kept to a minimum.
-	
-	if ! _if_cygwin
-	then
-		gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc &
-		
-		disown -h $!
-		disown -a -h -r
-		disown -a -r
-	else
-		local current_path_radioconda
+_gnuradioCompanion-launch-msw() {
+	local current_path_radioconda
 		
 		local currentHomePathMSW
 		currentHomePathMSW=$(cygpath -D | sed 's/\/Desktop$//')
@@ -44884,6 +44873,21 @@ _gnuradioCompanion() {
 		#&
 		#_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
 		_userMSW _messagePlain_probe_cmd cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
+		
+		sleep 2
+}
+_gnuradioCompanion() {
+	# CAUTION: Complexity must be kept to a minimum.
+	
+	if ! _if_cygwin
+	then
+		gnuradio-companion "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc &
+		
+		disown -h $!
+		disown -a -h -r
+		disown -a -r
+	else
+		"$scriptAbsoluteFolder"/_bin.bat _gnuradioCompanion-launch-msw "$@"
 		
 		#disown -h $!
 		#disown -a -h -r
