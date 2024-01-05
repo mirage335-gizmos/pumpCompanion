@@ -581,7 +581,7 @@ _gnuradioCompanion() {
 		
 		#&
 		#_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
-		_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
+		_userMSW cmd /c start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
 		
 		#disown -h $!
 		#disown -a -h -r
