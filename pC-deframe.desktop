@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/user/core/infrastructure/pumpCompanion/ubiquitous_bash.sh _pumpCompanion-deframe
+GenericName[en_US]=
+GenericName=
+Icon=/home/user/core/infrastructure/pumpCompanion/_lib/nsis/icon/icon.png
+MimeType=
+Name[en_US]=pC-deframe
+Name=pC-deframe
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
