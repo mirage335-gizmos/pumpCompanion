@@ -445,7 +445,7 @@ _pumpCompanion-frame-mega() {
 	_messageNormal '_pumpCompanion-frame'
 	
 	rm -f "$pumpCompanion_framedFile"
-	sudo -n rm -f "$pumpCompanion_framedFile"
+	! _if_cygwin && sudo -n rm -f "$pumpCompanion_framedFile"
 	
 	# Eliminates dependency on radio protocol to adjust AGC , sync clock, etc. DC Balanced , large amplitude, large bandwidth.
 	#0w
