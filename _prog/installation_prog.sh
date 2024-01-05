@@ -11,6 +11,8 @@ _setup_prog() {
 _setup_install() {
 	if _if_cygwin
 	then
+		_self_gitMad
+		
 		#mkdir -p "$pumpCompanion_directory"
 		true
 	fi

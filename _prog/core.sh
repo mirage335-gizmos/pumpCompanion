@@ -555,18 +555,33 @@ _gnuradioCompanion() {
 		disown -a -h -r
 		disown -a -r
 	else
+		local current_path_radioconda
+		
 		local currentHomePathMSW
 		currentHomePathMSW=$(cygpath -D | sed 's/\/Desktop$//')
 		
-		#_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
+		##_discoverResource-cygwinNative-ProgramFiles 'qalc' 'Qalculate' false
+		##ProgramData ?
 		
-		cd "$currentHomePathMSW"
+		##if type -p radioconda > /dev/null 2>&1
+		if [[ -e "/cygdrive/c/ProgramData/radioconda/python.exe" ]]
+		then
+			##current_path_radioconda=$(_getAbsoluteFolder type -p radioconda > /dev/null 2>&1)
+			##current_path_radioconda="$current_path_radioconda"/..
+			current_path_radioconda="/cygdrive/c/ProgramData/radioconda/python.exe"
+		else
+			current_path_radioconda="$currentHomePathMSW"
+		fi
+		
+		# Always begin at MSW Home .
+		#cd "$current_path_radioconda"
+		#cd "$currentHomePathMSW"
 		
 		#os.path.join(os.environ['HOME'], 'Downloads', '_diag.rrf') if os.name == 'posix' else  os.path.join(os.environ['USERPROFILE'], 'Downloads', '_diag.rrf')
 		
 		#&
-		#_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
-		_userMSW start "" "$currentHomePathMSW"/radioconda/python.exe "$currentHomePathMSW"/radioconda/cwp.py "$currentHomePathMSW"/radioconda "$currentHomePathMSW"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
+		#_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_experiment.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_rx-msw.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx-msw.grc
+		_userMSW start "" "$current_path_radioconda"/radioconda/python.exe "$current_path_radioconda"/radioconda/cwp.py "$current_path_radioconda"/radioconda "$current_path_radioconda"/radioconda/Scripts/gnuradio-companion.exe "$scriptAbsoluteFolder"/pumpCompanion_audio_rx.grc "$scriptAbsoluteFolder"/pumpCompanion_audio_tx.grc
 		
 		#disown -h $!
 		#disown -a -h -r
