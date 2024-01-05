@@ -82,7 +82,9 @@ EMI sensitivity. TRRS headphones connection DC load should be <<40kOhm.
 Heavy capacitive coupling >>250uF is apparently acceptable to bypass any DC 
 impedance to improve signal strength, though any amplifier output without 
 ~300Ohm resistive coupling will impose a near short circuit to other 
-outputs on the same line.
+outputs on the same line. Capacitor polarity should always place the 
+negative side of the capacitor towards the line (ie. towards the load on 
+the line to ground).
 <!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
 _t '
