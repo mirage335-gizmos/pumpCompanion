@@ -48,7 +48,7 @@ device=RESISTOR
 T -116100 -86400 5 10 1 1 90 2 1
 refdes=R?
 T -116200 -86100 5 10 1 1 90 2 1
-value=1.6k
+value=1.8k
 }
 C -115600 -86600 1 270 1 resistor-1.sym
 {
@@ -57,7 +57,7 @@ device=RESISTOR
 T -115300 -86400 5 10 1 1 90 2 1
 refdes=R?
 T -115400 -86100 5 10 1 1 90 2 1
-value=1.6k
+value=1.8k
 }
 C -114900 -86900 1 0 0 gnd-1.sym
 N -119400 -88400 -117000 -88400 4
@@ -122,7 +122,7 @@ device=RESISTOR
 T -110000 -85800 5 10 1 1 90 2 1
 refdes=R?
 T -110100 -85500 5 10 1 1 90 2 1
-value=1.6k
+value=1.8k
 }
 C -110300 -86300 1 0 0 gnd-1.sym
 C -109800 -85300 1 0 0 capacitor-2.sym
@@ -144,7 +144,7 @@ device=RESISTOR
 T -110000 -88600 5 10 1 1 90 2 1
 refdes=R?
 T -110100 -88300 5 10 1 1 90 2 1
-value=1.6k
+value=1.8k
 }
 C -110300 -89100 1 0 0 gnd-1.sym
 C -109800 -88100 1 0 0 capacitor-2.sym
