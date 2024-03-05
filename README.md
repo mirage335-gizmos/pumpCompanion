@@ -76,11 +76,11 @@ could transfer and install malware, nor any firmware reprogramming that
 could cause other devices to do this, nor any malformed network packets to 
 buffer overflow.
 
-As such, ihis is a necessary Commercial-Off-The-Shelf workaround for the 
-long history of abusing the insane proliferation of computer interfaces 
-with completely inappropriate functionality (eg. reprogrammable SATA 
-firmware wear leveling, BadUSB flash drive reprogramming, SD Card slot SDIO 
-serial/keyboard/etc functionality, parallel port functionality, etc).
+As such, this is a necessary Commercial-Off-The-Shelf workaround for the 
+long history of malware abusing the insane proliferation of computer 
+interfaces with completely inappropriate functionality (eg. reprogrammable 
+SATA firmware wear leveling, BadUSB flash drive reprogramming, SD Card slot 
+SDIO serial/keyboard/etc functionality, parallel port functionality, etc).
 
 
 
