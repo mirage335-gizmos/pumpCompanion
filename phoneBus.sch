@@ -9,7 +9,9 @@ device=none
 T -104000 -80600 5 10 1 2 0 0 1
 documentation=https://www.trendnet.com/products/patch-panel/12-Port-Cat6A-Shielded-Wall-Mount-Patch-Panel-TC-P12C6AS
 }
-T -119100 -80700 9 12 1 0 0 0 2
+T -119100 -80700 9 12 1 0 0 0 4
+DISCOURAGED
+ Do NOT connect to Cat6A.
 Basic Audio
 TRRS <-> TRS Audio Cable <-> TRRS
 C -119200 -84300 1 0 0 resistor-1.sym
@@ -174,7 +176,9 @@ T -112500 -85400 9 12 1 0 0 0 1
 Left Line (Tip)
 B -112900 -89800 8600 6500 3 0 1 0 -1 -1 0 -1 -1 -1 -1 -1
 B -103800 -88300 6100 5000 3 0 1 0 -1 -1 0 -1 -1 -1 -1 -1
-T -103500 -83900 9 12 1 0 0 0 2
+T -103500 -84400 9 12 1 0 0 0 4
+DISCOURAGED
+ Prefer Crossover .
 Loopback
 (stub)
 B -113000 -83000 8500 1500 3 0 1 0 -1 -1 0 -1 -1 -1 -1 -1
