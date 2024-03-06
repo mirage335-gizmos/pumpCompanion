@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='3674402627'
+export ub_setScriptChecksum_contents='2640591275'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -2826,10 +2826,30 @@ _terminateAll() {
 	while read -r currentPID
 	do
 		pkill -P "$currentPID"
+		sudo -n pkill -P "$currentPID"
 		kill "$currentPID"
+		sudo -n kill "$currentPID"
 	done < "$processListFile"
 	
+	if [[ "$ub_kill" == "true" ]]
+	then
+		sleep 9
+		while read -r currentPID
+		do
+			pkill -KILL -P "$currentPID"
+			sudo -n pkill -KILL -P "$currentPID"
+			kill -KILL "$currentPID"
+			sudo -n kill -KILL "$currentPID"
+		done < "$processListFile"
+	fi
+	
 	rm "$processListFile"
+}
+
+_killAll() {
+	export ub_kill="true"
+	_terminateAll
+	export ub_kill=
 }
 
 _condition_lines_zero() {
@@ -8062,14 +8082,58 @@ _cfgFW_procedure() {
     fi
 
 	echo y | ufw --force enable
+
+
+	# NOTICE: DANGER: STATELESS FILTERED is the ONLY SAFE way to interact with NETWORK SERVICES. If this is available, then these services may be used, but the dist/OS firewall should DENY ALL traffic, and all networking interfaces should be STRICTLY disabled.
+	# Think of these as the networking equivalent of a TPM . Instead of doing your networking directly on a malware infectable OS with malware infectable apps and services, you should instead exchange encoded serial messages with an FPGA by USB3 GPIO that then decodes and exchanges those messages over a variety of QRSSS sub-9kHz, narrowband radio, ultrawideband radio, optical, etc, as well conventional TCP/IP and UDP Ethernet, WiFi, etc, peer discovery and transfer services.
+	# WARNING: Ports 39000-39010 RESERVED for STATELESS FILTERED laboratory network experimentation with pipes , both TCP and UDP.
+	# WARNING: Ports 39085-39099 RESERVED for STATELESS FILTERED laboratory network experimentation with pipes , both TCP and UDP.
+	# WARNING: Ports 39400-39699 RESERVED for laboratory network experimentation with pipes , both TCP and UDP (especially for RF frequency mixing or BFSK/OFDM, QAM, etc, conversion or modulation from analog Ethernet/SFP baseband).
+	# WARNING: Ports 39800-39899 RESERVED for STATELESS FILTERED decentralized replacements for HTTP/HTTPS , peer discovery, etc, both TCP and UDP.
+	# WARNING: Ports 39980-39999 RESERVED for STATELESS FILTERED gizmos , both TCP and UDP.
+	ufw deny 39000:39999/tcp
+	ufw deny 39000:39999/udp
 	
+	# Ports 45000-45999 RESERVED for ALTERNATIVE AUTOMATIC PORTS for STATELESS FILTERED gizmos , both TCP and UDP.
+	ufw deny 45000:45999/tcp
+	ufw deny 45000:45999/udp
+	
+	# Ports 46000-46999 RESERVED for ALTERNATIVE AUTOMATIC PORTS for STATELESS FILTERED gizmos , both TCP and UDP.
+	ufw deny 46000:46999/tcp
+	ufw deny 46000:46999/udp
+	
+	# DANGER: Strongly discouraged. Network services are inherently dangerous. For ephemeral laboratory experimentation or expendable gaming computers ONLY.
+	#  DANGER: Preferably do NOT use these at all, ever.
+	# WARNING: Ports 38000-38010 RESERVED for laboratory network experimentation with pipes , both TCP and UDP.
+	# WARNING: Ports 38085-38099 RESERVED for laboratory network experimentation with pipes , both TCP and UDP.
+	# WARNING: Ports 38400-38699 RESERVED for laboratory network experimentation with pipes , both TCP and UDP (especially for RF frequency mixing or BFSK/OFDM, QAM, etc, conversion or modulation from analog Ethernet/SFP baseband).
+	# WARNING: Ports 38800-38899 RESERVED for decentralized replacements for HTTP/HTTPS , peer discovery, etc, both TCP and UDP.
+	# WARNING: Ports 38980-38999 RESERVED for gizmos , both TCP and UDP.
+	ufw allow 38000:38999/tcp
+	ufw allow 38000:38999/udp
+
+
+	if [[ "$ub_cfgFW" == "desktop" ]]
+	then
+		ufw allow 22/tcp
+		ufw allow out from any to any port 22 proto tcp
+		_ufw_portEnable 22
+	fi
+	
+	if [[ "$ub_cfgFW" == "terminal" ]]
+	then
+		_ufw_portDisable 22
+	fi
+
     if [[ "$ub_cfgFW" == "desktop" ]] || [[ "$ub_cfgFW" == "terminal" ]]
     then
         _ufw_portDisable 67
         _ufw_portDisable 68
         _ufw_portDisable 53
-        _ufw_portDisable 22
-        #_ufw_portEnable 80
+        
+        #_ufw_portDisable 22
+       
+       #_ufw_portEnable 80
         _ufw_portDisable 443
         #_ufw_portEnable 9001
         #_ufw_portEnable 9030
@@ -8141,6 +8205,23 @@ _cfgFW_procedure() {
 	pgrep avahi > /dev/null 2>&1 && _messagePlain_bad 'bad: detected: avahi' && _messagePlain_request 'request: remove: avahi'
 	_ufw_portDisable 5353
 	
+	# legacy servers
+	_ufw_portDisable 20
+	_ufw_portDisable 21
+	_ufw_portDisable 23
+	_ufw_portDisable 69
+	_ufw_portDisable 115
+	#_ufw_portDisable 445
+	_ufw_portDisable 989
+	_ufw_portDisable 980
+	
+	# unusual servers
+	_ufw_portDisable 107
+	_ufw_portDisable 118
+	_ufw_portDisable 992
+	_ufw_portDisable 4444
+	
+	
 	# ntp
 	_ufw_portDisable 123
 	
@@ -8151,12 +8232,16 @@ _cfgFW_procedure() {
 	
 	# Microsoft-DS (Active Directory, Windows Shares, SMB)
 	_ufw_portDisable 445
+	_ufw_portDisable 901
 	
 	
 	# SMTP
 	_ufw_portDisable 25
+	_ufw_portDisable 109
+	_ufw_portDisable 110
 	_ufw_portDisable 465
 	_ufw_portDisable 587
+	_ufw_portDisable 995
 	_ufw_portDisable 3535
 	
 	# IPP/CUPS
@@ -10851,6 +10936,8 @@ _getMost_debian11_install() {
 	_getMost_backend_aptGetInstall aria2
 	_getMost_backend_aptGetInstall unionfs-fuse
 	_getMost_backend_aptGetInstall samba
+	
+	_getMost_backend_aptGetInstall libcups2-dev
 
 	_getMost_backend_aptGetInstall gimp
 	_getMost_backend_aptGetInstall gimp-data-extras
@@ -11247,6 +11334,9 @@ _getMost_debian11_install() {
 	_getMost_backend_aptGetInstall coreutils
 	
 	_getMost_backend_aptGetInstall python3
+	_getMost_backend_aptGetInstall python3.11-venv
+	_getMost_backend_aptGetInstall python3-serial
+	
 	
 	# blkdiscard
 	_getMost_backend_aptGetInstall util-linux
@@ -11411,6 +11501,9 @@ _getMost_debian11_install() {
 	_getMost_backend sudo -n pip install --upgrade pip
 	
 	_getMost_backend_aptGetInstall freecad
+	
+	
+	_getMost_backend_aptGetInstall audacity
 	
 	
 	_getMost_backend_aptGetInstall w3m
@@ -18190,7 +18283,7 @@ _createVMimage() {
 	#sudo -n parted --script "$vmImageFile" 'mkpart primary '"98"'MiB '"610"'MiB'
 	#sudo -n parted --script "$vmImageFile" 'mkpart primary '"44"'MiB '"384"'MiB'
 	#sudo -n parted --script "$vmImageFile" 'mkpart primary '"44"'MiB '"592"'MiB'
-	sudo -n parted --script "$vmImageFile" 'mkpart primary '"44"'MiB '"610"'MiB'
+	sudo -n parted --script "$vmImageFile" 'mkpart primary '"44"'MiB '"770"'MiB'
 	
 	
 	# Root
@@ -18227,7 +18320,7 @@ _createVMimage() {
 	
 	
 	#sudo -n parted --script "$vmImageFile" 'mkpart primary '"384"'MiB '"$vmSize_boundary"'MiB'
-	sudo -n parted --script "$vmImageFile" 'mkpart primary '"610"'MiB '"$vmSize_boundary"'MiB'
+	sudo -n parted --script "$vmImageFile" 'mkpart primary '"770"'MiB '"$vmSize_boundary"'MiB'
 	
 	sudo -n parted --script "$vmImageFile" 'unit MiB print'
 	
@@ -18552,6 +18645,12 @@ _createVMfstab() {
 	then
 		echo 'LABEL=uk4uPhB663kVcygT0q /media/bootdisc iso9660 ro,nofail 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
 	fi
+	
+	# WARNING: May be untested.
+	echo '' | sudo -n tee -a "$globalVirtFS"/etc/fstab
+	echo '#tmpfs /var/spool/cups tmpfs defaults,uid=0,gid=7,umask=007,dmask=007,fmask=117 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
+	echo '#tmpfs /var/cache/cups tmpfs defaults,uid=0,gid=7,umask=007,dmask=000,fmask=007 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
+	echo '' | sudo -n tee -a "$globalVirtFS"/etc/fstab
 	
 	return 0
 }
@@ -25956,335 +26055,345 @@ _wget_githubRelease_join-stdout() {
 		elif type -p gh > /dev/null 2>&1 && [[ "$GH_TOKEN" != "" ]] && [[ "$FORCE_WGET" != "true" ]]
 		then
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			# ATTENTION: Follows structure based on functionality for 'aria2c' .
-			
-			#local currentAxelTmpFile
-			#currentAxelTmpFile="$scriptAbsoluteFolder"/.m_axelTmp_$(_uid 14)
-			export currentAxelTmpFileRelative=.m_axelTmp_$(_uid 14)
-			export currentAxelTmpFile="$scriptAbsoluteFolder"/"$currentAxelTmpFileRelative"
-			
-			local currentPID_1
-			local currentPID_2
-			local currentPID_3
-			local currentPID_4
-			local currentIteration
-			currentIteration=0
-			local currentIterationNext1
-			let currentIterationNext1=currentIteration+1
-			local currentIterationNext2
-			let currentIterationNext2=currentIteration+2
-			local currentIterationNext3
-			let currentIterationNext3=currentIteration+3
-			rm -f "$currentAxelTmpFile"
-			rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-			while [[ "${currentURL_array_reversed[$currentIteration]}" != "" ]] || [[ "${currentURL_array_reversed[$currentIterationNext1]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp2 ]] || [[ "${currentURL_array_reversed[$currentIterationNext2]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp3 ]] || [[ "${currentURL_array_reversed[$currentIterationNext3]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp4 ]]
-			do
-				#rm -f "$currentAxelTmpFile"
-				rm -f "$currentAxelTmpFile".aria2 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp.st > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp.aria2 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp1 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp1.st > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp1.aria2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".tmp2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".tmp2.st > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".tmp2.aria2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-				
-				#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-
-				# https://github.com/aria2/aria2/issues/1108
-
-				if [[ "${currentURL_array_reversed[$currentIteration]}" != "" ]]
-				then
-					_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFileRelative".tmp1 >&2
-					#"$scriptAbsoluteLocation"
-					_gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFileRelative".tmp1 >&2 &
-					currentPID_1="$!"
-				fi
+			if [[ $(cat /proc/meminfo | grep MemTotal | tr -cd '[[:digit:]]') -gt 16379210 ]] && [[ "$FORCE_LOWTMP" != "true" ]]
+			then
 				
 				
-				# CAUTION: ATTENTION: Very important. Simultaneous reading and writing is *very* important for writing directly to slow media (ie. BD-R) .
-				#  NOTICE: Wirting directly to slow BD-R is essential for burning a Live disc from having booted a Live disc.
-				#   DANGER: Critical for rapid recovery back to recent upstream 'ubdist/OS' ! Do NOT unnecessarily degrade this capability!
-				#  Also theoretically helpful with especially fast network connections.
-				#if [[ "$currentIteration" != "0" ]]
-				if [[ -e "$currentAxelTmpFile".tmp2 ]]
-				then
-					# ATTENTION: Staggered.
-					#sleep 10 > /dev/null 2>&1
-					wait "$currentPID_2" >&2
-					[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
-					#wait >&2
+				
+				
+				# ATTENTION: Follows structure based on functionality for 'aria2c' .
+				
+				#local currentAxelTmpFile
+				#currentAxelTmpFile="$scriptAbsoluteFolder"/.m_axelTmp_$(_uid 14)
+				export currentAxelTmpFileRelative=.m_axelTmp_$(_uid 14)
+				export currentAxelTmpFile="$scriptAbsoluteFolder"/"$currentAxelTmpFileRelative"
+				
+				local currentPID_1
+				local currentPID_2
+				local currentPID_3
+				local currentPID_4
+				local currentIteration
+				currentIteration=0
+				local currentIterationNext1
+				let currentIterationNext1=currentIteration+1
+				local currentIterationNext2
+				let currentIterationNext2=currentIteration+2
+				local currentIterationNext3
+				let currentIterationNext3=currentIteration+3
+				rm -f "$currentAxelTmpFile"
+				rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+				while [[ "${currentURL_array_reversed[$currentIteration]}" != "" ]] || [[ "${currentURL_array_reversed[$currentIterationNext1]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp2 ]] || [[ "${currentURL_array_reversed[$currentIterationNext2]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp3 ]] || [[ "${currentURL_array_reversed[$currentIterationNext3]}" != "" ]] || [[ -e "$currentAxelTmpFile".tmp4 ]]
+				do
+					#rm -f "$currentAxelTmpFile"
+					rm -f "$currentAxelTmpFile".aria2 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp.st > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp.aria2 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp1 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp1.st > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp1.aria2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".tmp2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".tmp2.st > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".tmp2.aria2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+					
+					#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
 
-					sleep 0.2 > /dev/null 2>&1
+					# https://github.com/aria2/aria2/issues/1108
+
+					if [[ "${currentURL_array_reversed[$currentIteration]}" != "" ]]
+					then
+						_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFileRelative".tmp1 >&2
+						#"$scriptAbsoluteLocation"
+						_gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFileRelative".tmp1 >&2 &
+						currentPID_1="$!"
+					fi
+					
+					
+					# CAUTION: ATTENTION: Very important. Simultaneous reading and writing is *very* important for writing directly to slow media (ie. BD-R) .
+					#  NOTICE: Wirting directly to slow BD-R is essential for burning a Live disc from having booted a Live disc.
+					#   DANGER: Critical for rapid recovery back to recent upstream 'ubdist/OS' ! Do NOT unnecessarily degrade this capability!
+					#  Also theoretically helpful with especially fast network connections.
+					#if [[ "$currentIteration" != "0" ]]
 					if [[ -e "$currentAxelTmpFile".tmp2 ]]
 					then
-						_messagePlain_probe dd if="$currentAxelTmpFile".tmp2 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
-						
-						# ### dd if="$currentAxelTmpFile".tmp2 bs=5M status=progress >> "$currentAxelTmpFile"
-						dd if="$currentAxelTmpFile".tmp2 bs=1M status=progress
-						#cat "$currentAxelTmpFile".tmp2
-						
-						du -sh "$currentAxelTmpFile".tmp2 >> "$currentAxelTmpFile"
-						
-						#cat "$currentAxelTmpFile".tmp2 >> "$currentAxelTmpFile"
-					fi
-				else
-					if [[ "$currentIteration" == "0" ]]
-					then
 						# ATTENTION: Staggered.
-						#sleep 6 > /dev/null 2>&1
-						true
-					fi
-				fi
-				rm -f "$currentAxelTmpFile".tmp2 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp2.st > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp2.aria2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-				
-				if [[ "${currentURL_array_reversed[$currentIterationNext1]}" != "" ]]
-				then
-					_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext1]}" -O "$currentAxelTmpFileRelative".tmp2 >&2
-					#"$scriptAbsoluteLocation" 
-					_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext1]}" -O "$currentAxelTmpFileRelative".tmp2 >&2 &
-					currentPID_2="$!"
-				fi
-				
-				
-				
-				if [[ -e "$currentAxelTmpFile".tmp3 ]]
-				then
-					# ATTENTION: Staggered.
-					#sleep 10 > /dev/null 2>&1
-					wait "$currentPID_3" >&2
-					[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
-					#wait >&2
+						#sleep 10 > /dev/null 2>&1
+						wait "$currentPID_2" >&2
+						[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
+						#wait >&2
 
-					sleep 0.2 > /dev/null 2>&1
+						sleep 0.2 > /dev/null 2>&1
+						if [[ -e "$currentAxelTmpFile".tmp2 ]]
+						then
+							_messagePlain_probe dd if="$currentAxelTmpFile".tmp2 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
+							
+							# ### dd if="$currentAxelTmpFile".tmp2 bs=5M status=progress >> "$currentAxelTmpFile"
+							dd if="$currentAxelTmpFile".tmp2 bs=1M status=progress
+							#cat "$currentAxelTmpFile".tmp2
+							
+							du -sh "$currentAxelTmpFile".tmp2 >> "$currentAxelTmpFile"
+							
+							#cat "$currentAxelTmpFile".tmp2 >> "$currentAxelTmpFile"
+						fi
+					else
+						if [[ "$currentIteration" == "0" ]]
+						then
+							# ATTENTION: Staggered.
+							#sleep 6 > /dev/null 2>&1
+							true
+						fi
+					fi
+					rm -f "$currentAxelTmpFile".tmp2 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp2.st > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp2.aria2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+					
+					if [[ "${currentURL_array_reversed[$currentIterationNext1]}" != "" ]]
+					then
+						_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext1]}" -O "$currentAxelTmpFileRelative".tmp2 >&2
+						#"$scriptAbsoluteLocation" 
+						_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext1]}" -O "$currentAxelTmpFileRelative".tmp2 >&2 &
+						currentPID_2="$!"
+					fi
+					
+					
+					
 					if [[ -e "$currentAxelTmpFile".tmp3 ]]
 					then
-						_messagePlain_probe dd if="$currentAxelTmpFile".tmp3 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
-						
-						# ### dd if="$currentAxelTmpFile".tmp3 bs=5M status=progress >> "$currentAxelTmpFile"
-						dd if="$currentAxelTmpFile".tmp3 bs=1M status=progress
-						#cat "$currentAxelTmpFile".tmp3
-						
-						du -sh "$currentAxelTmpFile".tmp3 >> "$currentAxelTmpFile"
-						
-						#cat "$currentAxelTmpFile".tmp3 >> "$currentAxelTmpFile"
-					fi
-				else
-					if [[ "$currentIteration" == "0" ]]
-					then
 						# ATTENTION: Staggered.
-						#sleep 6 > /dev/null 2>&1
-						true
-					fi
-				fi
-				rm -f "$currentAxelTmpFile".tmp3 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp3.st > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp3.aria2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-				
-				if [[ "${currentURL_array_reversed[$currentIterationNext2]}" != "" ]]
-				then
-					_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext2]}" -O "$currentAxelTmpFileRelative".tmp3 >&2
-					#"$scriptAbsoluteLocation" 
-					_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext2]}" -O "$currentAxelTmpFileRelative".tmp3 >&2 &
-					currentPID_3="$!"
-				fi
-				
-				
-				
-				if [[ -e "$currentAxelTmpFile".tmp4 ]]
-				then
-					# ATTENTION: Staggered.
-					#sleep 10 > /dev/null 2>&1
-					wait "$currentPID_4" >&2
-					[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
-					#wait >&2
+						#sleep 10 > /dev/null 2>&1
+						wait "$currentPID_3" >&2
+						[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
+						#wait >&2
 
-					sleep 0.2 > /dev/null 2>&1
+						sleep 0.2 > /dev/null 2>&1
+						if [[ -e "$currentAxelTmpFile".tmp3 ]]
+						then
+							_messagePlain_probe dd if="$currentAxelTmpFile".tmp3 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
+							
+							# ### dd if="$currentAxelTmpFile".tmp3 bs=5M status=progress >> "$currentAxelTmpFile"
+							dd if="$currentAxelTmpFile".tmp3 bs=1M status=progress
+							#cat "$currentAxelTmpFile".tmp3
+							
+							du -sh "$currentAxelTmpFile".tmp3 >> "$currentAxelTmpFile"
+							
+							#cat "$currentAxelTmpFile".tmp3 >> "$currentAxelTmpFile"
+						fi
+					else
+						if [[ "$currentIteration" == "0" ]]
+						then
+							# ATTENTION: Staggered.
+							#sleep 6 > /dev/null 2>&1
+							true
+						fi
+					fi
+					rm -f "$currentAxelTmpFile".tmp3 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp3.st > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp3.aria2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+					
+					if [[ "${currentURL_array_reversed[$currentIterationNext2]}" != "" ]]
+					then
+						_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext2]}" -O "$currentAxelTmpFileRelative".tmp3 >&2
+						#"$scriptAbsoluteLocation" 
+						_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext2]}" -O "$currentAxelTmpFileRelative".tmp3 >&2 &
+						currentPID_3="$!"
+					fi
+					
+					
+					
 					if [[ -e "$currentAxelTmpFile".tmp4 ]]
 					then
-						_messagePlain_probe dd if="$currentAxelTmpFile".tmp4 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
-						
-						# ### dd if="$currentAxelTmpFile".tmp4 bs=5M status=progress >> "$currentAxelTmpFile"
-						dd if="$currentAxelTmpFile".tmp4 bs=1M status=progress
-						#cat "$currentAxelTmpFile".tmp4
-						
-						du -sh "$currentAxelTmpFile".tmp4 >> "$currentAxelTmpFile"
-						
-						#cat "$currentAxelTmpFile".tmp4 >> "$currentAxelTmpFile"
+						# ATTENTION: Staggered.
+						#sleep 10 > /dev/null 2>&1
+						wait "$currentPID_4" >&2
+						[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
+						#wait >&2
+
+						sleep 0.2 > /dev/null 2>&1
+						if [[ -e "$currentAxelTmpFile".tmp4 ]]
+						then
+							_messagePlain_probe dd if="$currentAxelTmpFile".tmp4 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
+							
+							# ### dd if="$currentAxelTmpFile".tmp4 bs=5M status=progress >> "$currentAxelTmpFile"
+							dd if="$currentAxelTmpFile".tmp4 bs=1M status=progress
+							#cat "$currentAxelTmpFile".tmp4
+							
+							du -sh "$currentAxelTmpFile".tmp4 >> "$currentAxelTmpFile"
+							
+							#cat "$currentAxelTmpFile".tmp4 >> "$currentAxelTmpFile"
+						fi
+					else
+						if [[ "$currentIteration" == "0" ]]
+						then
+							# ATTENTION: Staggered.
+							#sleep 6 > /dev/null 2>&1
+							true
+						fi
 					fi
-				else
+					rm -f "$currentAxelTmpFile".tmp4 > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp4.st > /dev/null 2>&1
+					rm -f "$currentAxelTmpFile".tmp4.aria2 > /dev/null 2>&1
+					#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+					
+					if [[ "${currentURL_array_reversed[$currentIterationNext3]}" != "" ]]
+					then
+						_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext3]}" -O "$currentAxelTmpFileRelative".tmp4 >&2
+						#"$scriptAbsoluteLocation" 
+						_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext3]}" -O "$currentAxelTmpFileRelative".tmp4 >&2 &
+						currentPID_4="$!"
+					fi
+					
+					
+
+					# ATTENTION: NOT staggered.
+					#wait "$currentPID_1" >&2
+					#[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
+					#wait "$currentPID_2" >&2
+					#[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
+					#wait "$currentPID_3" >&2
+					#[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
+					#wait "$currentPID_4" >&2
+					#[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
+					#wait >&2
+					
 					if [[ "$currentIteration" == "0" ]]
 					then
-						# ATTENTION: Staggered.
-						#sleep 6 > /dev/null 2>&1
-						true
+						# CAUTION: Workaround for DUMMY , ONLY . Will NOT, by design, accept files that are both >1part and <4parts .
+						#  This is to confidently reject failures to acquire part4 during the initial multiple connections.
+						#sleep 7
+						sleep 90
+						if ( [[ ! -e "$currentAxelTmpFileRelative".tmp1 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp2 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp3 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp4 ]] ) && ! ( [[ -e "$currentAxelTmpFileRelative".tmp1 ]] && ( [[ ! -e "$currentAxelTmpFileRelative".tmp2 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp3 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp4 ]] ) )
+						then
+							_messageFAIL >&2
+							_messageFAIL
+							_stop 1
+							return 1
+						fi
+						wait "$currentPID_1" >&2
+						[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
+						sleep 6 > /dev/null 2>&1
+						[[ "$currentPID_2" == "" ]] && sleep 35 > /dev/null 2>&1
+						[[ "$currentPID_2" != "" ]] && wait "$currentPID_2" >&2
+						[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
+						[[ "$currentPID_3" != "" ]] && wait "$currentPID_3" >&2
+						[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
+						[[ "$currentPID_4" != "" ]] && wait "$currentPID_4" >&2
+						[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
+						wait >&2
 					fi
-				fi
-				rm -f "$currentAxelTmpFile".tmp4 > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp4.st > /dev/null 2>&1
-				rm -f "$currentAxelTmpFile".tmp4.aria2 > /dev/null 2>&1
-				#rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-				
-				if [[ "${currentURL_array_reversed[$currentIterationNext3]}" != "" ]]
-				then
-					_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIterationNext3]}" -O "$currentAxelTmpFileRelative".tmp4 >&2
-					#"$scriptAbsoluteLocation" 
-					_gh_downloadURL "${currentURL_array_reversed[$currentIterationNext3]}" -O "$currentAxelTmpFileRelative".tmp4 >&2 &
-					currentPID_4="$!"
-				fi
-				
-				
 
-				# ATTENTION: NOT staggered.
-				#wait "$currentPID_1" >&2
-				#[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
-				#wait "$currentPID_2" >&2
-				#[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
-				#wait "$currentPID_3" >&2
-				#[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
-				#wait "$currentPID_4" >&2
-				#[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
-				#wait >&2
-				
-				if [[ "$currentIteration" == "0" ]]
-				then
-					# CAUTION: Workaround for DUMMY , ONLY . Will NOT, by design, accept files that are both >1part and <4parts .
-					#  This is to confidently reject failures to acquire part4 during the initial multiple connections.
-					#sleep 7
-					sleep 90
-					if ( [[ ! -e "$currentAxelTmpFileRelative".tmp1 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp2 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp3 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp4 ]] ) && ! ( [[ -e "$currentAxelTmpFileRelative".tmp1 ]] && ( [[ ! -e "$currentAxelTmpFileRelative".tmp2 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp3 ]] || [[ ! -e "$currentAxelTmpFileRelative".tmp4 ]] ) )
-					then
-						_messageFAIL >&2
-						_messageFAIL
-						_stop 1
-						return 1
-					fi
 					wait "$currentPID_1" >&2
 					[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
-					sleep 6 > /dev/null 2>&1
-					[[ "$currentPID_2" == "" ]] && sleep 35 > /dev/null 2>&1
-					[[ "$currentPID_2" != "" ]] && wait "$currentPID_2" >&2
-					[[ "$currentPID_2" != "" ]] && _pauseForProcess "$currentPID_2" >&2
-					[[ "$currentPID_3" != "" ]] && wait "$currentPID_3" >&2
-					[[ "$currentPID_3" != "" ]] && _pauseForProcess "$currentPID_3" >&2
-					[[ "$currentPID_4" != "" ]] && wait "$currentPID_4" >&2
-					[[ "$currentPID_4" != "" ]] && _pauseForProcess "$currentPID_4" >&2
-					wait >&2
-				fi
-
-				wait "$currentPID_1" >&2
-				[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
-				sleep 0.2 > /dev/null 2>&1
-				if [[ -e "$currentAxelTmpFile".tmp1 ]]
-				then
-					_messagePlain_probe dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
-					
-					if [[ ! -e "$currentAxelTmpFile" ]]
+					sleep 0.2 > /dev/null 2>&1
+					if [[ -e "$currentAxelTmpFile".tmp1 ]]
 					then
-						# ### mv -f "$currentAxelTmpFile".tmp1 "$currentAxelTmpFile"
-						dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress
+						_messagePlain_probe dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress' >> '"$currentAxelTmpFile" >&2
 						
-						du -sh "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
-					else
-						# ATTENTION: Staggered.
-						#dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress >> "$currentAxelTmpFile" &
-					
-						# ATTENTION: NOT staggered.
-						# ### dd if="$currentAxelTmpFile".tmp1 bs=5M status=progress >> "$currentAxelTmpFile"
-						dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress
-						#cat "$currentAxelTmpFile".tmp1
+						if [[ ! -e "$currentAxelTmpFile" ]]
+						then
+							# ### mv -f "$currentAxelTmpFile".tmp1 "$currentAxelTmpFile"
+							dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress
+							
+							du -sh "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
+						else
+							# ATTENTION: Staggered.
+							#dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress >> "$currentAxelTmpFile" &
 						
-						du -sh "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
-						
-						#cat "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
+							# ATTENTION: NOT staggered.
+							# ### dd if="$currentAxelTmpFile".tmp1 bs=5M status=progress >> "$currentAxelTmpFile"
+							dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress
+							#cat "$currentAxelTmpFile".tmp1
+							
+							du -sh "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
+							
+							#cat "$currentAxelTmpFile".tmp1 >> "$currentAxelTmpFile"
+						fi
 					fi
+
+					let currentIteration=currentIteration+4
+					let currentIterationNext1=currentIteration+1
+					let currentIterationNext2=currentIteration+2
+					let currentIterationNext3=currentIteration+3
+				done
+
+				if ! [[ -e "$currentAxelTmpFile" ]]
+				then
+					true
+					# ### return 1
 				fi
 
-				let currentIteration=currentIteration+4
-				let currentIterationNext1=currentIteration+1
-				let currentIterationNext2=currentIteration+2
-				let currentIterationNext3=currentIteration+3
-			done
+				# ### cat "$currentAxelTmpFile"
 
-			if ! [[ -e "$currentAxelTmpFile" ]]
-			then
-				true
-				# ### return 1
+				rm -f "$currentAxelTmpFile"
+				rm -f "$currentAxelTmpFile".aria2
+				rm -f "$currentAxelTmpFile".tmp
+				rm -f "$currentAxelTmpFile".tmp.st
+				rm -f "$currentAxelTmpFile".tmp.aria2
+				rm -f "$currentAxelTmpFile".tmp1
+				rm -f "$currentAxelTmpFile".tmp1.st
+				rm -f "$currentAxelTmpFile".tmp1.aria2
+				rm -f "$currentAxelTmpFile".tmp2
+				rm -f "$currentAxelTmpFile".tmp2.st
+				rm -f "$currentAxelTmpFile".tmp2.aria2
+				rm -f "$currentAxelTmpFile".tmp3
+				rm -f "$currentAxelTmpFile".tmp3.st
+				rm -f "$currentAxelTmpFile".tmp3.aria2
+				rm -f "$currentAxelTmpFile".tmp4
+				rm -f "$currentAxelTmpFile".tmp4.st
+				rm -f "$currentAxelTmpFile".tmp4.aria2
+				
+				rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
+				
+				
+				
+			else
+				#local currentAxelTmpFile
+				#currentAxelTmpFile="$scriptAbsoluteFolder"/.m_axelTmp_$(_uid 14)
+				export currentAxelTmpFileRelative=.m_axelTmp_$(_uid 14)
+				export currentAxelTmpFile="$scriptAbsoluteFolder"/"$currentAxelTmpFileRelative"
+				
+				local currentPID_1
+				
+				local currentIteration
+				currentIteration=0
+				
+				while [[ "${currentURL_array_reversed[$currentIteration]}" != "" ]]
+				do
+					#_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O - >&2
+					##"$scriptAbsoluteLocation"
+					#_gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O - | dd bs=1M status=progress
+					
+					
+					
+					_messagePlain_probe _gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFile".tmp1 >&2
+					#"$scriptAbsoluteLocation"
+					_gh_downloadURL "${currentURL_array_reversed[$currentIteration]}" -O "$currentAxelTmpFile".tmp1 >&2 &
+					currentPID_1="$!"
+					
+					sleep 6 > /dev/null 2>&1
+					
+					wait "$currentPID_1" >&2
+					[[ "$currentPID_1" != "" ]] && wait "$currentPID_1" >&2
+					[[ "$currentPID_1" != "" ]] && _pauseForProcess "$currentPID_1" >&2
+					wait >&2
+					
+					
+					
+					dd if="$currentAxelTmpFile".tmp1 bs=1M status=progress
+					rm -f "$currentAxelTmpFile".tmp1
+					
+					
+					let currentIteration=currentIteration+1
+				done
+				
+				
+				rm -f "$currentAxelTmpFile"
+				rm -f "$currentAxelTmpFile".aria2
+				rm -f "$currentAxelTmpFile".tmp1
+				rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
 			fi
-
-			# ### cat "$currentAxelTmpFile"
-
-			rm -f "$currentAxelTmpFile"
-			rm -f "$currentAxelTmpFile".aria2
-			rm -f "$currentAxelTmpFile".tmp
-			rm -f "$currentAxelTmpFile".tmp.st
-			rm -f "$currentAxelTmpFile".tmp.aria2
-			rm -f "$currentAxelTmpFile".tmp1
-			rm -f "$currentAxelTmpFile".tmp1.st
-			rm -f "$currentAxelTmpFile".tmp1.aria2
-			rm -f "$currentAxelTmpFile".tmp2
-			rm -f "$currentAxelTmpFile".tmp2.st
-			rm -f "$currentAxelTmpFile".tmp2.aria2
-			rm -f "$currentAxelTmpFile".tmp3
-			rm -f "$currentAxelTmpFile".tmp3.st
-			rm -f "$currentAxelTmpFile".tmp3.aria2
-			rm -f "$currentAxelTmpFile".tmp4
-			rm -f "$currentAxelTmpFile".tmp4.st
-			rm -f "$currentAxelTmpFile".tmp4.aria2
-			
-			rm -f "$currentAxelTmpFile".* > /dev/null 2>&1
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -31383,6 +31492,8 @@ _kernelConfig_require-tradeoff-legacy() {
 	_kernelConfig__bad-n__ LEGACY_VSYSCALL_EMULATE
 }
 
+# WARNING: May be untested .
+# WARNING: May not identify drastically performance degrading features from harden-NOTcompatible .
 # WARNING: Risk must be evaluated for specific use cases.
 # WARNING: Insecure.
 # Standalone simulators (eg. flight sim):
@@ -31428,15 +31539,16 @@ _kernelConfig_require-tradeoff-perform() {
 
 # May become increasing tolerable and preferable for the vast majority of use cases.
 # WARNING: Risk must be evaluated for specific use cases.
-# WARNING: BREAKS some high-performance real-time applicatons (eg. flight sim, VR, AR).
+# WARNING: May BREAK some high-performance real-time applicatons (eg. flight sim, VR, AR).
 # Standalone simulators (eg. flight sim):
 # * May have hard real-time frame latency limits within 10% of the fastest avaialble from a commercially avaialble CPU.
 # * May be severely single-thread CPU constrained.
 # * May have real-time workloads exactly matching those suffering half performance due to security mitigations.
-# * May not require real-time security mitigations.
+# * May not (or may) require real-time security mitigations.
 # Disabling hardening may as much as double performance for some workloads.
 # https://www.phoronix.com/scan.php?page=article&item=linux-retpoline-benchmarks&num=2
 # https://www.phoronix.com/scan.php?page=article&item=linux-416early-spectremelt&num=4
+# DANGER: Hardware performance is getting better, while software security issues are getting worse. Think of faster computer processors as security hardware.
 _kernelConfig_require-tradeoff-harden() {
 	_messagePlain_nominal 'kernelConfig: tradeoff-harden'
 	_messagePlain_request 'Carefully evaluate '\''tradeoff-harden'\'' for specific use cases.'
@@ -31464,13 +31576,12 @@ _kernelConfig_require-tradeoff-harden() {
 	
 	_kernelConfig__bad-y__ CONFIG_RANDOMIZE_BASE
 	_kernelConfig__bad-y__ CONFIG_RANDOMIZE_MEMORY
-
-
-
-
-
-
-
+	
+	
+	
+	
+	
+	
 	# Special.
 	# VM guest should be tested.
 
@@ -31508,8 +31619,312 @@ _kernelConfig_require-tradeoff-harden() {
 	_kernelConfig__bad-y__ CONFIG_KVM_AMD_SEV
 	_kernelConfig__bad-y__ AMD_MEM_ENCRYPT
 	_kernelConfig__bad-y__ CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT
+}
+_kernelConfig_require-tradeoff-harden-compatible() {
+	
+	
+	# https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Recommended_Settings#sysctls
+	
+	# Worth considering whether indeed 'NOTcompatible' or actually usable as 'harden' .
+	# Nevertheless, 'KASAN' is probably most important, and only reasonably efficient on kernel 6.6+, while only kernel 6.1-lts may be itself still 'compatible' (ie. not panicing on 'systemctl stop sddm') as of 2023-12-26 .
+	
+	# ###
+	
+	#x bad: not:    -1: CONFIG_PANIC_TIMEOUT 
+	
+	# bad: not:     Y: CONFIG_DEBUG_CREDENTIALS 
+	#+ bad: not:     Y: CONFIG_DEBUG_NOTIFIERS 
+	# bad: not:     Y: CONFIG_DEBUG_SG 
+	#x bad: not:     Y: CONFIG_DEBUG_VIRTUAL 
+	
+	#+ bad: not:     Y: CONFIG_INIT_ON_FREE_DEFAULT_ON 
+	#+ bad: not:     Y: CONFIG_ZERO_CALL_USED_REGS 
+	
+	# https://blogs.oracle.com/linux/post/improving-application-security-with-undefinedbehaviorsanitizer-ubsan-and-gcc
+	#  'Adding UBSan instrumentation slows down programs by around 2 to 3x, which is a small price to pay for increased security.'
+	#x bad: not:     Y: CONFIG_UBSAN 
+	#x bad: not:     Y: CONFIG_UBSAN_TRAP 
+	#x bad: not:     Y: CONFIG_UBSAN_BOUNDS 
+	#x bad: not:     Y: CONFIG_UBSAN_SANITIZE_ALL 
+	#x bad: not:     Y: CONFIG_UBSAN_LOCAL_BOUNDS 
+	
+	#+ bad: not:     N: CONFIG_DEVMEM 
+	
+	#+_kernelConfig__bad-n__ CONFIG_DEVPORT
+	
+	#+ bad: not:     N: CONFIG_PROC_KCORE 
+	
+	#+_kernelConfig__bad-n__ CONFIG_PROC_VMCORE
+	
+	#+ bad: not:     N: CONFIG_LEGACY_TIOCSTI 
+	
+	#+ bad: not:     N: CONFIG_LDISC_AUTOLOAD 
+	
+	#+ bad: not:     N: CONFIG_SECURITY_SELINUX_DEVELOP
+	
+	# ###
+	
+	#if ! cat "$kernelConfig_file" | _kernelConfig_reject-comments | grep "CONFIG_PANIC_TIMEOUT"'\=-1' > /dev/null 2>&1
+	#then
+		#_messagePlain_bad 'bad: not:    -1: '"CONFIG_PANIC_TIMEOUT"
+		#export kernelConfig_bad='true'
+	#fi
+	
+	_kernelConfig__bad-y__ CONFIG_BUG
+	_kernelConfig__bad-y__ CONFIG_BUG_ON_DATA_CORRUPTION
+	
+	_kernelConfig__bad-y__ CONFIG_DEBUG_NOTIFIERS
+	
+	_kernelConfig__bad-y__ CONFIG_INIT_ON_FREE_DEFAULT_ON
+	_kernelConfig__bad-y__ CONFIG_ZERO_CALL_USED_REGS
+	
+	_kernelConfig__bad-n__ CONFIG_DEVMEM
+	_kernelConfig__bad-n__ CONFIG_DEVPORT
+	
+	_kernelConfig__bad-n__ CONFIG_PROC_KCORE
+	_kernelConfig__bad-n__ CONFIG_PROC_VMCORE
+	
+	_kernelConfig__bad-n__ CONFIG_LEGACY_TIOCSTI
+	_kernelConfig__bad-n__ CONFIG_LDISC_AUTOLOAD
+	
+	_kernelConfig__bad-n__ CONFIG_SECURITY_SELINUX_DEVELOP
+	
+	
+	
+	# WARNING: KFENCE is of DUBIOUS usefulness. Enable KASAN instead if possible!
+	# https://thomasw.dev/post/kfence/
+	#  'In theory, a buffer overflow exploit executed on a KFENCE object might be detected and miss its intended overwrite target as the vulnerable object is located in the KFENCE pool. This is in no way a defense - an attacker can trivially bypass KFENCE by simply executing a no-op allocation or depleting the KFENCE object pool first. Memory exploits often already require precisely setting up the heap to be successful, so this is a very minor obstacle to take care of.'
+	# https://openbenchmarking.org/result/2104197-PTS-5900XAMD52
+	#  Apparently negligible difference between 100ms and 500ms sample rates. Maybe ~7% .
+	# https://www.kernel.org/doc/html/v5.15/dev-tools/kfence.html
+	
+	#CONFIG_KFENCE=y
+	#CONFIG_KFENCE_SAMPLE_INTERVAL=39
+	
+	#CONFIG_KFENCE_NUM_OBJECTS=639
+	
+	#CONFIG_KFENCE_DEFERRABLE=y
+	
+	_kernelConfig__bad-y__ CONFIG_KFENCE
+	if ! cat "$kernelConfig_file" | _kernelConfig_reject-comments | grep "CONFIG_KFENCE_SAMPLE_INTERVAL"'\=39' > /dev/null 2>&1
+	then
+		_messagePlain_bad 'bad: not:    39: '"CONFIG_KFENCE_SAMPLE_INTERVAL"
+		export kernelConfig_bad='true'
+	fi
+	if ! cat "$kernelConfig_file" | _kernelConfig_reject-comments | grep "CONFIG_KFENCE_NUM_OBJECTS"'\=639' > /dev/null 2>&1
+	then
+		_messagePlain_bad 'bad: not:    639: '"CONFIG_KFENCE_NUM_OBJECTS"
+		export kernelConfig_bad='true'
+	fi
+	
+	#_kernelConfig_warn-any CONFIG_KFENCE_DEFERRABLE
+	_kernelConfig_warn-y__ CONFIG_KFENCE_DEFERRABLE
+}
 
+# WARNING: ATTENTION: Before moving to tradeoff-harden (compatible), ensure vboxdrv, vboxadd, nvidia, nvidia legacy, kernel modules can be loaded without issues, and also ensure significant performance penalty configuration options are oppositely documented in the tradeoff-perform function .
+# WARNING: Disables out-of-tree modules . VirtualBox and NVIDIA drivers WILL NOT be permitted to load .
+# NOTICE: The more severe performance costs of KASAN, UBSAN, etc, will, as kernel processing increasingly becomes still more of a minority of the work done by faster CPUs, and as more efficient kernels (ie. 6.6+) become more useful with fewer regressions, be migrated to 'harden' (ie. treated as 'compatible').
+_kernelConfig_require-tradeoff-harden-NOTcompatible() {
+	# https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Recommended_Settings#sysctls
+	
+	
+	# Apparently these are some typical differences from a stock distribution supplied kernel configuration .
+	
+	# ###
+	
+	# bad: not:     Y: CONFIG_PANIC_ON_OOPS 
+	# bad: not:    -1: CONFIG_PANIC_TIMEOUT 
+	# bad: not:     Y: CONFIG_KASAN 
+	# bad: not:     Y: CONFIG_KASAN_INLINE 
+	# bad: not:     Y: CONFIG_KASAN_VMALLOC 
+	# bad: not:     Y: CONFIG_DEBUG_CREDENTIALS 
+	# bad: not:     Y: CONFIG_DEBUG_NOTIFIERS 
+	# bad: not:     Y: CONFIG_DEBUG_SG 
+	# bad: not:     Y: CONFIG_DEBUG_VIRTUAL 
+	# bad: not:     Y: CONFIG_INIT_ON_FREE_DEFAULT_ON 
+	# bad: not:     Y: CONFIG_ZERO_CALL_USED_REGS 
+	# bad: not:     Y: CONFIG_UBSAN 
+	# bad: not:     Y: CONFIG_UBSAN_TRAP 
+	# bad: not:     Y: CONFIG_UBSAN_BOUNDS 
+	# bad: not:     Y: CONFIG_UBSAN_SANITIZE_ALL 
+	# bad: not:     Y: CONFIG_UBSAN_LOCAL_BOUNDS 
+	# bad: not:     N: CONFIG_DEVMEM 
+	# bad: not:     Y: CONFIG_CFI_CLANG 
+	# bad: not:     N: CONFIG_PROC_KCORE 
+	# bad: not:     N: CONFIG_LEGACY_TIOCSTI 
+	# bad: not:     Y: CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY 
+	# bad: not:     N: CONFIG_LDISC_AUTOLOAD 
+	# bad: not:     Y: CONFIG_GCC_PLUGINS 
+	# bad: not:     Y: CONFIG_GCC_PLUGIN_LATENT_ENTROPY 
+	# bad: not:     Y: CONFIG_GCC_PLUGIN_STRUCTLEAK 
+	# bad: not:     Y: CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL 
+	# bad: not:     Y: CONFIG_GCC_PLUGIN_STACKLEAK 
+	# bad: not:     Y: CONFIG_GCC_PLUGIN_RANDSTRUCT 
+	# bad: not:     N: CONFIG_SECURITY_SELINUX_DEVELOP
+	
+	# ###
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_BUG
+	_kernelConfig__bad-y__ CONFIG_BUG_ON_DATA_CORRUPTION
+	
+	_kernelConfig__bad-y__ CONFIG_PANIC_ON_OOPS
+	if ! cat "$kernelConfig_file" | _kernelConfig_reject-comments | grep "CONFIG_PANIC_TIMEOUT"'\=-1' > /dev/null 2>&1
+	then
+		_messagePlain_bad 'bad: not:    -1: '"CONFIG_PANIC_TIMEOUT"
+		export kernelConfig_bad='true'
+	fi
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_KASAN
+	_kernelConfig__bad-y__ CONFIG_KASAN_INLINE
+	_kernelConfig__bad-y__ CONFIG_KASAN_VMALLOC
+	
+	
+	# DUBIOUS. KASAN should catch everything KFENCE does, but apparently CONFIG_KASAN_VMALLOCKFENCE may rarely catch errors.
+	#_kernelConfig__bad-y__ CONFIG_KFENCE
+	
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SCHED_STACK_END_CHECK
+	_kernelConfig__bad-y__ CONFIG_DEBUG_CREDENTIALS
+	_kernelConfig__bad-y__ CONFIG_DEBUG_NOTIFIERS
+	_kernelConfig__bad-y__ CONFIG_DEBUG_LIST
+	_kernelConfig__bad-y__ CONFIG_DEBUG_SG
+	_kernelConfig__bad-y__ CONFIG_DEBUG_VIRTUAL
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SLUB_DEBUG
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SLAB_FREELIST_RANDOM
+	_kernelConfig__bad-y__ CONFIG_SLAB_FREELIST_HARDENED
+	_kernelConfig__bad-y__ CONFIG_SHUFFLE_PAGE_ALLOCATOR
+	
+	
+	_kernelConfig__bad-y__ CONFIG_INIT_ON_ALLOC_DEFAULT_ON
+	_kernelConfig__bad-y__ CONFIG_INIT_ON_FREE_DEFAULT_ON
+	
+	_kernelConfig__bad-y__ CONFIG_ZERO_CALL_USED_REGS
+	
+	
+	_kernelConfig__bad-y__ CONFIG_HARDENED_USERCOPY
+	_kernelConfig__bad-n__ CONFIG_HARDENED_USERCOPY_FALLBACK
+	_kernelConfig__bad-n__ CONFIG_HARDENED_USERCOPY_PAGESPAN
+	
+	
+	_kernelConfig__bad-y__ CONFIG_UBSAN
+	_kernelConfig__bad-y__ CONFIG_UBSAN_TRAP
+	_kernelConfig__bad-y__ CONFIG_UBSAN_BOUNDS
+	_kernelConfig__bad-y__ CONFIG_UBSAN_SANITIZE_ALL
+	_kernelConfig__bad-n__ CONFIG_UBSAN_SHIFT
+	_kernelConfig__bad-n__ CONFIG_UBSAN_DIV_ZERO
+	_kernelConfig__bad-n__ CONFIG_UBSAN_UNREACHABLE
+	_kernelConfig__bad-n__ CONFIG_UBSAN_BOOL
+	_kernelConfig__bad-n__ CONFIG_UBSAN_ENUM
+	_kernelConfig__bad-n__ CONFIG_UBSAN_ALIGNMENT
+	# This is only available on Clang builds, and is likely already enabled if CONFIG_UBSAN_BOUNDS=y is set:
+	_kernelConfig__bad-y__ CONFIG_UBSAN_LOCAL_BOUNDS
+	
+	
+	
+	_kernelConfig__bad-n__ CONFIG_DEVMEM
+	#_kernelConfig__bad-y__ CONFIG_STRICT_DEVMEM
+	#_kernelConfig__bad-y__ CONFIG_IO_STRICT_DEVMEM
+	
+	_kernelConfig__bad-n__ CONFIG_DEVPORT
+	
+	
+	_kernelConfig__bad-y__ CONFIG_CFI_CLANG
+	_kernelConfig__bad-n__ CONFIG_CFI_PERMISSIVE
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_STACKPROTECTOR
+	_kernelConfig__bad-y__ CONFIG_STACKPROTECTOR_STRONG
+	
+	
+	_kernelConfig__bad-n__ CONFIG_DEVKMEM
+	
+	_kernelConfig__bad-n__ CONFIG_COMPAT_BRK
+	_kernelConfig__bad-n__ CONFIG_PROC_KCORE
+	_kernelConfig__bad-n__ CONFIG_ACPI_CUSTOM_METHOD
+	
+	_kernelConfig__bad-n__ CONFIG_PROC_VMCORE
+	
+	_kernelConfig__bad-n__ CONFIG_LEGACY_TIOCSTI
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SECURITY_LOCKDOWN_LSM
+	_kernelConfig__bad-y__ CONFIG_SECURITY_LOCKDOWN_LSM_EARLY
+	_kernelConfig__bad-y__ CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SECURITY_DMESG_RESTRICT
+	
+	_kernelConfig__bad-y__ CONFIG_VMAP_STACK
+	
+	
+	_kernelConfig__bad-n__ CONFIG_LDISC_AUTOLOAD
+	
+	
+	
+	# Enable GCC Plugins
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGINS
 
+	# Gather additional entropy at boot time for systems that may not have appropriate entropy sources.
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGIN_LATENT_ENTROPY
+
+	# Force all structures to be initialized before they are passed to other functions.
+	# When building with GCC:
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGIN_STRUCTLEAK
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+
+	# Wipe stack contents on syscall exit (reduces stale data lifetime in stack)
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGIN_STACKLEAK
+	_kernelConfig__bad-n__ CONFIG_STACKLEAK_METRICS
+	_kernelConfig__bad-n__ CONFIG_STACKLEAK_RUNTIME_DISABLE
+
+	# Randomize the layout of system structures. This may have dramatic performance impact, so
+	# use with caution or also use CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE=y
+	_kernelConfig__bad-y__ CONFIG_GCC_PLUGIN_RANDSTRUCT
+	_kernelConfig__bad-n__ CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
+	
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_SECURITY
+	_kernelConfig__bad-y__ CONFIG_SECURITY_YAMA
+	
+	_kernelConfig__bad-y__ CONFIG_X86_64
+	
+	
+	_kernelConfig__bad-n__ CONFIG_SECURITY_SELINUX_BOOTPARAM
+	_kernelConfig__bad-n__ CONFIG_SECURITY_SELINUX_DEVELOP
+	_kernelConfig__bad-n__ CONFIG_SECURITY_WRITABLE_HOOKS
+	
+	
+	
+	_kernelConfig_warn-n__ CONFIG_KEXEC
+	_kernelConfig_warn-n__ CONFIG_HIBERNATION
+	
+	
+	
+	_kernelConfig__bad-y__ CONFIG_RESET_ATTACK_MITIGATION
+	
+	
+	_kernelConfig_warn-y__ CONFIG_EFI_DISABLE_PCI_DMA
+	
+	
+	
+	# WARNING: CAUTION: Now obviously this is really incompatible. Do NOT move this to any other function.
+	_kernelConfig_warn-y__ CONFIG_MODULE_SIG_FORCE
 }
 
 # ATTENTION: Override with 'ops.sh' or similar.
@@ -31522,10 +31937,20 @@ _kernelConfig_require-tradeoff() {
 	if [[ "$kernelConfig_tradeoff_perform" == 'true' ]]
 	then
 		_kernelConfig_require-tradeoff-perform "$@"
-		return
+	else
+		_kernelConfig_require-tradeoff-harden "$@"
 	fi
 	
-	_kernelConfig_require-tradeoff-harden "$@"
+	[[ "$kernelConfig_tradeoff_compatible" == "" ]] && [[ "$kernelConfig_tradeoff_perform" == 'true' ]] && export kernelConfig_tradeoff_compatible='true'
+	[[ "$kernelConfig_tradeoff_compatible" == "" ]] && export kernelConfig_tradeoff_compatible='false'
+	
+	if [[ "$kernelConfig_tradeoff_compatible" != 'true' ]]
+	then
+		_kernelConfig_require-tradeoff-harden-NOTcompatible "$@"
+	else
+		_kernelConfig_require-tradeoff-harden-compatible "$@"
+	fi
+	
 	return
 }
 
@@ -32134,6 +32559,7 @@ _kernelConfig_panel() {
 	_messageNormal 'kernelConfig: panel'
 	
 	[[ "$kernelConfig_tradeoff_perform" == "" ]] && export kernelConfig_tradeoff_perform='false'
+	[[ "$kernelConfig_tradeoff_compatible" == "" ]] && export kernelConfig_tradeoff_compatible='true'
 	[[ "$kernelConfig_frequency" == "" ]] && export kernelConfig_frequency=300
 	[[ "$kernelConfig_tickless" == "" ]] && export kernelConfig_tickless='false'
 	
@@ -32173,6 +32599,7 @@ _kernelConfig_mobile() {
 	_messageNormal 'kernelConfig: mobile'
 	
 	[[ "$kernelConfig_tradeoff_perform" == "" ]] && export kernelConfig_tradeoff_perform='false'
+	[[ "$kernelConfig_tradeoff_compatible" == "" ]] && export kernelConfig_tradeoff_compatible='true'
 	[[ "$kernelConfig_frequency" == "" ]] && export kernelConfig_frequency=300
 	[[ "$kernelConfig_tickless" == "" ]] && export kernelConfig_tickless='true'
 	
@@ -32213,6 +32640,7 @@ _kernelConfig_desktop() {
 	_messageNormal 'kernelConfig: desktop'
 	
 	[[ "$kernelConfig_tradeoff_perform" == "" ]] && export kernelConfig_tradeoff_perform='false'
+	[[ "$kernelConfig_tradeoff_compatible" == "" ]] && export kernelConfig_tradeoff_compatible='true'
 	[[ "$kernelConfig_frequency" == "" ]] && export kernelConfig_frequency=1000
 	[[ "$kernelConfig_tickless" == "" ]] && export kernelConfig_tickless='false'
 	
@@ -32251,6 +32679,7 @@ _kernelConfig_server() {
 	_messageNormal 'kernelConfig: server'
 
 	export kernelConfig_tradeoff_perform='false'
+	export kernelConfig_tradeoff_compatible='false'
 	_kernelConfig_desktop "$@"
 }
 
@@ -32640,6 +33069,21 @@ then
 	#. /cygdrive/c/core/infrastructure/extendedInterface/_lib/coreoracle/_shortcuts-cygwin.sh
 fi
 
+
+if [[ -e /cygdrive/c/core/infrastructure/quickWriter ]]
+then
+	export shortcutsPath_quickWriter=/cygdrive/c/"core/infrastructure/quickWriter"
+	. /cygdrive/c/core/infrastructure/quickWriter/_shortcuts-cygwin.sh
+elif [[ -e /cygdrive/c/core/infrastructure/extendedInterface/_lib/quickWriter-msw ]]
+then
+	export shortcutsPath_quickWriter=/cygdrive/c/"core/infrastructure/extendedInterface/_lib/quickWriter-msw"
+	. /cygdrive/c/core/infrastructure/extendedInterface/_lib/quickWriter-msw/_shortcuts-cygwin.sh
+elif [[ -e /cygdrive/c/core/infrastructure/extendedInterface/_lib/quickWriter ]]
+then
+	export shortcutsPath_quickWriter=/cygdrive/c/"core/infrastructure/extendedInterface/_lib/quickWriter"
+	. /cygdrive/c/core/infrastructure/extendedInterface/_lib/quickWriter/_shortcuts-cygwin.sh
+fi
+
 CZXWXcRMTo8EmM8i4d
 	else
 		cat << CZXWXcRMTo8EmM8i4d
@@ -32652,11 +33096,21 @@ then
 fi
 
 
+
 if [[ -e "$HOME"/core/infrastructure/coreoracle ]]
 then
 	export shortcutsPath_coreoracle="$HOME"/core/infrastructure/coreoracle/
 	. "$HOME"/core/infrastructure/coreoracle/_shortcuts.sh
 fi
+
+
+if [[ -e "$HOME"/core/infrastructure/quickWriter ]]
+then
+	export shortcutsPath_quickWriter="$HOME"/core/infrastructure/quickWriter/
+	. "$HOME"/core/infrastructure/quickWriter/_shortcuts.sh
+fi
+
+
 
 # Returns priority to normal.
 # Greater or equal, '_priority_app_pid_root' .
@@ -34602,6 +35056,8 @@ _w540_display_start() {
 
 # ATTENTION: May rely on some assumptions about the software configuration of the laptop, and may be very specific to only W540 .
 _w540_display-leftOf() {
+	xrandr --output eDP-1 --mode 1920x1080
+	
 	xrandr --output HDMI-1 --scale 1.375x1.375
 	
 	
@@ -35423,6 +35879,12 @@ export pumpCompanion_gzFile="$pumpCompanion_directory"/_in.tar.gz
 
 
 
+
+#_set_GH_TOKEN() {
+	#[[ "$GH_TOKEN" != "" ]] && export GH_TOKEN=$(_safeEcho "$GH_TOKEN" | tr -dc 'a-zA-Z0-9_')
+	#[[ "$INPUT_GITHUB_TOKEN" != "" ]] && export INPUT_GITHUB_TOKEN=$(_safeEcho "$INPUT_GITHUB_TOKEN" | tr -dc 'a-zA-Z0-9_')
+#}
+#_set_GH_TOKEN
 
 
 _prepareFakeHome() {
