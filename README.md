@@ -60,14 +60,30 @@ _document_main() {
 #__HEADER_uk4uPhB663kVcygT0q_HEADER__
 _t '
 scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
-Copyright (C) 2023 mirage335
+Copyright (C) 2023,2024- mirage335
 See the end of the file for license conditions.
 See license.txt for pumpCompanion license conditions.
 
 
-Everyone should be using something like this, as well as maybe not many 
-other related things. But you probably don&#39;t know what this is, so have 
-fun. (ie. rewrite this placeholder text later)
+Safe (malware preventative) file transfer modem software app for MSWindows 
+and Linux through Software Defined Radio or audio hardware. Thoroughly 
+proven schematics for TRRS/TRS adapters to RJ45 Cat6A telephone, and 
+similar, included.
+
+By transferring data in a discontinuous (ie. analog) format, none of the 
+computer hardware interfaces will present either keyboard traffic that 
+could transfer and install malware, nor any firmware reprogramming that 
+could cause other devices to do this, nor any malformed network packets to 
+buffer overflow.
+
+As such, this is a necessary Commercial-Off-The-Shelf workaround for the 
+long history of malware abusing the insane proliferation of computer 
+interfaces with completely inappropriate functionality (eg. reprogrammable 
+SATA firmware wear leveling, BadUSB flash drive reprogramming, SD Card slot 
+SDIO serial/keyboard/etc functionality, parallel port functionality, etc).
+
+
+
 
 This system has been tested with real world audio hardware and does 
 function as designed at decent throughput under challenging conditions.
@@ -82,7 +98,15 @@ EMI sensitivity. TRRS headphones connection DC load should be <<40kOhm.
 Heavy capacitive coupling >>250uF is apparently acceptable to bypass any DC 
 impedance to improve signal strength, though any amplifier output without 
 ~300Ohm resistive coupling will impose a near short circuit to other 
-outputs on the same line.
+outputs on the same line. Capacitor polarity should always place the 
+negative side of the capacitor towards the line (ie. towards the load on 
+the line to ground).
+
+Auditing is a nice bonus for the audio interface - a mere continious analog 
+recording may be kept without possibility of tampering by the malware.
+
+Optical Data Diodes may be formed by widely available ADC/SPDIF and 
+DAC/SPDIF fiber optic adapters.
 <!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
 '
 _t '
