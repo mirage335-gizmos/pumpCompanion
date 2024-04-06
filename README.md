@@ -130,6 +130,28 @@ if false; then true; # -->
 fi
 _t '
 scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Some computer systems may require audio jack retasking.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_o' '_messagePlain_probe' 'hdajackretask'
+if false; then true; # -->
+<!-- # --><pre style="-webkit-print-color-adjust: exact;background-color:#848484;margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+<!-- # --><span style="color:#1818b2;background-color:#848484;"> hdajackretask</span>
+<!-- # --></pre>
+<!--
+fi
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
 
 
 <!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q

@@ -78,6 +78,10 @@ _paragraph_begin
 _o _messagePlain_probe './ubiquitous_bash.sh'
 _paragraph_end
 _paragraph_begin
+_t 'Some computer systems may require audio jack retasking.'
+_o _messagePlain_probe 'hdajackretask'
+_paragraph_end
+_paragraph_begin
 _t '
 
 
