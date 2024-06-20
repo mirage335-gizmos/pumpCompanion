@@ -300,7 +300,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '44100'
+    value: '48000'
   states:
     bus_sink: false
     bus_source: false
@@ -319,7 +319,7 @@ blocks:
     bus_structure: null
     coordinate: [32, 264.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: samp_rate
   id: variable
   parameters:
@@ -331,7 +331,7 @@ blocks:
     bus_structure: null
     coordinate: [32, 336.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: shift_factor
   id: variable
   parameters:
@@ -360,7 +360,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '4'
+    value: '6'
   states:
     bus_sink: false
     bus_source: false

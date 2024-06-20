@@ -85,7 +85,7 @@ class pumpCompanion_audio_tx(gr.top_block, Qt.QWidget):
         self.points = points = 64
         self.constel = constel = digital.qam_constellation(constellation_points=points, differential=True, mod_code='gray').base()
         self.sps = sps = 3
-        self.samp_rate = samp_rate = 44100
+        self.samp_rate = samp_rate = 48000
         self.packet_size = packet_size = 384
         self.modulus = modulus = pow(2,constel.bits_per_symbol())
         self.par2_redundancy = par2_redundancy = 0.06+0.06

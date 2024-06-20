@@ -66,9 +66,9 @@ See license.txt for pumpCompanion license conditions.
 
 
 Safe (malware preventative) file transfer modem software app for MSWindows 
-and Linux through Software Defined Radio or audio hardware. Thoroughly 
-proven schematics for TRRS/TRS adapters to RJ45 Cat6A telephone, and 
-similar, included.
+(including ARM64) and Linux through Software Defined Radio or audio 
+hardware. Thoroughly proven schematics for TRRS/TRS adapters to RJ45 Cat6A 
+telephone, and similar, included.
 
 By transferring data in a discontinuous (ie. analog) format, none of the 
 computer hardware interfaces will present either keyboard traffic that 
@@ -130,15 +130,69 @@ if false; then true; # -->
 <!-- # --><h1>Usage</h1>
 <!--
 fi
+ '_heading2'
+if false; then true; # -->
+<!-- # --><h2></h2>
+<!--
+fi
  '_paragraph_begin'
 if false; then true; # -->
 <!-- # --><p>
 <!--
 fi
- '_o' '_messagePlain_probe' './ubiquitous_bash.sh'
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">Please use the &#39;*.lnk&#39; shotrcut files under MSWindows, or the 
+&#39;*.desktop&#39; shortcut files under Linux/KDE/Plasma .
+
+pC-frame
+pC-deframe
+pC-modem
+
+Frame/deframe shortcuts will convert &#39;Downloads/_in.rrf&#39; and 
+&#39;Downloads/_out.rrf&#39; to/from &#39;Downloads/_framed.rrf&#39;, which 
+includes added compression, gain control preamble, error correction 
+information.
+
+Modem will open transmit and receive GNURadio companion flowgraphs, which 
+may be run to transfer the &#39;Downloads/_framed.rrf&#39; file across 
+audio. Variable blocks at the top-left of the flowgraph may be enabled to 
+change speed if necessary.
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_heading2' 'Alternatives'
+if false; then true; # -->
+<!-- # --><h2>Alternatives</h2>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+ '_o' '_messagePlain_probe' './ubiquitous_bash.sh _gnuradioCompanion'
 if false; then true; # -->
 <!-- # --><pre style="-webkit-print-color-adjust: exact;background-color:#848484;margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
-<!-- # --><span style="color:#1818b2;background-color:#848484;"> ./ubiquitous_bash.sh</span>
+<!-- # --><span style="color:#1818b2;background-color:#848484;"> ./ubiquitous_bash.sh _gnuradioCompanion</span>
+<!-- # --></pre>
+<!--
+fi
+ '_o' '_messagePlain_probe' './ubiquitous_bash.sh _pumpCompanion-frame'
+if false; then true; # -->
+<!-- # --><pre style="-webkit-print-color-adjust: exact;background-color:#848484;margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+<!-- # --><span style="color:#1818b2;background-color:#848484;"> ./ubiquitous_bash.sh _pumpCompanion-frame</span>
+<!-- # --></pre>
+<!--
+fi
+ '_o' '_messagePlain_probe' './ubiquitous_bash.sh _pumpCompanion-deframe'
+if false; then true; # -->
+<!-- # --><pre style="-webkit-print-color-adjust: exact;background-color:#848484;margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+<!-- # --><span style="color:#1818b2;background-color:#848484;"> ./ubiquitous_bash.sh _pumpCompanion-deframe</span>
 <!-- # --></pre>
 <!--
 fi
@@ -172,6 +226,172 @@ fi
  '_paragraph_begin'
 if false; then true; # -->
 <!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_page'
+if false; then true; # -->
+<!-- # --><div style="page-break-before: always;margin: 0;padding: 0; border-width: 0px;"> </div>
+<!--
+fi
+ '_heading1' 'Windows11 on ARM64 Compatibility'
+if false; then true; # -->
+<!-- # --><h1>Windows11 on ARM64 Compatibility</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Some ARM64 tablets capable of high-performance x86/x64 emulation have been 
+comparable to the most recent x64 native hardware, compatible with desktop 
+software, and are much more usable for filesystem workflows than 
+smartphone/tablets. Recommended.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_heading2' 'Microsoft Surface Pro 2-in-1 Laptop/Tablet (2024), Windows 11 Copilot+ PC, 13inch Touchscreen OLED Display, Snapdragon X Elite (12 Core), 16GB RAM, 256GB Storage'
+if false; then true; # -->
+<!-- # --><h2>Microsoft Surface Pro 2-in-1 Laptop/Tablet (2024), Windows 11 Copilot+ PC, 13inch Touchscreen OLED Display, Snapdragon X Elite (12 Core), 16GB RAM, 256GB Storage</h2>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+TRRS/USB-C microphone input has non-configurable &#39;enhancement&#39; 
+applied, causing strong intersymbol-interference which lowers the useful 
+bitrate to 16kb/s (useful throughput with overhead of 13.913kb/s). Users 
+should consider seriously whether they really need to specifically transfer 
+files >5MB in to this device from untrusted computers - usually such a 
+tablet would be internet facing, so the opposite direction of transfer, 
+which is unimpeded, would be far more common. If this specific case is a 
+concern, then an external USB sound card may be beneficial.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_heading1' 'Tablets'
+if false; then true; # -->
+<!-- # --><h1>Tablets</h1>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Other recommended tablets.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_heading2' 'Surface Go 2, m3-8100Y CPU 8GB RAM (fanless)'
+if false; then true; # -->
+<!-- # --><h2>Surface Go 2, m3-8100Y CPU 8GB RAM (fanless)</h2>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Both MSWindows and ubdist/Linux are usable without apparent issues. Limited 
+track record.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+
+
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_heading1' 'External Sound Cards'
+if false; then true; # -->
+<!-- # --><h1>External Sound Cards</h1>
+<!--
+fi
+ '_heading2' 'USB Sound Card'
+if false; then true; # -->
+<!-- # --><h2>USB Sound Card</h2>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">Combination of USB isolator and USB sound card has been reasonably 
+effective without introducing much noise to a shared audio bus.
+
+*) https://www.amazon.com/gp/product/B00F4SCCR2/
+*) https://www.amazon.com/gp/product/B07RV6VBNR/
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
+<!--
+fi
+ '_heading2' 'Fiber Optic SPDIF ADC/DAC'
+if false; then true; # -->
+<!-- # --><h2>Fiber Optic SPDIF ADC/DAC</h2>
+<!--
+fi
+ '_paragraph_begin'
+if false; then true; # -->
+<!-- # --><p>
+<!--
+fi
+_t '
+scriptedIllustrator_markup_uk4uPhB663kVcygT0q --><!-- # --><pre style="margin-top: 0px;margin-bottom: 0px;white-space: pre-wrap;">
+Unfortunately, existing Fiber Optic SPDIF ADC/DAC USB devices, while 
+promising in principle, have apparently had unnecessarily poor bit depth 
+and frequency response. Usable throughput is still good, but much less than 
+high-quality 24bit sound cards. Eventually, a custom circuit board may be 
+designed with good quality components and firmware.
+<!-- # --></pre><!-- scriptedIllustrator_markup_uk4uPhB663kVcygT0q
+'
+ '_paragraph_end'
+if false; then true; # -->
+<!-- # --></p>
 <!--
 fi
 _t '

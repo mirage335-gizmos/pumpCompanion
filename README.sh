@@ -60,7 +60,7 @@ See the end of the file for license conditions.
 See license.txt for pumpCompanion license conditions.
 
 
-Safe (malware preventative) file transfer modem software app for MSWindows and Linux through Software Defined Radio or audio hardware. Thoroughly proven schematics for TRRS/TRS adapters to RJ45 Cat6A telephone, and similar, included.
+Safe (malware preventative) file transfer modem software app for MSWindows (including ARM64) and Linux through Software Defined Radio or audio hardware. Thoroughly proven schematics for TRRS/TRS adapters to RJ45 Cat6A telephone, and similar, included.
 
 By transferring data in a discontinuous (ie. analog) format, none of the computer hardware interfaces will present either keyboard traffic that could transfer and install malware, nor any firmware reprogramming that could cause other devices to do this, nor any malformed network packets to buffer overflow.
 
@@ -85,14 +85,73 @@ _t '
 
 '
 _heading1 'Usage'
+_heading2
 _paragraph_begin
-_o _messagePlain_probe './ubiquitous_bash.sh'
+_t 'Please use the &#39;*.lnk&#39; shotrcut files under MSWindows, or the &#39;*.desktop&#39; shortcut files under Linux/KDE/Plasma .
+
+pC-frame
+pC-deframe
+pC-modem
+
+Frame/deframe shortcuts will convert &#39;Downloads/_in.rrf&#39; and &#39;Downloads/_out.rrf&#39; to/from &#39;Downloads/_framed.rrf&#39;, which includes added compression, gain control preamble, error correction information.
+
+Modem will open transmit and receive GNURadio companion flowgraphs, which may be run to transfer the &#39;Downloads/_framed.rrf&#39; file across audio. Variable blocks at the top-left of the flowgraph may be enabled to change speed if necessary.
+
+'
+_paragraph_end
+_heading2 'Alternatives'
+_paragraph_begin
+_o _messagePlain_probe './ubiquitous_bash.sh _gnuradioCompanion'
+_o _messagePlain_probe './ubiquitous_bash.sh _pumpCompanion-frame'
+_o _messagePlain_probe './ubiquitous_bash.sh _pumpCompanion-deframe'
 _paragraph_end
 _paragraph_begin
 _t 'Some computer systems may require audio jack retasking.'
 _o _messagePlain_probe 'hdajackretask'
 _paragraph_end
 _paragraph_begin
+_t '
+
+
+'
+_page
+_heading1 'Windows11 on ARM64 Compatibility'
+_paragraph_begin
+_t 'Some ARM64 tablets capable of high-performance x86/x64 emulation have been comparable to the most recent x64 native hardware, compatible with desktop software, and are much more usable for filesystem workflows than smartphone/tablets. Recommended.'
+_paragraph_end
+_heading2 'Microsoft Surface Pro 2-in-1 Laptop/Tablet (2024), Windows 11 Copilot+ PC, 13inch Touchscreen OLED Display, Snapdragon X Elite (12 Core), 16GB RAM, 256GB Storage'
+_paragraph_begin
+_t 'TRRS/USB-C microphone input has non-configurable &#39;enhancement&#39; applied, causing strong intersymbol-interference which lowers the useful bitrate to 16kb/s (useful throughput with overhead of 13.913kb/s). Users should consider seriously whether they really need to specifically transfer files >5MB in to this device from untrusted computers - usually such a tablet would be internet facing, so the opposite direction of transfer, which is unimpeded, would be far more common. If this specific case is a concern, then an external USB sound card may be beneficial.'
+_paragraph_end
+_t '
+
+
+'
+_heading1 'Tablets'
+_paragraph_begin
+_t 'Other recommended tablets.'
+_paragraph_end
+_heading2 'Surface Go 2, m3-8100Y CPU 8GB RAM (fanless)'
+_paragraph_begin
+_t 'Both MSWindows and ubdist/Linux are usable without apparent issues. Limited track record.'
+_paragraph_end
+_t '
+
+
+'
+_heading1 'External Sound Cards'
+_heading2 'USB Sound Card'
+_paragraph_begin
+_t 'Combination of USB isolator and USB sound card has been reasonably effective without introducing much noise to a shared audio bus.
+
+*) https://www.amazon.com/gp/product/B00F4SCCR2/
+*) https://www.amazon.com/gp/product/B07RV6VBNR/
+'
+_paragraph_end
+_heading2 'Fiber Optic SPDIF ADC/DAC'
+_paragraph_begin
+_t 'Unfortunately, existing Fiber Optic SPDIF ADC/DAC USB devices, while promising in principle, have apparently had unnecessarily poor bit depth and frequency response. Usable throughput is still good, but much less than high-quality 24bit sound cards. Eventually, a custom circuit board may be designed with good quality components and firmware.'
+_paragraph_end
 _t '
 
 
