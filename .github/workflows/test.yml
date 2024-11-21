@@ -129,7 +129,7 @@ jobs:
           cd /
           #Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases") | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
           Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
-          #start "Installer" /wait "extIface" /S
+          #start "Installer" /wait "pumpCompanion" /S
           Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
@@ -196,7 +196,7 @@ jobs:
 
           Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
 
-          #start "Installer" /wait "extIface" /S
+          #start "Installer" /wait "pumpCompanion" /S
           Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
@@ -262,7 +262,7 @@ jobs:
 
           Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
 
-          #start "Installer" /wait "extIface" /S
+          #start "Installer" /wait "pumpCompanion" /S
           Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
