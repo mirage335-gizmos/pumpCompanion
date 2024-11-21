@@ -128,8 +128,24 @@ jobs:
           #mkdir /
           cd /
           #Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases") | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
-          Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
+          #Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
           #start "Installer" /wait "pumpCompanion" /S
+          # 
+          # ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-21 .
+          # Fetch the asset information
+          $asset = (Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) |
+              Where-Object { $_.name -eq "internal" } |
+              ForEach-Object { $_.assets } |
+              Where-Object { $_.name -eq "pumpCompanion.exe" } |
+              Sort-Object -Property { $_.url -replace '\D+(\d+)-\d+$', '$1' } -Descending |
+              Select-Object -First 1
+
+          # Download the asset using authenticated request
+          Invoke-WebRequest -Uri $asset.url -Headers @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+              Accept        = "application/octet-stream"
+          } -OutFile ./pumpCompanion.exe
+          # 
           Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
