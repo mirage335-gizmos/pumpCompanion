@@ -228,6 +228,8 @@ jobs:
           #rclone_limited_conf_base64: ${{ secrets.rclone_limited_conf_base64 }}
       - name: _getCore_ubcp-pumpCompanion
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 180
         run: |
           mkdir /core
@@ -347,6 +349,8 @@ jobs:
           #rclone_limited_conf_base64: ${{ secrets.rclone_limited_conf_base64 }}
       - name: _getCore_ubcp
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 180
         run: |
           mkdir /core
