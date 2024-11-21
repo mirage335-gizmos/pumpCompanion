@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='2640591275'
+export ub_setScriptChecksum_contents='2497195486'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -749,6 +749,18 @@ fi
 
 if _if_cygwin
 then
+	# NOTICE: Recent versions of Cygwin seem to have replaced or omitted '/usr/bin/gpg.exe', possibly in favor of a symlink to '/usr/bin/gpg2.exe' .
+	# CAUTION: This override is specifically to ensure availability of 'gpg' binary through a function, but that could have the effect of presenting an incorrect gpg2 CLI interface to software expecting a gpg1 CLI interface.
+	 # In practice, Debian Linux seem to impose gpg v2 as the CLI interface for gpg - 'gpg --version' responds v2 .
+	# WARNING: All of which is a good reason to always automatically prefer a specified major version binary of gpg (ie. gpg2) in other software.
+	if ! type -p gpg > /dev/null && type -p gpg2 > /dev/null
+	then
+		gpg() {
+			gpg2 "$@"
+		}
+	fi
+	
+	
 	# WARNING: Since MSW/Cygwin is hardly suitable for mounting UNIX/tmpfs/ramfs/etc filesystems, 'mountpoint' 'safety checks' are merely disabled.
 	mountpoint() {
 		true
@@ -804,7 +816,8 @@ then
 	#l() {
 		#_wsl "$@"
 	#}
-	alias l='_wsl'
+	#alias l='_wsl'
+	alias u='_wsl'
 fi
 
 
@@ -10008,9 +10021,14 @@ _fetchDep_debianBullseye_sequence() {
 }
 
 _fetchDep_debianBullseye() {
+	# ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-20 .
+	echo 'APT::AutoRemove::RecommendsImportant "true";
+APT::AutoRemove::SuggestsImportant "true";' | sudo -n tee /etc/apt/apt.conf.d/99autoremove-recommends > /dev/null
+
+	
 	# https://askubuntu.com/questions/104899/make-apt-get-or-aptitude-run-with-y-but-not-prompt-for-replacement-of-configu
-	echo 'Dpkg::Options {"--force-confdef"};' | sudo tee /etc/apt/apt.conf.d/50unattended-replaceconfig-ub > /dev/null
-	echo 'Dpkg::Options {"--force-confold"};' | sudo tee -a /etc/apt/apt.conf.d/50unattended-replaceconfig-ub > /dev/null
+	echo 'Dpkg::Options {"--force-confdef"};' | sudo -n tee /etc/apt/apt.conf.d/50unattended-replaceconfig-ub > /dev/null
+	echo 'Dpkg::Options {"--force-confold"};' | sudo -n tee -a /etc/apt/apt.conf.d/50unattended-replaceconfig-ub > /dev/null
 	
 	export DEBIAN_FRONTEND=noninteractive
 	
@@ -12380,12 +12398,16 @@ _get_from_nix-user() {
 	_getMost_backend sudo -n -u "$currentUser" /bin/bash -l -c 'nix-channel --update'
 
 	
+	# CAUTION: May correctly fail, due to marked insecure, due to CVE-2024-6775 , or similar. Do NOT force.
 	#_custom_installDeb /root/core/installations/Wire.deb
 	_getMost_backend sudo -n -u "$currentUser" /bin/bash -l -c 'nix-env -iA nixpkgs.wire-desktop'
 	_getMost_backend sudo -n -u "$currentUser" /bin/bash -l -c 'xdg-desktop-menu install "$HOME"/.nix-profile/share/applications/wire-desktop.desktop'
+	
+
 	_getMost_backend sudo -n -u "$currentUser" cp -a /home/"$currentUser"/.nix-profile/share/icons /home/"$currentUser"/.local/share/
 	
 	sleep 3
+
 	
 	#nix-env --uninstall geda
 	#export NIXPKGS_ALLOW_INSECURE=1
@@ -18208,8 +18230,12 @@ _createVMimage() {
 		# 25.95GiB
 		#export vmSize=26572
 	
+		# Preferred before addition of any AI models. Smaller than 32GB USB flash drive.
 		# 27.95GiB
-		export vmSize=28620
+		#export vmSize=28620
+	
+		# 37.95GiB
+		export vmSize=38860
 		
 		export vmSize_boundary=$(bc <<< "$vmSize - 1")
 		_createRawImage
@@ -18648,8 +18674,8 @@ _createVMfstab() {
 	
 	# WARNING: May be untested.
 	echo '' | sudo -n tee -a "$globalVirtFS"/etc/fstab
-	echo '#tmpfs /var/spool/cups tmpfs defaults,uid=0,gid=7,umask=007,dmask=007,fmask=117 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
-	echo '#tmpfs /var/cache/cups tmpfs defaults,uid=0,gid=7,umask=007,dmask=000,fmask=007 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
+	echo '#none /var/spool/cups ramfs defaults,uid=0,gid=7,umask=007,dmask=007,fmask=117,size=800M 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
+	echo '#none /var/cache/cups ramfs defaults,uid=0,gid=7,umask=007,dmask=000,fmask=007,size=800M 0 0' | sudo -n tee -a "$globalVirtFS"/etc/fstab
 	echo '' | sudo -n tee -a "$globalVirtFS"/etc/fstab
 	
 	return 0
@@ -22142,14 +22168,34 @@ _setup_wsl2_procedure() {
     _messagePlain_probe wsl --update
     wsl --update
 
+    _messagePlain_probe wsl --install --no-launch
+    wsl --install --no-launch
+    
+    echo 'WSL errors and usage information above may or may not be disregarded.'
+
+    _messagePlain_probe wsl --update
+    wsl --update
+    
+    _messagePlain_probe wsl --set-default-version 2
+    wsl --set-default-version 2
+
+    _messagePlain_probe wsl --update
+    wsl --update
+
     sleep 45
     wsl --update
 
     sleep 5
     wsl --update
+    
+    sleep 5
+    wsl --set-default-version 2
 
     sleep 5
     wsl --update
+    
+    sleep 5
+    wsl --set-default-version 2
 }
 _setup_wsl2() {
     "$scriptAbsoluteLocation" _setup_wsl2_procedure "$@"
@@ -22662,6 +22708,436 @@ _request_visualPrompt() {
 	_messagePlain_request 'export profileScriptFolder="'"$scriptAbsoluteFolder"'"'
 	_messagePlain_request ". "'"'"$scriptAbsoluteLocation"'"' --profile _importShortcuts
 }
+
+
+
+
+
+
+_setup_researchEngine() {
+	if [[ -e "$scriptLib"/kit/app/researchEngine ]]
+	then
+		export kit_dir_researchEngine="$scriptLib"/kit/app/researchEngine
+		. "$scriptLib"/kit/app/researchEngine/kit/researchEngine.sh
+		if [[ "$1" == "" ]]
+		then
+			_setup_researchEngine-kit
+		else
+			"$@"
+		fi
+		return
+	fi
+	
+	if [[ -e "$scriptLib"/ubiquitous_bash/_lib/kit/app/researchEngine ]]
+	then
+		export kit_dir_researchEngine="$scriptLib"/ubiquitous_bash/_lib/kit/app/researchEngine
+		. "$scriptLib"/ubiquitous_bash/_lib/kit/app/researchEngine/kit/researchEngine.sh
+		if [[ "$1" == "" ]]
+		then
+			_setup_researchEngine-kit
+		else
+			"$@"
+		fi
+		return
+	fi
+	
+	if [[ -e "$scriptLib"/ubDistBuild/_lib/ubiquitous_bash/_lib/kit/app/researchEngine ]]
+	then
+		export kit_dir_researchEngine="$scriptLib"/ubDistBuild/_lib/ubiquitous_bash/_lib/kit/app/researchEngine
+		. "$scriptLib"/ubDistBuild/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/kit/researchEngine.sh
+		if [[ "$1" == "" ]]
+		then
+			_setup_researchEngine-kit
+		else
+			"$@"
+		fi
+		return
+	fi
+	
+	_messagePlain_bad 'bad: missing: kit researchEngine'
+	_messageFAIL
+	_stop 1
+}
+
+
+
+# ATTENTION: NOTICE: WIP: AI models bring such efficient and effective natural language processing, reasoning, parsing, summarization, API/documentation understanding, and code generation, as to backport an essential yet unusually new capability to some of the oldest (ie. >20years old) computer CPUs (even without a GPU). ATTENTION: Unusually, all 'ai' functions (including those here), may be very interdependent on the 'shortcut' functions. This has two consequences:
+# (1) CAUTION: No 'compile' of the script should include only the 'ai' functions without the 'shortcut' functions, this WILL cause potentially dangerous failures.
+# (2) NOTICE: Please DO read all comments from both directories for both VERY significant TODO items, and possible obligations you may have to follow to actually use some specifically supported AI models.
+
+
+
+
+
+
+
+_setup_ollama_model_augment_sequence() {
+	# NOTICE: WARNING: Normally, any redistribution of a 'Llama', similar AI model, or other AI model, would be from an authoratative corporation, such as "Soaring Distributions LLC" .
+	
+	# DANGER: An 'augment' model, which may be included with 'ubdist' or other 'dist/OS' is intended SOLELY for developer use. As a public domain or some publicly available AI model licensing terms apparently allow, this model may be modified for better compliance with technical use cases (such as not disregarding the previous conversation when given repeated 'system' prompts), or for smaller model size (eg. through quantization, or use of a lower parameter count model).
+	
+	# DANGER DANGER: Any 'augment' model really should NOT be used for 'end user' services, including any any built-in help for any end-user program or machinery (excepting that it may or may NOT be reasonable to include with some non-commercial open-source software as a built-in help, wizard, etc, following usual expectations of community provided software). You should expect users WILL, at best, more easily 'jailbreak' such a model, and, due to the emphasis on technical usage (where reliability above 0.2% failure rates, unusual repetitive prompting, etc) as well as small model size, there may be both a complete absence of any safeguards as well as a (albeit not yet observed) possibility of introducing harmful subjects to otherwise harmless conversation.
+	
+	# YOU HAVE BEEN WARNED ! DEVELOPERS ONLY, NOT USERS !
+	
+	
+	# Any distribution or any other activity regarding any 'augmentation' or other AI model is without any warranty of any kind. Superseding all other statements, there are no representations or warranties of any kind concerning the Work, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+	
+	# SPECIFICALLY THIS STATEMENT DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER.
+	
+	
+	# NOTICE: Purpose of the 'augment' model is, above all other purposes, both:
+	#  (1) To supervise and direct decisions and analysis by other AI models (such as from vision encoders, but also mathematical reasoning specific LLMs, computer activity and security logging LLMs, etc).
+	#  (2) To assist and possibly supervise 'human-in-the-loop' decision making (eg. to sanity check human responses).
+	
+	
+	# https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/tree/main
+	# https://web.archive.org/web/20240831194035/https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/tree/main
+	# Explicitly states 'License: llama3.1'. Readme file from repository does NOT contradict this.
+	
+	# https://www.llama.com/llama3_1/license/
+	# https://huggingface.co/meta-llama/Meta-Llama-3.1-70B-Instruct/blob/main/LICENSE
+	#  NOTICE: ATTENTION: This license has been preserved as 'LICENSE-Llama-3.1.txt', but this license does NOT apply to any 'ubiquitous_bash' code or any other work that is not either a work by Meta or strictly a derivative of a work by Meta (such as a modified AI model GGUF or safetensors file) !
+	
+	# https://www.llama.com/llama3_1/use-policy/
+	
+	
+	# https://www.llama.com/llama3_1/license/
+	#  'include “Llama” at the beginning of any such AI model name'
+	# ATTENTION: Nevertheless, it is very possible a non-'Llama' model will eventually be used, especially as science and technology (eg. plasma recombination EUV physics) related datasets (eg. relevant Wikipedia articles) are increasingly gathered.
+	
+	
+	# https://www.llama.com/llama3_2/license/
+	# https://www.llama.com/llama3_2/use-policy/
+	#  'or to enable functionality disabled by Meta'
+	#   The functionality offered by 'Llama 3.2' (eg. multimodal functionality) is expected to exceed the purpose of an 'augment' model, but the reliabilility limitations imposed are expected prohibitive (especially regarding repeated 'system' prompts). Thus, it is expected that 'Llama 3.1' will be the last 'Llama' model used as an 'augment' model. This is NOT a concern, because it is expected that 'Llama 3.1' already reached a point of diminishing returns on what can be achieved by AI model training methods alone.
+	#   Purposes other than as an 'augment' model, which is a text-only technical use case, and expected to require fine tuning (eg. on prompt/responses generated from the 'ubiquitous_bash' codebase), at that, are expected to achieve very adequate performance from 'stock' original 'Llama' models, or at least those fine-tuned for specific use cases (eg. needle-in-haystack, computer vision object recognition, robot motor control, etc).
+	
+	
+	
+	
+	
+	
+	
+	# ATTENTION: Default context size is low to ensure compatibility with low-RAM computers (LLM on CPU performance generally being acceptable).
+	# STRONGLY RECOMMENDED to greatly increase the context length (6144) if at all possible (>32GB RAM) or to decrease if necessary (eg. 8GB RAM) .
+	
+	#/clear
+	#/set parameter num_thread 768
+	#/set parameter num_gpu 0
+	
+	# 4GB (presumed)
+	#/set parameter num_ctx 512
+
+	# 8GB (presumed)
+	#/set parameter num_ctx 2048
+
+	#/set parameter num_ctx 4096
+
+	# 16GB (presumed)
+	#/set parameter num_ctx 8192
+
+	#/set parameter num_ctx 16384
+
+	# 32GB
+	#/set parameter num_ctx 32768
+
+	# 68.5GiB (presumed)
+	#/set parameter num_ctx 131072
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	local functionEntryPWD="$PWD"
+	_start
+	
+	
+	cd "$safeTmp"
+	
+	
+	
+	
+	
+	
+	# TODO: Replace with model fine-tuned by additional relevant codebases and scientific knowledge.
+	
+	# TODO: TODO: Intentionally overfit smaller parameter models by reinforcing prompt/response for specific knowledge (eg. plasma recombiation light emission physics) and reasoning (eg. robot motor control).
+	
+	
+	# TODO: There may or may not be more track record with this slightly different model, using Q4-K-M quantization.
+	# https://huggingface.co/grimjim/Llama-3.1-8B-Instruct-abliterated_via_adapter-GGUF
+	
+	# TODO: Consider alternative quantization, especially IQ2-M, IQ4-XS. Beware Q4-K-M may have some community testing of important edge cases already.
+	# https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/tree/main
+	
+	echo 'FROM ./llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf
+PARAMETER num_ctx 6144' > Llama-augment.Modelfile
+	
+	#wget 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf'
+	aria2c --log=- --log-level=info -x "3" -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf'
+	[[ ! -e 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' ]] && aria2c --log=- --log-level=info -x "3" -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' --disable-ipv6=true
+	
+	
+	_service_ollama
+	
+	ollama create Llama-augment -f Llama-augment.Modelfile
+	
+	rm -f llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf
+	rm -f Llama-augment.Modelfile
+	
+	_ollama_stop_augment
+	
+	
+	cd "$functionEntryPWD"
+	_stop
+}
+_setup_ollama_sequence() {
+	local functionEntryPWD
+	functionEntryPWD="$PWD"
+
+	_start
+	
+	echo 'setup: ollama: https://ollama.com/install.sh'
+
+	cd "$safeTmp"
+
+	local currentExitStatus="1"
+	
+	# DANGER: This upstream script, as with many, has been known to use 'rm' recursively without the safety checks of '_safeRMR' .
+	# CAUTION: This upstream script may not catch error conditions upon failure, which may increase the size of dist/OS images built after such failures.
+	curl -fsSL https://ollama.com/install.sh | sh
+	currentExitStatus="$?"
+	sleep 3
+
+	# Apparently necessary to enable the service, due to systemctl not being usefully available within ChRoot.
+	sudo -n mkdir -p /etc/systemd/system/default.target.wants/
+	sudo -n ln -sf /etc/systemd/system/ollama.service /etc/systemd/system/default.target.wants/ollama.service
+
+	cd "$functionEntryPWD"
+	_stop "$currentExitStatus"
+}
+_setup_ollama() {
+	#_wantGetDep sudo
+	#_mustGetSudo
+	#export currentUser_ollama=$(_user_ollama)
+	
+	if ! _if_cygwin
+	then
+		"$scriptAbsoluteLocation" _setup_ollama_sequence "$@"
+	fi
+	
+	type -p ollama > /dev/null 2>&1 && "$scriptAbsoluteLocation" _setup_ollama_model_augment_sequence
+}
+
+_test_ollama() {
+	#_mustGetSudo
+	#export currentUser_ollama=$(_user_ollama)
+
+	if ! type -p ollama > /dev/null 2>&1
+	then
+		_setup_ollama
+	fi
+	
+	
+	if ! _if_cygwin
+	then
+		! type -p ollama > /dev/null 2>&1 && _messageFAIL && _stop 1
+	else
+		! type -p ollama > /dev/null 2>&1 && echo 'warn: acepted: cygwin: missing: ollama'
+		# Accepted. Do NOT return with error status (ie. do NOT 'return 1') .
+	fi
+	
+	return 0
+}
+
+_vector_ollama_procedure() {
+	! _ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep true > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+	_ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep false > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+	
+	! _ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep false > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+	_ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep true > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+
+	return 0
+}
+_vector_ollama() {
+	#_mustGetSudo
+	#export currentUser_ollama=$(_user_ollama)
+
+	_service_ollama
+	
+	if _if_cygwin && ! type -p ollama > /dev/null 2>&1
+	then
+		echo 'warn: accepted: cygwin: missing: ollama'
+	elif type -p ollama > /dev/null 2>&1
+	then
+		if [[ "$hostMemoryQuantity" -lt 28000000 ]]
+		then
+			_messagePlain_nominal '_vector_ollama: begin: low RAM detected'
+			local currentExitStatus
+			currentExitStatus="1"
+			
+			_ollama_set_sequence-augment-lowRAM
+
+			"$scriptAbsoluteLocation" _vector_ollama_procedure
+			currentExitStatus="$?"
+
+			_ollama_set_sequence-augment-normal
+
+			[[ "$currentExitStatus" != "0" ]] && _messageFAIL && _stop 1
+			_messagePlain_nominal '_vector_ollama: end: low RAM detected'
+		else
+			_vector_ollama_procedure
+		fi
+	fi
+
+	_ollama_stop_augment
+
+	return 0
+}
+
+
+
+
+
+_user_ollama() {
+	#_mustGetSudo
+	local currentUser_temp
+	[[ "$currentUser_researchEngine" != "" ]] && currentUser_temp="$currentUser_researchEngine"
+	[[ "$currentUser_temp" == "" ]] && currentUser_temp="$currentUser"
+	[[ "$currentUser_temp" == "" ]] && [[ "$USER" != "root" ]] && currentUser_temp="$USER"
+	[[ "$currentUser_temp" == "" ]] && currentUser_temp="user"
+
+	echo "$currentUser_temp"
+	return 0
+}
+
+
+# Very unusual. Ensures service is available, if normal systemd service is not.
+# WARNING: Should NOT run standalone service if systemd service is available. Thus, it is important to check if the service is already available (as would normally always be the case when booted with systemd available).
+# Mostly, this is used to workaround very unusual dist/OS build and custom situations (ie. ChRoot, GitHub Actions, etc).
+# CAUTION: This leaves a background process running, which must continue running (ie. not hangup) while other programs use it, and which must terminate upon shutdown , _closeChRoot , etc .
+_service_ollama() {
+	if ! wget --timeout=1 --tries=3 127.0.0.1:11434 > /dev/null -q -O - > /dev/null
+	then
+		sudo -n -u ollama ollama serve &
+		while ! wget --timeout=1 --tries=3 127.0.0.1:11434 > /dev/null -q -O - > /dev/null
+		do
+			echo "wait: ollama: service"
+			sleep 1
+		done
+		sleep 45
+	fi
+	
+	
+	if ! wget --timeout=1 --tries=3 127.0.0.1:11434 > /dev/null -q -O - > /dev/null
+	then
+		echo 'fail: _service_ollama: ollama: 127.0.0.1:11434'
+		return 1
+	fi
+}
+
+
+
+
+
+
+
+
+# TODO: TODO: Reference implementation of alternative, easily scriptable Text-User-Interface (TUI) for 'ollama', for more convenient GUI wrapper design,etc.
+# https://huggingface.co/blog/llama2#how-to-prompt-llama-2
+#<s>[INST] <<SYS>>
+#{{ system_prompt }}
+#<</SYS>>
+#
+#{{ user_msg_1 }} [/INST] {{ model_answer_1 }} </s><s>[INST] {{ user_msg_2 }} [/INST]
+
+
+
+
+# https://github.com/ollama/ollama/issues/6286
+_ollama_set_sequence-augment-normal() {
+	local functionEntryPWD
+	functionEntryPWD="$PWD"
+
+	_start
+	cd "$safeTmp"
+
+	ollama show Llama-augment --modelfile | sed 's/PARAMETER num_ctx [0-9]*/PARAMETER num_ctx 6144/' > ./Llama-augment-tmp.Modelfile
+	sleep 9
+	ollama create Llama-augment --file ./Llama-augment-tmp.Modelfile
+	sleep 9
+
+	cd "$functionEntryPWD"
+	_stop
+}
+_ollama_set-augment-normal() {
+	"$scriptAbsoluteLocation" _ollama_set_sequence-augment-normal "$@"
+}
+# Temporarily reduce RAM/VRAM requirement for constrained CI .
+_ollama_set_sequence-augment-lowRAM() {
+	local functionEntryPWD
+	functionEntryPWD="$PWD"
+
+	_start
+	cd "$safeTmp"
+
+	ollama show Llama-augment --modelfile | sed 's/PARAMETER num_ctx [0-9]*/PARAMETER num_ctx 512/' > ./Llama-augment-tmp.Modelfile
+	sleep 9
+	ollama create Llama-augment --file ./Llama-augment-tmp.Modelfile
+	sleep 9
+
+
+	cd "$functionEntryPWD"
+	_stop
+}
+_ollama_set-augment-lowRAM() {
+	"$scriptAbsoluteLocation" _ollama_set_sequence-augment-lowRAM "$@"
+}
+
+
+_ollama_stop_augment() {
+	ollama stop Llama-augment
+}
+
+_ollama_run_augment() {
+	# NOTICE: ATTENTION: Additional documenation about the 'augment' model may be present at comments around the '_setup_ollama_model_augment_sequence' and similar functions .
+	
+	# DANGER DANGER: Any 'augment' model really should NOT be used for 'end user' services, including any any built-in help for any end-user program or machinery (excepting that it may or may NOT be reasonable to include with some non-commercial open-source software as a built-in help, wizard, etc, following usual expectations of community provided software). You should expect users WILL, at best, more easily 'jailbreak' such a model, and, due to the emphasis on technical usage (where reliability above 0.2% failure rates, unusual repetitive prompting, etc) as well as small model size, there may be both a complete absence of any safeguards as well as a (albeit not yet observed) possibility of introducing harmful subjects to otherwise harmless conversation.
+	
+	# YOU HAVE BEEN WARNED ! DEVELOPERS ONLY, NOT USERS !
+	
+	# https://www.llama.com/llama3_1/license/
+	#  'include “Llama” at the beginning of any such AI model name'
+	# ATTENTION: Nevertheless, it is very possible a non-'Llama' model will eventually be used, especially as science and technology (eg. plasma recombination EUV physics) related datasets (eg. relevant Wikipedia articles) are increasingly gathered.
+	
+	# https://www.llama.com/llama3_1/use-policy/
+	
+	ollama run Llama-augment "$@"
+}
+# 'l'... 'LLM', 'language', 'Llama', etc .
+_l() {
+	_ollama_run_augment "$@"
+}
+alias l=_l
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #https://stackoverflow.com/questions/15432156/display-filename-before-matching-line-grep
 _grepFileLine() {
@@ -24332,130 +24808,6 @@ _bashdb() {
 
 _ubdb() {
 	_bashdb "$scriptAbsoluteLocation" "$@"
-}
-
-_test_devatom() {
-	_wantGetDep rsync
-	
-	_wantGetDep atom
-	
-	#local atomDetectedVersion=$(atom --version | head -n 1 | cut -f 2- -d \: | cut -f 2- -d \  | cut -f 2 -d \. )
-	#! [[ "$atomDetectedVersion" -ge "27" ]] && echo atom too old && return 1
-	
-	return 0
-}
-
-_install_fakeHome_atom() {	
-	_link_fakeHome "$atomFakeHomeSource"/.atom .atom
-	
-	_link_fakeHome "$atomFakeHomeSource"/.config/Atom .config/Atom
-}
-
-_set_atomFakeHomeSource() {
-	export atomFakeHomeSource="$scriptLib"/app/atom/home
-	
-	if ! [[ -e "$atomFakeHomeSource" ]]
-	then
-		true
-		#export atomFakeHomeSource="$scriptLib"/ubiquitous_bash/_lib/app/atom/home
-	fi
-	
-	if [[ ! -e "$scriptLib"/app/atom/home ]]
-	then
-		_messageError 'missing: atomFakeHomeSource= '"$atomFakeHomeSource" > /dev/tty
-		_messageFAIL
-		_stop 1
-	fi
-}
-
-_atom_user_procedure() {
-	_set_atomFakeHomeSource
-	
-	export actualFakeHome="$instancedFakeHome"
-	#export actualFakeHome="$globalFakeHome"
-	export fakeHomeEditLib="false"
-	export keepFakeHome="true"
-	
-	_install_fakeHome_atom
-	
-	_fakeHome atom --foreground "$@"
-}
-
-_atom_user_sequence() {
-	_start
-	
-	"$scriptAbsoluteLocation" _atom_user_procedure "$@"
-	
-	_stop $?
-}
-
-_atom_user() {
-	_atom_user_sequence "$@"  > /dev/null 2>&1 &
-}
-
-_atom_edit_procedure() {
-	_set_atomFakeHomeSource
-	
-	export actualFakeHome="$instancedFakeHome"
-	#export actualFakeHome="$globalFakeHome"
-	export fakeHomeEditLib="true"
-	export keepFakeHome="true"
-	
-	_install_fakeHome_atom
-	
-	_fakeHome atom --foreground "$@"
-}
-
-_atom_edit_sequence() {
-	_start
-	
-	_atom_edit_procedure "$@"
-	
-	_stop $?
-}
-
-_atom_edit() {
-	"$scriptAbsoluteLocation" _atom_edit_sequence "$@"  > /dev/null 2>&1 &
-}
-
-_atom_config() {
-	_set_atomFakeHomeSource
-	
-	export ATOM_HOME="$atomFakeHomeSource"/.atom
-	atom "$@"
-}
-
-_atom_tmp_procedure() {
-	_set_atomFakeHomeSource
-	
-	mkdir -p "$safeTmp"/atom
-	
-	rsync -q -ax --exclude "/.cache" "$atomFakeHomeSource"/.atom/ "$safeTmp"/atom/
-	
-	export ATOM_HOME="$safeTmp"/atom
-	atom --foreground "$@"
-	unset ATOM_HOME
-}
-
-_atom_tmp_sequence() {
-	_start
-	
-	_atom_tmp_procedure "$@"
-	
-	_stop $?
-}
-
-_atom_tmp() {
-	"$scriptAbsoluteLocation" _atom_tmp_sequence "$@"  > /dev/null 2>&1 &
-	wait
-}
-
-_atom() {
-	_atom_tmp "$@"
-}
-
-_ubide() {
-	_atom . ./ubiquitous_bash.sh "$@"
 }
 
 _set_java__eclipse() {
@@ -33478,7 +33830,7 @@ _gitPull_ubiquitous() {
 
 _gitClone_ubiquitous() {
 	#git clone --depth 1 git@github.com:mirage335/ubiquitous_bash.git
-	_gitBest clone --depth 1 git@github.com:mirage335/ubiquitous_bash.git
+	_gitBest clone --recursive --depth 1 git@github.com:mirage335/ubiquitous_bash.git
 }
 
 _selfCloneUbiquitous() {
@@ -35023,16 +35375,21 @@ _x220_vgaTablet() {
 }
 
 
+_w540_check() {
+	if ! grep 'ThinkPad W540' /sys/devices/virtual/dmi/id/product_family > /dev/null 2>&1 && ! grep 'ThinkPad W540' /sys/devices/virtual/dmi/id/product_version > /dev/null 2>&1
+	then
+		return 1
+	fi
+	return 0
+}
+
 # ATTENTION: Override with 'ops.sh' if necessary.
 # WARNING: Disable Kscreen background service recommended. Use KDE "System Settings" .
 _w540_display_start() {
-	_w540_display_start
-}
-
-
-
-# ATTENTION: Override with 'ops.sh' if necessary.
-_w540_display_start() {
+	! _w540_check && return 1
+	
+	
+	
 	local currentIteration
 	currentIteration=0
 	while ! pgrep plasmashell > /dev/null 2>&1 && [[ "$currentIteration" -lt "15" ]]
@@ -35056,6 +35413,10 @@ _w540_display_start() {
 
 # ATTENTION: May rely on some assumptions about the software configuration of the laptop, and may be very specific to only W540 .
 _w540_display-leftOf() {
+	! _w540_check && return 1
+	
+	
+	
 	xrandr --output eDP-1 --mode 1920x1080
 	
 	xrandr --output HDMI-1 --scale 1.375x1.375
@@ -42476,6 +42837,9 @@ _vector() {
 	
 	
 	_tryExec "_vector_virtUser"
+	
+	
+	_tryExec "_vector_ollama"
 }
 
 
@@ -44248,6 +44612,11 @@ _test() {
 	# ATTENTION: Override with 'ops' or similar.
 	# More portable computing (ie. better laptops) and hardware (eg. mechanical) USB switches are also displacing the usefulness of such keyboard/mouse sharing software.
 	#_tryExec "_test_synergy"
+	
+	
+	
+	_tryExec "_test_ollama"
+	
 	
 	
 	_tryExec "_test_devqalculate"
@@ -46487,6 +46856,7 @@ _init_deps() {
 	
 	export enUb_dev=""
 	export enUb_dev_heavy=""
+	export enUb_dev_heavy_atom=""
 	
 	export enUb_generic=""
 	
@@ -46570,6 +46940,12 @@ _deps_dev() {
 _deps_dev_heavy() {
 	_deps_notLean
 	export enUb_dev_heavy="true"
+}
+
+_deps_dev_heavy_atom() {
+	_deps_notLean
+	export enUb_dev_heavy="true"
+	export enUb_dev_heavy_atom="true"
 }
 
 _deps_cloud_heavy() {
@@ -46691,6 +47067,12 @@ _deps_x11() {
 	_deps_build
 	_deps_notLean
 	export enUb_x11="true"
+}
+
+_deps_ai() {
+	_deps_notLean
+	export enUb_researchEngine="true"
+	export enUb_ollama="true"
 }
 
 _deps_blockchain() {
@@ -46900,6 +47282,12 @@ _deps_calculators() {
 	_deps_generic
 	
 	export enUb_calculators="true"
+}
+
+_deps_ai_shortuts() {
+	_deps_generic
+	
+	export enUb_ollama_shortcuts="true"
 }
 
 #placeholder, define under "queue/build"
@@ -47449,6 +47837,9 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
+		_deps_ai
+		_deps_ai_shortuts
+		
 		_deps_calculators
 		
 		#_deps_queue
@@ -47506,6 +47897,9 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
+		_deps_ai
+		_deps_ai_shortuts
+		
 		_deps_calculators
 		
 		_deps_channel
@@ -47524,6 +47918,8 @@ _compile_bash_deps() {
 		
 		_deps_python
 		_deps_haskell
+		
+		_deps_ai_shortuts
 		
 		_deps_calculators
 		
@@ -47547,6 +47943,8 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
+		_deps_ai_shortuts
+		
 		_deps_calculators
 		
 		_deps_channel
@@ -47565,6 +47963,7 @@ _compile_bash_deps() {
 	if [[ "$1" == "monolithic" ]]
 	then
 		_deps_dev_heavy
+		#_deps_dev_heavy_atom
 		_deps_dev
 		
 		#_deps_cloud_heavy
@@ -47602,6 +48001,9 @@ _compile_bash_deps() {
 		
 		_deps_python
 		_deps_haskell
+		
+		_deps_ai
+		_deps_ai_shortuts
 		
 		_deps_calculators
 		
@@ -47663,6 +48065,7 @@ _compile_bash_deps() {
 	if [[ "$1" == "core" ]]
 	then
 		_deps_dev_heavy
+		#_deps_dev_heavy_atom
 		_deps_dev
 		
 		#_deps_cloud_heavy
@@ -47700,6 +48103,9 @@ _compile_bash_deps() {
 		
 		_deps_python
 		_deps_haskell
+		
+		_deps_ai
+		_deps_ai_shortuts
 		
 		_deps_calculators
 		
@@ -47761,6 +48167,7 @@ _compile_bash_deps() {
 	if [[ "$1" == "" ]] || [[ "$1" == "ubiquitous_bash" ]] || [[ "$1" == "ubiquitous_bash.sh" ]] || [[ "$1" == "complete" ]]
 	then
 		_deps_dev_heavy
+		#_deps_dev_heavy_atom
 		_deps_dev
 		
 		_deps_cloud_heavy
@@ -47798,6 +48205,9 @@ _compile_bash_deps() {
 		
 		_deps_python
 		_deps_haskell
+		
+		_deps_ai
+		_deps_ai_shortuts
 		
 		_deps_calculators
 		
@@ -48122,6 +48532,15 @@ _compile_bash_shortcuts() {
 	
 	includeScriptList+=( "shortcuts/prompt"/visualPrompt.sh )
 	
+	
+	[[ "$enUb_researchEngine" == "true" ]] && includeScriptList+=( "ai"/researchEngine.sh )
+	
+	[[ "$enUb_ollama" == "true" ]] && includeScriptList+=( "ai/ollama"/ollama.sh )
+	
+	( ( [[ "$enUb_dev_heavy" == "true" ]] ) || [[ "$enUb_ollama_shortcuts" == "true" ]] ) && includeScriptList+=( "shortcuts/ai/ollama"/ollama.sh )
+	
+	
+	
 	#[[ "$enUb_dev_heavy" == "true" ]] && 
 	includeScriptList+=( "shortcuts/dev"/devsearch.sh )
 	
@@ -48132,7 +48551,7 @@ _compile_bash_shortcuts() {
 	( ( [[ "$enUb_dev_heavy" == "true" ]] || [[ "$enUb_metaengine" == "true" ]] ) || [[ "$enUb_calculators" == "true" ]] ) && includeScriptList+=( "shortcuts/dev/app/calculators"/scriptedIllustrator_terminal.sh )
 	
 	[[ "$enUb_fakehome" == "true" ]] && [[ "$enUb_dev_heavy" == "true" ]] && includeScriptList+=( "shortcuts/dev/app"/devemacs.sh )
-	[[ "$enUb_fakehome" == "true" ]] && [[ "$enUb_dev_heavy" == "true" ]] && includeScriptList+=( "shortcuts/dev/app"/devatom.sh )
+	[[ "$enUb_fakehome" == "true" ]] && [[ "$enUb_dev_heavy" == "true" ]] && [[ "$enUb_dev_heavy_atom" == "true" ]] && includeScriptList+=( "shortcuts/dev/app"/devatom.sh )
 	
 	[[ "$enUb_fakehome" == "true" ]] && [[ "$enUb_abstractfs" == "true" ]] && [[ "$enUb_dev_heavy" == "true" ]] && includeScriptList+=( "shortcuts/dev/app/eclipse"/deveclipse_java.sh )
 	[[ "$enUb_fakehome" == "true" ]] && [[ "$enUb_abstractfs" == "true" ]] && [[ "$enUb_dev_heavy" == "true" ]] && includeScriptList+=( "shortcuts/dev/app/eclipse"/deveclipse_env.sh )
