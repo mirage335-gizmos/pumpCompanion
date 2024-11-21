@@ -323,6 +323,7 @@ jobs:
         timeout-minutes: 240
         run: |
           #Set-Item -Path Env:devfast -Value ("true")
+          cd C:\core\infrastructure\pumpCompanion\
           ./_test | tee /_test.log
           $SEL = cat /_test.log | Select-String -Pattern 'FAIL' -CaseSensitive -SimpleMatch
           if ($SEL -ne $null)
@@ -357,7 +358,62 @@ jobs:
           mkdir /core/infrastructure
           cd /core/infrastructure
 
-          Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
+          #Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
+
+
+          # ATTRIBUTION-AI: Largely attributable to ChatGPT o1-preview 2024-11-21 .
+          # Fetch the latest release
+          try {
+              Write-Host "Fetching the latest release..."
+              $release = Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases/latest" -Headers @{
+                  Authorization = "Bearer $env:GITHUB_TOKEN"
+              }
+          } catch {
+              Write-Error "Failed to fetch the latest release: $_"
+              exit 1
+          }
+
+          if ($release -eq $null) {
+              Write-Error "No latest release found."
+              exit 1
+          }
+
+          Write-Host "Latest release: $($release.name)"
+
+          $assets = $release.assets
+
+          if ($assets -eq $null -or $assets.Count -eq 0) {
+              Write-Error "No assets found in the latest release."
+              exit 1
+          }
+
+          Write-Host "Assets found: $($assets.Count)"
+
+          # Find the asset named 'pumpCompanion.exe'
+          $asset = $assets |
+              Where-Object { $_.name -eq "pumpCompanion.exe" } |
+              Select-Object -First 1
+
+          if ($asset -eq $null) {
+              Write-Error "Asset 'pumpCompanion.exe' not found in the latest release."
+              exit 1
+          }
+
+          Write-Host "Asset found: $($asset.name)"
+
+          Write-Host "Downloading asset..."
+          try {
+              Invoke-WebRequest -Uri $asset.url -Headers @{
+                  Authorization = "Bearer $env:GITHUB_TOKEN"
+                  Accept        = "application/octet-stream"
+              } -OutFile ./pumpCompanion.exe
+              Write-Host "Download completed."
+          } catch {
+              Write-Error "Failed to download asset: $_"
+              exit 1
+          }
+          # 
+
 
           #start "Installer" /wait "pumpCompanion" /S
           Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
@@ -391,6 +447,7 @@ jobs:
         timeout-minutes: 240
         run: |
           #Set-Item -Path Env:devfast -Value ("true")
+          cd C:\core\infrastructure\pumpCompanion\
           ./_test | tee /_test.log
           $SEL = cat /_test.log | Select-String -Pattern 'FAIL' -CaseSensitive -SimpleMatch
           if ($SEL -ne $null)
