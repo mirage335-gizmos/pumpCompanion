@@ -123,6 +123,8 @@ jobs:
           #rclone_limited_conf_base64: ${{ secrets.rclone_limited_conf_base64 }}
       - name: _getCore_ubcp-pumpCompanion
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 180
         run: |
           #mkdir /
@@ -133,16 +135,38 @@ jobs:
           # 
           # ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-21 .
           # Fetch the asset information
-          $asset = (Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) |
-              Where-Object { $_.name -eq "internal" } |
-              ForEach-Object { $_.assets } |
+          # 
+          $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-gizmos/pumpCompanion/releases" -Headers @{
+              Authorization = "Bearer $env:GITHUB_TOKEN"
+          }
+
+          # Debugging output
+          Write-Host "Releases fetched: $($releases.Count)"
+
+          $release = $releases | Where-Object { $_.name -eq "internal" }
+
+          if ($release -eq $null) {
+              Write-Error "Release 'internal' not found."
+              exit 1
+          }
+
+          $assets = $release.assets
+
+          $asset = $assets |
               Where-Object { $_.name -eq "pumpCompanion.exe" } |
-              Sort-Object -Property { $_.url -replace '\D+(\d+)-\d+$', '$1' } -Descending |
+              Sort-Object -Property { $_.id } -Descending |
               Select-Object -First 1
+
+          if ($asset -eq $null) {
+              Write-Error "Asset 'pumpCompanion.exe' not found."
+              exit 1
+          }
+
+          Write-Host "Asset found: $($asset.name)"
 
           # Download the asset using authenticated request
           Invoke-WebRequest -Uri $asset.url -Headers @{
-              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+              Authorization = "Bearer $env:GITHUB_TOKEN"
               Accept        = "application/octet-stream"
           } -OutFile ./pumpCompanion.exe
           # 
