@@ -127,10 +127,10 @@ jobs:
         run: |
           #mkdir /
           cd /
-          #Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases") | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "extIface.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./extIface.exe
-          Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "extIface.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./extIface.exe
+          #Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases") | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
+          Invoke-WebRequest -Uri (((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }) | Where-Object { $_.name -eq "internal" } | ForEach-Object { $_.assets } | Where-Object {$_.name -eq "pumpCompanion.exe"} | Sort-Object -Property {$_.browser_download_url -replace '\D+(\d+)-\d+$', '$1'} -Descending | Select-Object -First 1).browser_download_url) -OutFile ./pumpCompanion.exe
           #start "Installer" /wait "extIface" /S
-          Start-Process -FilePath ".\extIface.exe" -ArgumentList "/wait", ".\extIface.exe", "/S" -NoNewWindow -Wait
+          Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
         timeout-minutes: 180
@@ -194,10 +194,10 @@ jobs:
           mkdir /core/infrastructure
           cd /core/infrastructure
 
-          Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "extIface.exe"}).browser_download_url -OutFile ./extIface.exe
+          Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
 
           #start "Installer" /wait "extIface" /S
-          Start-Process -FilePath ".\extIface.exe" -ArgumentList "/wait", ".\extIface.exe", "/S" -NoNewWindow -Wait
+          Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
         timeout-minutes: 180
@@ -260,10 +260,10 @@ jobs:
           mkdir /core/infrastructure
           cd /core/infrastructure
 
-          Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "extIface.exe"}).browser_download_url -OutFile ./extIface.exe
+          Invoke-WebRequest -Uri ((Invoke-RestMethod -Uri "https://api.github.com/repos/mirage335-colossus/pumpCompanion/releases/latest" -Headers @{Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }).assets | Where-Object {$_.name -eq "pumpCompanion.exe"}).browser_download_url -OutFile ./pumpCompanion.exe
 
           #start "Installer" /wait "extIface" /S
-          Start-Process -FilePath ".\extIface.exe" -ArgumentList "/wait", ".\extIface.exe", "/S" -NoNewWindow -Wait
+          Start-Process -FilePath ".\pumpCompanion.exe" -ArgumentList "/wait", ".\pumpCompanion.exe", "/S" -NoNewWindow -Wait
       - name: _getMinimal_cloud
         shell: pwsh
         timeout-minutes: 180
