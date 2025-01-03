@@ -27,8 +27,23 @@ _getMinimal-build_pumpCompanion() {
         _set_getMost_backend "$@"
         _test_getMost_backend "$@"
         #_getMost_debian11_aptSources "$@"
-        
+
         _getMost_backend_aptGetInstall nsis
+        
+        ## WARNING: May be untested.
+        ## Essentially, some OS/distributions are NOT trusted to install a working version of the Nullsoft installer.
+        ## Really, Ubuntu may just be the issue. All the migration to snaps was probably responsible for breaking anything needed on a development system. Although it would be helpful for GitHub #Actions to use Debian, realistically, the more complicated builds probably already mostly use a ChRoot within another dist/OS .
+        #if [[ -e /etc/issue ]] && cat /etc/issue | grep 'Ubuntu' > /dev/null 2>&1
+        #then
+            #_getMost_backend_aptGetInstall nsis
+            #_getMost_backend apt-get remove -y nsis
+            
+            ## ATTRIBUTION-AI ChatGPT o1 2025-01-03
+            #git clone https://github.com/kichik/nsis.git
+            #cd nsis
+            #scons -j4
+            #sudo -n cp build/release/makensis /usr/local/bin/
+        #fi
     fi
 
 
