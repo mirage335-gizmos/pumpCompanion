@@ -4,7 +4,16 @@
 
 
 _getMinimal-build_pumpCompanion() {
-    
+    if ! _if_cygwin && ( [[ -e /etc/issue ]] && cat /etc/issue | grep 'Ubuntu' > /dev/null 2>&1 || [[ -e /etc/issue ]] && cat /etc/issue | grep 'Debian\|Raspbian' > /dev/null 2>&1 )
+    then
+        # ATTRIBUTION-AI ChatGPT o1 2025-01-03 ... partially ... suggested to resolve apparent segmentation fault from 'makensis' on Ubuntu 24.04.1 .
+        sudo -n dpkg --add-architecture i386
+        sudo -n env DEBIAN_FRONTEND=noninteractive apt-get -y update
+        sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y libc6:i386 lib32z1
+		sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y wine wine32 wine64 libwine libwine:i386 fonts-wine
+    fi
+
+
     ! type makensis && _if_cygwin && _at_userMSW_probeCmd_discoverResource-cygwinNative-ProgramFiles 'makensis' 'NSIS/bin' false
     
     if ! type makensis
