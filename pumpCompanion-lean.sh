@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='3482360618'
+export ub_setScriptChecksum_contents='3708184494'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -15187,23 +15187,26 @@ _getMinimal-build_pumpCompanion() {
 
         _getMost_backend_aptGetInstall nsis
         
-        # WARNING: May be untested.
-        # Essentially, some OS/distributions are NOT trusted to install a working version of the Nullsoft installer.
-        # Really, Ubuntu may just be the issue. All the migration to snaps was probably responsible for breaking anything needed on a development system. Although it would be helpful for GitHub Actions to use Debian, realistically, the more complicated builds probably already mostly use a ChRoot within another dist/OS .
-        if [[ -e /etc/issue ]] && cat /etc/issue | grep 'Ubuntu' > /dev/null 2>&1
-        then
-            _getMost_backend_aptGetInstall nsis
-            _getMost_backend apt-get remove -y nsis
-            
-            # ATTRIBUTION-AI ChatGPT o1 2025-01-03 ... partially
-            _getMost_backend_aptGetInstall scons
-            _getMost_backend_aptGetInstall zlib1g-dev
-            #git clone https://github.com/kichik/nsis.git
-            _gitBest clone --recursive --depth 1 git@github.com:soaringDistributions/nsis.git
-            cd nsis
-            scons -j4
-            sudo -n cp build/release/makensis /usr/local/bin/
-        fi
+        ## WARNING: May be untested.
+        ## Essentially, some OS/distributions are NOT trusted to install a working version of the Nullsoft installer.
+        ## Really, Ubuntu may just be the issue. All the migration to snaps was probably responsible for breaking anything needed on a development system. Although it would be helpful for GitHub Actions to use Debian, realistically, the more complicated builds probably already mostly use a ChRoot within another dist/OS .
+        #if [[ -e /etc/issue ]] && cat /etc/issue | grep 'Ubuntu' > /dev/null 2>&1
+        #then
+            #_getMost_backend_aptGetInstall nsis
+            #_getMost_backend apt-get remove -y nsis
+            #
+            ## ATTRIBUTION-AI ChatGPT o1 2025-01-03 ... partially
+            #_getMost_backend_aptGetInstall scons
+            #_getMost_backend_aptGetInstall zlib1g-dev
+            #_getMost_backend_aptGetInstall mingw-w64
+            ##git clone https://github.com/kichik/nsis.git
+            #_gitBest clone --recursive --depth 1 git@github.com:soaringDistributions/nsis.git
+            #cd nsis
+            #scons -c
+            ###scons -j4
+            ###scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all NSIS_CONFIG_CONST_DATA_PATH=no PREFIX=/usr/local install-compiler
+            ###sudo -n cp build/release/makensis /usr/local/bin/
+        #fi
     fi
 
 
@@ -15369,7 +15372,7 @@ _build_pumpCompanion-build() {
     unix2dos "$scriptAbsoluteFolder"/license-installer.txt
 
     cd "$scriptLib"/nsis
-    makensis "$scriptLib"/nsis/pumpCompanion.nsi
+    makensis -V4 "$scriptLib"/nsis/pumpCompanion.nsi
 
 
 
