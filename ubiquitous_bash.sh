@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='308194565'
+export ub_setScriptChecksum_contents='183993175'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -1246,6 +1246,25 @@ then
 	kwrite() {
 		kate -n "$@"
 	}
+
+	_aria2c_cygwin_overide() {
+		if _safeEcho_newline "$@" | grep '\--async-dns' > /dev/null
+		then
+			aria2c "$@"
+			return
+		else
+			aria2c --async-dns=false "$@"
+			return
+		fi
+	}
+	alias aria2c=_aria2c_cygwin_overide
+
+	##! type -p wslg
+	#[[ -e '/cygdrive/c/WINDOWS/system32/wslg.exe' ]] && wsl() { '/cygdrive/c/WINDOWS/system32/wslg.exe' "$@" ; }
+	[[ -e '/cygdrive/c/Program Files/WSL/wslg.exe' ]] && wslg() { '/cygdrive/c/Program Files/WSL/wslg.exe' "$@" ; }
+	##! type -p wsl
+	#[[ -e '/cygdrive/c/WINDOWS/system32/wsl.exe' ]] && wsl() { '/cygdrive/c/WINDOWS/system32/wsl.exe' "$@" ; }
+	[[ -e '/cygdrive/c/Program Files/WSL/wsl.exe' ]] && wsl() { '/cygdrive/c/Program Files/WSL/wsl.exe' "$@" ; }
 fi
 
 # WARNING: What is otherwise considered bad practice may be accepted to reduce substantial MSW/Cygwin inconvenience .
@@ -1426,6 +1445,9 @@ _report_setup_ubcp() {
 	[[ "$1" == "/" ]] && currentCygdriveC_equivalent=$(echo "$PWD" | sed 's/\(\/cygdrive\/[a-zA-Z]*\).*/\1/')
 
 	find /bin/ /usr/bin/ /sbin/ /usr/sbin/ | tee "$currentCygdriveC_equivalent"/core/infrastructure/ubcp-binReport > /dev/null
+
+
+	apt-cyg show | cut -f1 -d\ | tail -n +2 | tee "$currentCygdriveC_equivalent"/core/infrastructure/ubcp-packageReport > /dev/null
 }
 
 
@@ -1891,12 +1913,6 @@ _package-cygwinOnly() {
 _package-cygwin() {
 	_package-cygwinOnly "$@"
 }
-
-
-
-
-
-
 
 
 
@@ -8079,6 +8095,11 @@ _cfgFW_procedure() {
 	    ufw allow 443
     fi
 
+	# ATTRIBUTION-AI ChatGPT o1 2024-12-25
+	ufw allow proto tcp from 172.17.0.0/16 to any port 8080
+	ufw allow proto tcp from 172.17.0.0/16 to any port 11434
+
+
 	if [[ "$ub_cfgFW" == "desktop" ]] || [[ "$ub_cfgFW" == "terminal" ]]
     then
         ufw default deny incoming
@@ -8151,9 +8172,12 @@ _cfgFW_procedure() {
         #_ufw_portEnable 9001
         #_ufw_portEnable 9030
         
+
         # TODO: Allow typical offset ports/ranges.
         _ufw_portDisable 8443
         ufw deny 10001:49150/tcp
+        #ufw deny 10001:11433/tcp # ###
+        #ufw deny 11435:49150/tcp # ###
         ufw deny 10001:49150/udp
     else
 	ufw allow 22/tcp
@@ -8269,6 +8293,8 @@ _cfgFW_procedure() {
 	ufw deny 2:1023/tcp
 	ufw deny 2:1023/udp
 	ufw deny 1024:10000/tcp
+	#ufw deny 1024:8079/tcp # ###
+	#ufw deny 8081:10000/tcp # ###
 	ufw deny 1024:10000/udp
 	ufw deny 49152:65535/tcp
 	ufw deny 49152:65535/udp
@@ -9185,16 +9211,19 @@ _fetchDep_debianBookworm_special() {
 		
 		sudo -n env DEBIAN_FRONTEND=noninteractive apt-get -y update
 		#sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y dkms virtualbox-6.1
-		sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y dkms virtualbox-7.0
+		#sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y dkms virtualbox-7.0
+		sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y dkms virtualbox-7.1
 		
 		# https://www.virtualbox.org/ticket/20949
 		if ! type -p virtualbox > /dev/null 2>&1 && ! type -p VirtualBox > /dev/null 2>&1
 		then
 			#curl -L "https://download.virtualbox.org/virtualbox/6.1.34/virtualbox-6.1_6.1.34-150636.1~Debian~bookworm_amd64.deb" -o "$safeTmp"/"virtualbox-6.1_6.1.34-150636.1~Debian~bookworm_amd64.deb"
-			curl -L "https://download.virtualbox.org/virtualbox/7.0.10/virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb" -o "$safeTmp"/"virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb"
+			#curl -L "https://download.virtualbox.org/virtualbox/7.0.10/virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb" -o "$safeTmp"/"virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb"
+			curl -L "https://download.virtualbox.org/virtualbox/7.1.4/virtualbox-7.1_7.1.4-165100~Debian~bookworm_amd64.deb" -o "$safeTmp"/"virtualbox-7.1_7.1.4-165100~Debian~bookworm_amd64.deb"
 			sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y dkms
 			#yes | sudo -n dpkg -i "$safeTmp"/"virtualbox-6.1_6.1.34-150636.1~Debian~bookworm_amd64.deb"
-			yes | sudo -n dpkg -i "$safeTmp"/"virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb"
+			#yes | sudo -n dpkg -i "$safeTmp"/"virtualbox-7.0_7.0.10-158379~Debian~bookworm_amd64.deb"
+			yes | sudo -n dpkg -i "$safeTmp"/"virtualbox-7.1_7.1.4-165100~Debian~bookworm_amd64.deb"
 			sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends -y -f
 		fi
 		
@@ -10800,9 +10829,11 @@ _getMost_debian12_install() {
 	_getMost_backend_aptGetInstall usbip
 
 	
-	_getMost_backend apt-get -d install -y virtualbox-7.0
+	#_getMost_backend apt-get -d install -y virtualbox-7.0
+	_getMost_backend apt-get -d install -y virtualbox-7.1
 
-	_getMost_backend_aptGetInstall virtualbox-7.0
+	#_getMost_backend_aptGetInstall virtualbox-7.0
+	_getMost_backend_aptGetInstall virtualbox-7.1
 }
 
 _getMost_debian11_install() {
@@ -10864,6 +10895,8 @@ _getMost_debian11_install() {
 	fi
 	
 	_getMost_backend_aptGetInstall git
+	
+	_getMost_backend_aptGetInstall git-lfs
 
 	_getMost_backend_aptGetInstall bup
 	
@@ -10954,6 +10987,8 @@ _getMost_debian11_install() {
 	_getMost_backend_aptGetInstall aria2
 	_getMost_backend_aptGetInstall unionfs-fuse
 	_getMost_backend_aptGetInstall samba
+	
+	_getMost_backend_aptGetInstall dia
 	
 	_getMost_backend_aptGetInstall libcups2-dev
 
@@ -11121,11 +11156,16 @@ _getMost_debian11_install() {
 	
 	# ATTENTION: ATTENTION: WARNING: CAUTION: DANGER: High maintenance. Expect to break and manually update frequently!
 	#_getMost_backend wget -qO- 'https://download.virtualbox.org/virtualbox/6.1.34/VBoxGuestAdditions_6.1.34.iso' | _getMost_backend tee /VBoxGuestAdditions.iso > /dev/null
-	_getMost_backend wget -qO- 'https://download.virtualbox.org/virtualbox/7.0.10/VBoxGuestAdditions_7.0.10.iso' | _getMost_backend tee /VBoxGuestAdditions.iso > /dev/null
+	#_getMost_backend wget -qO- 'https://download.virtualbox.org/virtualbox/7.0.10/VBoxGuestAdditions_7.0.10.iso' | _getMost_backend tee /VBoxGuestAdditions.iso > /dev/null
+	_getMost_backend wget -qO- 'https://download.virtualbox.org/virtualbox/7.1.4/VBoxGuestAdditions_7.1.4.iso' | _getMost_backend tee /VBoxGuestAdditions.iso > /dev/null
 	_getMost_backend 7z x /VBoxGuestAdditions.iso -o/VBoxGuestAdditions -aoa -y
 	_getMost_backend rm -f /VBoxGuestAdditions.iso
 	_getMost_backend chmod u+x /VBoxGuestAdditions/VBoxLinuxAdditions.run
 	
+	# https://forums.virtualbox.org/viewtopic.php?t=112770
+	echo 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT kvm.enable_virt_at_load=0"' | _getMost_backend tee ""/etc/default/grub.d/99_vbox_kvm_compatibility.cfg
+
+
 	
 	# From '/var/log/vboxadd-*' , 'shared folder support module' 'modprobe vboxguest failed'
 	# Due to 'rcvboxadd setup' and/or 'rcvboxadd quicksetup all' apparently ceasing to build subsequent modules (ie. 'vboxsf') after any error (ie. due to 'modprobe' failing unless VirtualBox virtual hardware is present).
@@ -11191,6 +11231,7 @@ _getMost_debian11_install() {
 	_getMost_backend_aptGetInstall konqueror
 	
 	_getMost_backend_aptGetInstall xserver-xorg-video-all
+	_getMost_backend_aptGetInstall xserver-xorg-video-amdgpu
 	
 	_getMost_backend_aptGetInstall qalculate-gtk
 	_getMost_backend_aptGetInstall qalc
@@ -11543,6 +11584,12 @@ _getMost_debian11_install() {
 	_getMost_backend_aptGetInstall fldigi
 	_getMost_backend_aptGetInstall flamp
 	_getMost_backend_aptGetInstall psk31lx
+
+
+	_getMost_backend_aptGetInstall zip
+	_getMost_backend_aptGetInstall unzip
+	
+	_getMost_backend_aptGetInstall par2
 	
 	
 	_getMost_backend apt-get remove --autoremove -y plasma-discover
@@ -11580,6 +11627,19 @@ _getMost_debian11_install() {
 	
 	
 	_getMost_backend_aptGetInstall cloud-guest-utils
+
+
+
+
+	
+	
+	_getMost_backend_aptGetInstall python3-piexif
+	
+
+	_getMost_backend_aptGetInstall python3-torch
+	_getMost_backend_aptGetInstall python3-torchaudio
+	_getMost_backend_aptGetInstall python3-torchtext
+	_getMost_backend_aptGetInstall python3-torchvision
 	
 	
 	
@@ -11750,9 +11810,11 @@ _getMost_ubuntu22-VBoxManage() {
 	
 	#_getMost_ubuntu22_install "$@"
 	#_getMost_backend apt-get -d install -y virtualbox-6.1
-	_getMost_backend apt-get -d install -y virtualbox-7.0
+	#_getMost_backend apt-get -d install -y virtualbox-7.0
+	_getMost_backend apt-get -d install -y virtualbox-7.1
 	
-	_getMost_backend_aptGetInstall virtualbox-7.0
+	#_getMost_backend_aptGetInstall virtualbox-7.0
+	_getMost_backend_aptGetInstall virtualbox-7.1
 	
 	_getMost_backend apt-get remove --autoremove -y plasma-discover
 	
@@ -11770,6 +11832,10 @@ _set_getMost_backend_debian() {
 	_getMost_backend_aptGetInstall() {
 		# --no-upgrade
 		# -o Dpkg::Options::="--force-confold"
+
+		# ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-20 .
+		echo 'APT::AutoRemove::RecommendsImportant "true";
+APT::AutoRemove::SuggestsImportant "true";' | _getMost_backend tee /etc/apt/apt.conf.d/99autoremove-recommends > /dev/null
 		
 		if ! _getMost_backend dash -c 'type apt-fast' > /dev/null 2>&1 || [[ "$RUNNER_OS" != "" ]]
 		then
@@ -12267,6 +12333,16 @@ _getMinimal_cloud() {
 	_getMost_backend_aptGetInstall mkswap
 	
 	
+
+
+
+	# ATTRIBUTION-AI ChatGPT o1 2025-01-03 ... partially. Seems there is some evidence newer dist/OS versions may be more likely to break by default, 'i386', needed for building MSW installers, etc.
+	_getMost_backend dpkg --add-architecture i386
+	#_getMost_backend env DEBIAN_FRONTEND=noninteractive apt-get -y update
+	_getMost_backend_aptGetInstall libc6:i386 lib32z1
+	_getMost_backend_aptGetInstall wine wine32 wine64 libwine libwine:i386 fonts-wine
+
+
 	
 	
 	
@@ -13026,6 +13102,859 @@ _nix_update() {
 	
 	nix-channel --list
 	nix-channel --update
+}
+
+
+
+
+# ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-25 .
+# This is a tricky issue, which is not easily reproduced nor solved. Presumably due to '| tee' under the powershell environment used by 'build.yml', or possibly due to standard input somehow being piped as well, stdout is redirected while stderr actually does exist but is reported as a non-existent file when written to, and cannot be replaced, with error messages 'No such file or directory' and 'Read-only file system'. Redirections of subshells through other means, such as ' 2>&1 ' does not work.
+# ATTENTION: There may not be any real solution other than simply avoiding depending on usable /dev/stderr , such as by using quiet mode with apt-cyg --quiet .
+_cygwin_workaround_dev_stderr() {
+    # ChatGPT search found this link, which strongly implicates the '| tee' used for logging by build.yml as causing the absence of stderr .
+    # https://cygwin.com/pipermail/cygwin/2017-July/233639.html?utm_source=chatgpt.com
+
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #_messagePlain_warn 'warn: workaround /dev/stderr: exec 2>&1'
+        ## ATTRIBUTION-AI: ChatGPT 4o 2024-11-25 .
+        #exec 2>&1
+    #fi
+    
+    # DUBIOUS
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #mkdir -p /dev
+        #ln -sf /proc/self/fd/1 /dev/stderr
+    #fi
+
+    # DUBIOUS
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #mkdir -p /dev
+        #ln -sf /proc/self/fd/1 /dev/stderr
+    #fi
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #mkdir -p /dev
+        #ln -sf /dev/fd/1 /dev/stderr
+    #fi
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #mkdir -p /dev
+        #ln -sf /proc/$$/fd/1 /dev/stderr
+    #fi
+
+    
+    # Local experiments with a functional Cygwin/MSW environment show creating /dev/stderr_experiment this way is apparently not usable anyway.
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #mkdir -p /dev
+        #mknod /dev/stderr c 1 3
+        #chmod 622 /dev/stderr
+    #fi
+
+    #if [ ! -e /dev/stderr ] || ! echo x | tee /dev/stderr > /dev/null
+    #then
+        #_messagePlain_bad 'fail: missing: /dev/stderr'
+        #_messageFAIL
+    #fi
+
+    return 0
+}
+
+
+
+
+_getMost_cygwin_sequence-priority() {
+    _cygwin_workaround_dev_stderr
+
+    _start
+
+    _messageNormal "_getMost_cygwin_priority: apt-cyg --quiet install"
+    
+    #nc,
+
+cat << 'CZXWXcRMTo8EmM8i4d' | grep -v '^#' | tee "$safeTmp"/cygwin_package_list_priority_01
+bash-completion
+bc
+bzip
+coreutils
+curl
+dos2unix
+expect
+git
+git-svn
+gnupg
+inetutils
+jq
+lz4
+mc
+nc
+openssh
+openssl
+perl
+psmisc
+python37
+pv
+rsync
+ssh-pageant
+screen
+subversion
+unzip
+vim
+wget
+zip
+zstd
+tigervnc-server
+flex
+bison
+libncurses-devel
+par2
+python3-pip
+gnupg2
+CZXWXcRMTo8EmM8i4d
+
+
+
+cat << 'CZXWXcRMTo8EmM8i4d' | grep -v '^#' | tee "$safeTmp"/cygwin_package_list_priority_02
+bash-completion
+bc
+bzip
+coreutils
+curl
+dos2unix
+expect
+git
+git-svn
+gnupg
+inetutils
+jq
+lz4
+mc
+nc
+openssh
+openssl
+perl
+psmisc
+python37
+pv
+rsync
+ssh-pageant
+screen
+subversion
+unzip
+vim
+wget
+zip
+zstd
+procps-ng
+awk
+socat
+aria2
+jq
+gnupg2
+php
+php-PEAR
+php-devel
+gnuplot-base
+gnuplot-doc
+gnuplot-qt5
+gnuplot-wx
+gnuplot-X11
+libqalculate-common
+libqalculate-devel
+libqalculate5
+cantor-backend-qalculate
+octave
+octave-devel
+octave-parallel
+octave-linear-algebra
+octave-general
+octave-geometry
+octave-strings
+octave-financial
+octave-communications
+octave-control
+mkisofs
+genisoimage
+dbus
+dbus-x11
+tigervnc-server
+flex
+bison
+libncurses-devel
+p7zip
+par2
+python3-pip
+gnupg2 2>&1
+CZXWXcRMTo8EmM8i4d
+
+
+    local currentLine
+
+    cat "$safeTmp/cygwin_package_list_priority_01" | while read currentLine
+    do
+        #echo "$currentLine"
+        _messagePlain_probe apt-cyg --quiet install "$currentLine"
+        apt-cyg --quiet install "$currentLine" 2>&1
+    done
+
+    cat "$safeTmp/cygwin_package_list_priority_02" | while read currentLine
+    do
+        #echo "$currentLine"
+        _messagePlain_probe apt-cyg --quiet install "$currentLine"
+        apt-cyg --quiet install "$currentLine" 2>&1
+    done
+
+    _stop
+}
+_getMost_cygwin-priority() {
+    "$scriptAbsoluteLocation" _getMost_cygwin_sequence-priority "$@"
+}
+
+_getMost_cygwin_sequence() {
+    _cygwin_workaround_dev_stderr
+
+    _start
+
+    _messageNormal "_getMost_cygwin: list installed"
+    apt-cyg --quiet show | cut -f1 -d\ | tail -n +2 | tee "$safeTmp"/cygwin_package_list_installed
+
+    _messageNormal "_getMost_cygwin: list desired"
+    cat << 'CZXWXcRMTo8EmM8i4d' | grep -v '^#' | tee "$safeTmp"/cygwin_package_list_desired
+#_autorebase
+#adwaita-icon-theme
+#alternatives
+aria2
+#at-spi2-core
+autoconf
+#autoconf2.1
+#autoconf2.5
+#autoconf2.7
+base-cygwin
+base-files
+bash
+bash-completion
+bc
+binutils
+bison
+bsdtar
+build-docbook-catalog
+bzip2
+#ca-certificates
+cantor
+cantor-backend-qalculate
+coreutils
+#crypto-policies
+#csih
+curl
+#cygrunsrv
+#cygutils
+#cygwin
+#cygwin-devel
+dash
+dbus
+dbus-x11
+dconf-service
+#dejavu-fonts
+desktop-file-utils
+dialog
+diffutils
+docbook-xml45
+docbook-xsl
+dos2unix
+#dri-drivers
+ed
+editrights
+expect
+file
+findutils
+flex
+gamin
+gawk
+gcc-core
+gcr
+gdk-pixbuf2.0-svg
+genisoimage
+#getent
+#gettext
+ghostscript
+ghostscript-fonts-other
+git
+git-svn
+glib2.0-networking
+gnome-keyring
+gnupg2
+gnuplot-X11
+gnuplot-base
+gnuplot-doc
+gnuplot-qt5
+gnuplot-wx
+grep
+groff
+gsettings-desktop-schemas
+#gtk-update-icon-cache
+gzip
+#hicolor-icon-theme
+hostname
+inetutils
+#info
+ipc-utils
+iso-codes
+jq
+#kf5-kdoctools
+less
+#libEGL1
+libFLAC8
+#libGL1
+#libGLU1
+#libGraphicsMagick++12 # ATTENTION
+#libGraphicsMagick3 # ATTENTION
+#libICE6
+#libKF5Archive5
+#libKF5Attica5
+#libKF5Auth5
+#libKF5Bookmarks5
+#libKF5Codecs5
+#libKF5Completion5
+#libKF5Config5
+#libKF5ConfigWidgets5
+#libKF5CoreAddons5
+#libKF5Crash5
+#libKF5DBusAddons5
+#libKF5GlobalAccel5
+#libKF5GuiAddons5
+#libKF5I18n5
+#libKF5IconThemes5
+#libKF5ItemViews5
+#libKF5JobWidgets5
+#libKF5KIO5
+#libKF5NewStuff5
+#libKF5Notifications5
+#libKF5Parts5
+#libKF5Service5
+#libKF5Solid5
+#libKF5Sonnet5
+#libKF5SyntaxHighlighting5
+#libKF5TextEditor5
+#libKF5TextWidgets5
+#libKF5Wallet5
+#libKF5WidgetsAddons5
+#libKF5WindowSystem5
+#libKF5XmlGui5
+#libQt5Core5
+#libQt5Gui5
+#libQt5Help5
+#libQt5Quick5
+#libQt5Script5
+#libQt5Sql5
+#libQt5Svg5
+#libQt5TextToSpeech5
+#libQt5X11Extras5
+#libQt5XmlPatterns5
+libSDL2_2.0_0
+#libSM6
+#libX11-xcb1
+#libX11_6
+#libXau6
+#libXaw7
+#libXcomposite1
+#libXcursor1
+#libXdamage1
+#libXdmcp6
+#libXext6
+#libXfixes3
+#libXfont2_2
+#libXft2
+#libXi6
+#libXinerama1
+#libXmu6
+#libXmuu1
+#libXpm4
+#libXrandr2
+#libXrender1
+#libXss1
+#libXt6
+#libXtst6
+#libaec0
+#libamd2
+#libapr1
+#libaprutil1
+libarchive13
+#libargon2_1
+libargp
+#libarpack0
+#libaspell15
+#libassuan0
+#libasyncns0
+#libatk-bridge2.0_0
+#libatk1.0_0
+#libatomic1
+#libatspi0
+libattr1
+libblkid1
+#libbrotlicommon1
+#libbrotlidec1
+#libbsd0
+#libbtf1
+#libbz2_1
+libcairo2
+#libcamd2
+#libcares2
+#libccolamd2
+#libcerf1
+#libcharset1
+#libcholmod3
+#libcln-devel
+#libcln6
+#libcolamd2
+#libcom_err2
+#libcroco0.6_3
+libcrypt0
+libcrypt2
+libcurl4
+#libcxsparse3
+#libdatrie1
+#libdb5.3
+libdbus-glib_1_2
+libdbus1_3
+libdbusmenu-qt5_2
+#libde265_0
+libdeflate0
+libdialog15
+libdotconf0
+libe2p2
+#libedit0
+#libenchant1
+#libepoxy0
+#libespeak1
+libexpat1
+libext2fs2
+libfam0
+libfdisk1
+libffi-devel
+libffi6
+libffi8
+#libfftw3_3
+libfido2
+libflite1
+libfltk1.3
+#libfontconfig-common
+#libfontconfig1
+#libfontenc1
+#libfreetype6
+#libfribidi0
+#libgailutil3_0
+#libgc1
+libgcc1
+libgck1_0
+libgcr-base3_1
+libgcr-ui3-common
+libgcr-ui3_1
+libgcrypt20
+libgd3
+#libgdbm4
+#libgdbm6
+#libgdbm_compat4
+libgdk_pixbuf2.0_0
+#libgeoclue0
+#libgfortran5
+#libgit2_25
+libgl2ps1
+#libglapi0
+#libglib2.0-devel
+#libglib2.0_0
+#libglpk40
+#libgmp-devel
+#libgmp10
+#libgmpxx4
+libgnutls30
+#libgomp1
+#libgpg-error0
+#libgpgme11
+#libgpgmepp6
+#libgraphite2_3
+libgs10
+libgs9
+#libgsasl-common
+#libgsasl18
+#libgssapi_krb5_2
+#libgstinterfaces1.0_0
+#libgstreamer1.0_0
+#libgtk3_0
+#libguile3.0_1
+#libharfbuzz-icu0
+#libharfbuzz0
+#libhdf5_200
+#libheif1
+libhogweed4
+libhogweed6
+#libhunspell1.6_0
+#libiconv
+#libiconv-devel
+#libiconv2
+#libicu56
+#libicu61
+#libicu74
+#libidn12
+#libidn2_0
+#libimagequant0
+#libintl-devel
+#libintl8
+#libiodbc2
+#libisl23
+#libjasper4
+#libjavascriptcoregtk3.0_0
+#libjbig2
+#libjpeg8
+#libjq1
+#libk5crypto3
+libklu1
+#libkpathsea6
+#libkrb5_3
+#libkrb5support0
+#libksba8
+#liblapack0
+#liblcms2_2
+libllvm8
+libltdl7
+liblua5.3
+#liblz4_1
+#liblzma5
+#liblzo2_2
+libmd0
+libmetalink3
+#libmetis0
+#libmp3lame0
+#libmpc3
+#libmpfr6
+#libmpg123_0
+#libmspack0
+#libmysqlclient18
+#libncurses++w10
+libncurses-devel
+#libncursesw10
+libnettle6
+libnettle8
+#libnghttp2_14
+#libnotify4
+#libnpth0
+#libntlm0
+#libogg0
+#libonig5
+#libopenblas
+#libopenldap2
+#libopenldap2_4_2
+#libopus0
+#liborc0.4_0
+libp11-kit0
+#libpango1.0_0
+#libpaper-common
+#libpaper1
+#libpcre-devel
+#libpcre1
+#libpcre16_0
+#libpcre2_16_0
+#libpcre2_8_0
+#libpcre32_0
+#libpcrecpp0
+#libpcreposix0
+#libphonon4qt5_4
+#libpipeline1
+libpixman1_0
+libpkgconf5
+libpng16
+libpopt-common
+libpopt0
+#libportaudio2
+libpotrace0
+#libpq5
+#libproc2_0
+#libproxy1
+#libpsl5
+libptexenc1
+#libpulse-simple0
+#libpulse0
+libqalculate-common
+libqalculate-devel
+libqalculate5
+#libqhull_8
+#libqrupdate0
+#libqscintilla2_qt5-common
+#libqscintilla2_qt5_13
+#libquadmath0
+libraqm0
+libreadline7
+libretls26
+librsvg2_2
+#libsamplerate0
+#libsasl2_3
+libsecret1_0
+#libserf1_0
+#libslang2
+#libsmartcols1
+#libsndfile1
+#libsodium-common
+#libsodium23
+#libsoup2.4_1
+libspectre1
+#libspeechd2
+#libspqr2
+#libsqlite3_0
+#libssh2_1
+#libssl1.0
+#libssl1.1
+#libssl3
+#libstdc++6
+#libsuitesparseconfig5
+#libsundials_ida5
+#libsundials_sunlinsol3
+#libsundials_sunmatrix3
+#libsybdb5
+#libsynctex2
+#libsz2
+#libtasn1_6
+#libteckit0
+#libtexlua53_5
+#libtexluajit2
+#libthai0
+#libtiff6
+#libtiff7
+#libuchardet0
+#libumfpack5
+#libunistring5
+#libusb1.0
+libuuid1
+#libvoikko1
+#libvorbis
+#libvorbis0
+#libvorbisenc2
+#libwebkitgtk3.0_0
+#libwebp5
+#libwebp7
+#libwebpdemux2
+#libwebpmux3
+libwrap0
+libwx_baseu3.0_0
+libwx_gtk3u3.0_0
+#libxcb-dri2_0
+#libxcb-glx0
+#libxcb-icccm4
+#libxcb-image0
+#libxcb-keysyms1
+#libxcb-randr0
+#libxcb-render-util0
+#libxcb-render0
+#libxcb-shape0
+#libxcb-shm0
+#libxcb-sync1
+#libxcb-util1
+#libxcb-xfixes0
+#libxcb-xinerama0
+#libxcb-xkb1
+#libxcb1
+#libxkbcommon0
+#libxkbfile1
+#libxml2
+libxml2-devel
+#libxslt
+libxxhash0
+#libzstd1
+#libzzip0.13
+#login
+lz4
+m4
+make
+#man-db
+#mariadb-common
+mc
+#mintty
+mkisofs
+#mysql-common
+#ncurses
+netcat
+octave
+octave-communications
+octave-control
+octave-devel
+octave-financial
+octave-general
+octave-geometry
+octave-io
+octave-linear-algebra
+octave-parallel
+octave-signal
+octave-strings
+octave-struct
+openssh
+openssl
+p11-kit
+p11-kit-trust
+p7zip
+par2
+patch
+perl
+#perl-Clone
+#perl-Encode-Locale
+#perl-Error
+#perl-File-Listing
+#perl-HTML-Parser
+#perl-HTML-Tagset
+#perl-HTTP-Cookies
+#perl-HTTP-Date
+#perl-HTTP-Message
+#perl-HTTP-Negotiate
+#perl-IO-HTML
+#perl-IO-String
+#perl-JSON-PP
+#perl-LWP-MediaTypes
+#perl-Net-HTTP
+#perl-TermReadKey
+#perl-TimeDate
+#perl-Tk
+#perl-Try-Tiny
+#perl-URI
+#perl-WWW-RobotRules
+#perl-XML-Parser
+#perl-YAML
+#perl-libwww-perl
+#perl_autorebase
+perl_base
+php
+php-PEAR
+php-bz2
+php-devel
+php-zlib
+pinentry
+pkg-config
+pkgconf
+poppler-data
+procps-ng
+psmisc
+#publicsuffix-list-dafsa
+pv
+python3
+python3-pip
+#python37
+#python37-pip
+#python37-setuptools
+#python39
+#python39-babel
+#python39-chardet
+#python39-docutils
+#python39-idna
+#python39-imagesize
+#python39-imaging
+#python39-iniconfig
+#python39-jinja2
+#python39-markupsafe
+#python39-olefile
+#python39-packaging
+#python39-pip
+#python39-platformdirs
+#python39-pluggy
+#python39-pygments
+#python39-pyparsing
+#python39-pytest
+#python39-railroad-diagrams
+#python39-requests
+#python39-setuptools
+#python39-six
+#python39-snowballstemmer
+#python39-sphinx
+#python39-sphinxcontrib-serializinghtml
+#python39-toml
+#python39-urllib3
+rebase
+rsync
+run
+screen
+sed
+#sgml-common
+#shared-mime-info
+socat
+#speech-dispatcher
+#ssh-pageant
+subversion
+#subversion-perl
+#suomi-malaga
+tar
+tcl
+tcl-tk
+terminfo
+texlive
+texlive-collection-basic
+texlive-collection-latex
+tigervnc-server
+tzcode
+tzdata
+unzip
+#urw-base35-fonts
+util-linux
+vim
+vim-common
+vim-minimal
+w32api-headers
+w32api-runtime
+wget
+which
+windows-default-manifest
+#xauth
+#xcursor-themes
+#xkbcomp
+#xkeyboard-config
+#xorg-server-common
+xxd
+xz
+zip
+zlib-devel
+zlib0
+zstd
+CZXWXcRMTo8EmM8i4d
+
+    _messageNormal "_getMost_cygwin: todo"
+    # ATTRIBUTION-AI: ChatGPT o1-preview 2024-11-25 .
+    grep -F -x -v -f "$safeTmp/cygwin_package_list_installed" "$safeTmp/cygwin_package_list_desired" | tee "$safeTmp/cygwin_package_list_todo"
+
+
+    local currentLine
+    cat "$safeTmp/cygwin_package_list_todo" | while read currentLine
+    do
+        #echo "$currentLine"
+        _messagePlain_probe apt-cyg --quiet install "$currentLine"
+        apt-cyg --quiet install "$currentLine" 2>&1
+    done
+
+
+    _stop
+}
+_getMost_cygwin() {
+    "$scriptAbsoluteLocation" _getMost_cygwin_sequence "$@" 2>&1
+}
+
+
+
+_custom_ubcp_prog() {
+	true
+}
+_custom_ubcp_sequence() {
+	_cygwin_workaround_dev_stderr
+    
+    _messageNormal '_custom_ubcp: apt-cyg --quiet'
+	_messagePlain_probe apt-cyg --quiet install ImageMagick
+    apt-cyg --quiet install ImageMagick 2>&1
+	#_messagePlain_probe_cmd apt-cyg --quiet install ffmpeg
+	
+	_messageNormal '_custom_ubcp: pip3'
+	_messagePlain_probe pip3 install piexif
+    pip3 install piexif 2>&1
+
+    _cygwin_workaround_dev_stderr
+	_custom_ubcp_prog "$@"
+}
+_custom_ubcp() {
+    "$scriptAbsoluteLocation" _custom_ubcp_sequence "$@" 2>&1
 }
 
 
@@ -18234,8 +19163,19 @@ _createVMimage() {
 		# 27.95GiB
 		#export vmSize=28620
 	
+		# Preferred with 'augment' ~8b q4_k_m LLM model.
 		# 37.95GiB
-		export vmSize=38860
+		#export vmSize=38860
+	
+		# May accommodate a few additional AI models.
+		# 52.95GiB
+		#export vmSize=54220
+	
+		# Slightly smaller than expected 50GB BD-R DL .
+		# 46.1GiB
+		export vmSize=47206
+
+
 		
 		export vmSize_boundary=$(bc <<< "$vmSize - 1")
 		_createRawImage
@@ -22879,9 +23819,13 @@ _setup_ollama_model_augment_sequence() {
 PARAMETER num_ctx 6144' > Llama-augment.Modelfile
 	
 	#wget 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf'
-	aria2c --log=- --log-level=info -x "3" -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf'
-	[[ ! -e 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' ]] && aria2c --log=- --log-level=info -x "3" -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' --disable-ipv6=true
+	aria2c --log=- --log-level=info -x "3" --async-dns=false -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf'
+	[[ ! -e 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' ]] && aria2c --log=- --log-level=info -x "3" --async-dns=false -o 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' 'https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF/resolve/main/meta-llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' --disable-ipv6=true
 	
+	if [[ ! -e 'llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf' ]]
+	then
+		_wget_githubRelease_join "soaringDistributions/Llama-augment_bundle" "" "llama-3.1-8b-instruct-abliterated.Q4_K_M.gguf"
+	fi
 	
 	_service_ollama
 	
@@ -22956,11 +23900,38 @@ _test_ollama() {
 }
 
 _vector_ollama_procedure() {
-	! _ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep true > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
-	_ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep false > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+	local currentExitStatus
+	currentExitStatus=1
 	
-	! _ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep false > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
-	_ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep true > /dev/null && echo 'fail: _vector_ollama' && _messageFAIL && _stop 1
+	if ! _ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep -i true > /dev/null
+	then
+		echo 'fail: _vector_ollama' && _messagePlain_bad 'fail: _vector_ollama: prompt for word true did not output word true'
+	else
+		currentExitStatus=0
+	fi
+	if _ollama_run_augment "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ." | grep -i false > /dev/null
+	then
+		echo 'fail: _vector_ollama' && _messagePlain_bad 'fail: _vector_ollama: prompt for word true instead included word false'
+	else
+		currentExitStatus=0
+	fi
+	
+	if ! _ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep -i false > /dev/null
+	then
+		echo 'fail: _vector_ollama' && _messagePlain_bad 'fail: _vector_ollama: prompt for word false did not output word false'
+	else
+		currentExitStatus=0
+	fi
+	if _ollama_run_augment "Please output the word false . Any other output accompanying the word false is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word false will be very helpful whereas any output other than the word false will be unhelpful . Please output the word false ." | grep -i true > /dev/null
+	then
+		echo 'fail: _vector_ollama' && _messagePlain_bad 'fail: _vector_ollama: prompt for word false instead included word true'
+	else
+		currentExitStatus=0
+	fi
+
+
+	# If NONE of the vector tests have succeeded, then FAIL . Normally, with an 'augment' LLM model, this should be so rare as to vastly more often indicate broken ollama installation, very broken/corrupted LLM model, very broken LLM configuration, insufficient disk space for model, etc.
+	[[ "$currentExitStatus" != "0" ]] && _messageFAIL && _stop 1
 
 	return 0
 }
@@ -22973,7 +23944,10 @@ _vector_ollama() {
 	if _if_cygwin && ! type -p ollama > /dev/null 2>&1
 	then
 		echo 'warn: accepted: cygwin: missing: ollama'
-	elif type -p ollama > /dev/null 2>&1
+		return 0
+	fi
+
+	if type -p ollama > /dev/null 2>&1
 	then
 		if [[ "$hostMemoryQuantity" -lt 28000000 ]]
 		then
@@ -23022,6 +23996,14 @@ _user_ollama() {
 # Mostly, this is used to workaround very unusual dist/OS build and custom situations (ie. ChRoot, GitHub Actions, etc).
 # CAUTION: This leaves a background process running, which must continue running (ie. not hangup) while other programs use it, and which must terminate upon shutdown , _closeChRoot , etc .
 _service_ollama() {
+	_mustGetSudo
+	_if_cygwin && return 0
+	if ! sudo -n -u ollama bash -c 'type -p ollama'
+	then
+		echo 'warn: _service_ollama: missing: ollama'
+		return 1
+	fi
+	
 	if ! wget --timeout=1 --tries=3 127.0.0.1:11434 > /dev/null -q -O - > /dev/null
 	then
 		sudo -n -u ollama ollama serve &
@@ -23086,7 +24068,8 @@ _ollama_set_sequence-augment-lowRAM() {
 	_start
 	cd "$safeTmp"
 
-	ollama show Llama-augment --modelfile | sed 's/PARAMETER num_ctx [0-9]*/PARAMETER num_ctx 512/' > ./Llama-augment-tmp.Modelfile
+	#512
+	ollama show Llama-augment --modelfile | sed 's/PARAMETER num_ctx [0-9]*/PARAMETER num_ctx 640/' > ./Llama-augment-tmp.Modelfile
 	sleep 9
 	ollama create Llama-augment --file ./Llama-augment-tmp.Modelfile
 	sleep 9
@@ -24673,9 +25656,17 @@ _declareFunctions_markup_terminal() {
 
 _test_devemacs() {
 	_wantGetDep emacs
+
+	#_if_cygwin && return 0
 	
-	local emacsDetectedVersion=$(emacs --version | head -n 1 | cut -f 3 -d\ | cut -d\. -f1)
-	! [[ "$emacsDetectedVersion" -ge "24" ]] && echo emacs too old && return 1
+	if type -p emacs > /dev/null 2>&1
+	then
+		echo 'warn: missing: emacs'
+		return 0
+	else
+		local emacsDetectedVersion=$(emacs --version | head -n 1 | cut -f 3 -d\ | cut -d\. -f1)
+		! [[ "$emacsDetectedVersion" -ge "24" ]] && echo 'warn: obsolete: emacs' && return 1
+	fi
 	
 	return 0
 }
@@ -26078,7 +27069,7 @@ _wget_githubRelease_join-stdout() {
 
 	local currentIteration
 	currentIteration=0
-	for currentIteration in $(seq -f "%02g" 0 32)
+	for currentIteration in $(seq -f "%02g" 0 50)
 	do
 		currentURL=$(_wget_githubRelease-URL "$1" "$2" "$3"".part""$currentIteration")
 		[[ "$currentURL" == "" ]] && break
@@ -26119,7 +27110,7 @@ _wget_githubRelease_join-stdout() {
 
 		local current_usable_ipv4
 		current_usable_ipv4="false"
-		#if _timeout 8 aria2c -o "$currentAxelTmpFile" --disable-ipv6 --allow-overwrite=true --auto-file-renaming=false --file-allocation=none --timeout=6 "${currentURL_array_reversed[0]}" >&2
+		#if _timeout 8 aria2c --async-dns=false -o "$currentAxelTmpFile" --disable-ipv6 --allow-overwrite=true --auto-file-renaming=false --file-allocation=none --timeout=6 "${currentURL_array_reversed[0]}" >&2
 		#then
 			#current_usable_ipv4="true"
 		#fi
@@ -26185,23 +27176,23 @@ _wget_githubRelease_join-stdout() {
 					if [[ "$GH_TOKEN" == "" ]]
 					then
 						#--file-allocation=falloc
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false "${currentURL_array_reversed[$currentIteration]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false "${currentURL_array_reversed[$currentIteration]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_1="$!"
 					else
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIteration]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIteration]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=false --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_1="$!"
 					fi
 				else
 					if [[ "$GH_TOKEN" == "" ]]
 					then
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true "${currentURL_array_reversed[$currentIteration]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true "${currentURL_array_reversed[$currentIteration]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_1="$!"
 					else
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIteration]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIteration]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp1 --disable-ipv6=true --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIteration]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_1="$!"
 					fi
 				fi
@@ -26257,23 +27248,23 @@ _wget_githubRelease_join-stdout() {
 				then
 					if [[ "$GH_TOKEN" == "" ]]
 					then
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true "${currentURL_array_reversed[$currentIterationNext1]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true "${currentURL_array_reversed[$currentIterationNext1]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_2="$!"
 					else
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIterationNext1]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIterationNext1]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=true --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_2="$!"
 					fi
 				else
 					if [[ "$GH_TOKEN" == "" ]]
 					then
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false "${currentURL_array_reversed[$currentIterationNext1]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false "${currentURL_array_reversed[$currentIterationNext1]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_2="$!"
 					else
-						_messagePlain_probe aria2c -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIterationNext1]}" >&2
-						aria2c --log=- --log-level=info -x "$currentForceAxel" -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
+						_messagePlain_probe aria2c -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false --header="Authorization: Bearer "'$GH_TOKEN'"" "${currentURL_array_reversed[$currentIterationNext1]}" >&2
+						aria2c --log=- --log-level=info -x "$currentForceAxel" --async-dns=false -o "$currentAxelTmpFileRelative".tmp2 --disable-ipv6=false --header="Authorization: Bearer $GH_TOKEN" "${currentURL_array_reversed[$currentIterationNext1]}" | grep --color -i -E "Name resolution|$" >&2 &
 						currentPID_2="$!"
 					fi
 				fi
@@ -26943,6 +27934,54 @@ _dropCache() {
 
 
 
+
+
+
+
+
+
+# WARNING: Very conservative functions, for such extraordinary situations as directly streaming from a satellite connection to optical disc using an unreliable optical disc drive, equivalent to operating a laser cutter at sub-micron precision from space.
+# NOTICE: EXAMPLE functions intended for reference only. Often appropriate to instead write a custom command with less conservative parameters.
+# Usually these functions should be equally applicable to DVD and BD discs, preferably very high quality BD M-Discs. DVD-RAM may also be supported, but is not recommended. Magneto-Optical discs do not need such trickery. CD-ROM and other special legacy disc types will not be needed on any routine basis, not having any of particularly good capacity, durability, or longevity.
+
+
+# WARNING: May be untested. Example.
+# [[ "$1" == currentFile ]]
+# [[ "$2" == currentSpeed ]] # (3 is safest)
+# [[ "$3" == currentDrive ]]
+_growisofs() {
+	local currentFile
+	currentFile="$1"
+	[[ "$currentFile" == "" ]] && _messagePlain_warn 'warn: unspecified: currentFile... assuming urandom'
+	#[[ "$currentFile" == "" ]] && _messageFAIL
+	[[ "$currentFile" == "" ]] && currentFile=/dev/urandom
+	
+	local currentSpeed
+	currentSpeed="$2"
+	[[ "$currentSpeed" == "" ]] && currentSpeed=3
+	
+	local currentDrive
+	currentDrive="$3"
+	[[ "$currentDrive" == "" ]] && _messagePlain_bad 'fail: unspecified: currentDrive'
+	[[ "$currentDrive" == "" ]] && _messageFAIL
+	
+	_messagePlain_request 'checksum commands: '
+	local current_cksum_size
+	current_cksum_size=$(wc -c "$currentFile" | cut -f1 -d\  | tr -dc '0-9')
+	echo sudo -n dd if=\""$currentFile"\" bs=1M \| head --bytes=\""$current_cksum_size"\" \| env CMD_ENV=xpg4 cksum
+	echo sudo -n dd if=\""$currentDrive"\" bs=1M \| head --bytes=\""$current_cksum_size"\" \| env CMD_ENV=xpg4 cksum
+	
+	_messagePlain_nominal '_growisofs: growisofs'
+	
+	# STRONGLY DISCOURAGED.
+	# Hash or checksum during writing only verifies downloaded data, which is ONLY useful to diagnose whether the disc drive or download was the point of failure during real-time writing of download. Unlike Magneto-Optical discs, packet writing optical disc devices can suffer buffer underrun errors, necessitating hash of the disc itself anyway.
+	# ONLY use case for hash/checksum of streamed data is real-time download, usually only desired either due to near identical download and disc writing speed, or due to creating the disc from a 'live' dist/OS with no persistent storage.
+	#tee >(cksum >> /dev/stderr) ; dd if=/dev/zero bs=2048 count=$(bc <<< '1000000000000 / 2048' ) )
+	#tee >(openssl dgst -whirlpool -binary | xxd -p -c 256 >> "$scriptLocal"/hash-download.txt) ; dd if=/dev/zero bs=2048 count=$(bc <<< '1000000000000 / 2048' ) )
+	
+	# ATTENTION: Important command is just this. Writes data from cat "$currentFile" through pipe to /dev/stdin to "$currentDrive" at "$currentSpeed" . Fills remainder of disc with zeros.
+	( cat "$currentFile" ; dd if=/dev/zero bs=2048 count=$(bc <<< '1000000000000 / 2048' ) ) | sudo -n growisofs -speed="$currentSpeed" -dvd-compat -Z "$currentDrive"=/dev/stdin -use-the-force-luke=notray -use-the-force-luke=spare:min -use-the-force-luke=bufsize:128m
+}
 
 
 
@@ -29919,6 +30958,11 @@ _test_fetchDebian() {
 	then
 		echo 'warn: Debian Keyring missing.'
 		echo 'request: apt-get install debian-keyring'
+		_if_cygwin && return 0
+		if ! ( [[ -e /etc/issue ]] && cat /etc/issue | grep 'Debian\|Raspbian' > /dev/null 2>&1 ) && ! ( [[ -e /etc/issue ]] && cat /etc/issue | grep 'Ubuntu' > /dev/null 2>&1 )
+		then
+			return 0
+		fi
 		! _wantSudo && echo 'warn: no sudo'
 		sudo -n apt-get install -y debian-keyring
 		! ls /usr/share/keyrings/debian-role-keys.gpg && return 1
@@ -31860,7 +32904,7 @@ _kernelConfig_require-tradeoff-perform() {
 	_messagePlain_nominal 'kernelConfig: tradeoff-perform'
 	_messagePlain_request 'Carefully evaluate '\''tradeoff-perform'\'' for specific use cases.'
 	export kernelConfig_file="$1"
-	
+
 	_kernelConfig__bad-n__ CONFIG_RETPOLINE
 	_kernelConfig__bad-n__ CONFIG_PAGE_TABLE_ISOLATION
 	
@@ -31906,6 +32950,32 @@ _kernelConfig_require-tradeoff-harden() {
 	_messagePlain_request 'Carefully evaluate '\''tradeoff-harden'\'' for specific use cases.'
 	export kernelConfig_file="$1"
 	
+	_kernelConfig__bad-y__ CPU_MITIGATIONS
+	_kernelConfig__bad-y__ MITIGATION_PAGE_TABLE_ISOLATION
+	_kernelConfig__bad-y__ MITIGATION_RETPOLINE
+	_kernelConfig__bad-y__ MITIGATION_RETHUNK
+	_kernelConfig__bad-y__ MITIGATION_UNRET_ENTRY
+	_kernelConfig__bad-y__ MITIGATION_CALL_DEPTH_TRACKING
+	_kernelConfig__bad-y__ MITIGATION_IBPB_ENTRY
+	_kernelConfig__bad-y__ MITIGATION_IBRS_ENTRY
+	_kernelConfig__bad-y__ MITIGATION_SRSO
+	_kernelConfig__bad-y__ MITIGATION_GDS
+	_kernelConfig__bad-y__ MITIGATION_RFDS
+	_kernelConfig__bad-y__ MITIGATION_SPECTRE_BHI
+	_kernelConfig__bad-y__ MITIGATION_MDS
+	_kernelConfig__bad-y__ MITIGATION_TAA
+	_kernelConfig__bad-y__ MITIGATION_MMIO_STALE_DATA
+	_kernelConfig__bad-y__ MITIGATION_L1TF
+	_kernelConfig__bad-y__ MITIGATION_RETBLEED
+	_kernelConfig__bad-y__ MITIGATION_SPECTRE_V1
+	_kernelConfig__bad-y__ MITIGATION_SPECTRE_V2
+	_kernelConfig__bad-y__ MITIGATION_SRBDS
+	_kernelConfig__bad-y__ MITIGATION_SSB
+
+	_kernelConfig__bad-y__ MITIGATION_SLS
+
+	_kernelConfig__bad-y__ CPU_SRSO
+
 	_kernelConfig__bad-y__ CONFIG_RETPOLINE
 	_kernelConfig__bad-y__ CONFIG_PAGE_TABLE_ISOLATION
 	
@@ -31954,7 +33024,7 @@ _kernelConfig_require-tradeoff-harden() {
 	#qemuArgs+=(-cpu host,-sgx-provisionkey,-sgx-tokenkey)
 
 	_kernelConfig__bad-y__ CONFIG_X86_SGX
-	_kernelConfig__bad-y__ CONFIG_X86_SGX_kVM
+	_kernelConfig__bad-y__ CONFIG_X86_SGX_KVM
 	_kernelConfig__bad-y__ CONFIG_INTEL_TDX_GUEST
 	_kernelConfig__bad-y__ TDX_GUEST_DRIVER
 
@@ -31967,10 +33037,16 @@ _kernelConfig_require-tradeoff-harden() {
 	#qemuArgs+=(-machine accel=kvm,confidential-guest-support=sev0 -object sev-guest,id=sev0,cbitpos=47,reduced-phys-bits=1 )
 	# #,policy=0x5
 
+
 	# https://libvirt.org/kbase/launch_security_sev.html
 	_kernelConfig__bad-y__ CONFIG_KVM_AMD_SEV
 	_kernelConfig__bad-y__ AMD_MEM_ENCRYPT
 	_kernelConfig__bad-y__ CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT
+
+	_kernelConfig__bad-y__ KVM_SMM
+
+
+	_kernelConfig__bad-y__ RANDOM_KMALLOC_CACHES
 }
 _kernelConfig_require-tradeoff-harden-compatible() {
 	
@@ -32029,6 +33105,8 @@ _kernelConfig_require-tradeoff-harden-compatible() {
 	
 	_kernelConfig__bad-y__ CONFIG_INIT_ON_FREE_DEFAULT_ON
 	_kernelConfig__bad-y__ CONFIG_ZERO_CALL_USED_REGS
+
+	_kernelConfig__bad-y__ CONFIG_INIT_STACK_ALL_ZERO
 	
 	_kernelConfig__bad-n__ CONFIG_DEVMEM
 	_kernelConfig__bad-n__ CONFIG_DEVPORT
@@ -32071,6 +33149,11 @@ _kernelConfig_require-tradeoff-harden-compatible() {
 	
 	#_kernelConfig_warn-any CONFIG_KFENCE_DEFERRABLE
 	_kernelConfig_warn-y__ CONFIG_KFENCE_DEFERRABLE
+
+
+	# DUBIOUS . Seems to require a userspace service setting scheduling attributes for processes, and not supported by default.
+	# WARNING: Definitely much better to disable SMT .
+	#_kernelConfig__bad-y__ CONFIG_SCHED_CORE
 }
 
 # WARNING: ATTENTION: Before moving to tradeoff-harden (compatible), ensure vboxdrv, vboxadd, nvidia, nvidia legacy, kernel modules can be loaded without issues, and also ensure significant performance penalty configuration options are oppositely documented in the tradeoff-perform function .
@@ -32272,11 +33355,18 @@ _kernelConfig_require-tradeoff-harden-NOTcompatible() {
 	
 	
 	_kernelConfig_warn-y__ CONFIG_EFI_DISABLE_PCI_DMA
+
+
+	# ATTENTION: In practice, the 'gather_data_sampling=force' command line parameter has been available, through optional  "$globalVirtFS"/etc/default/grub.d/01_hardening_ubdist.cfg  .
+	_kernelConfig__bad-y__ CONFIG_GDS_FORCE_MITIGATION
 	
 	
 	
 	# WARNING: CAUTION: Now obviously this is really incompatible. Do NOT move this to any other function.
 	_kernelConfig_warn-y__ CONFIG_MODULE_SIG_FORCE
+
+	# WARNING: May be untested. Kernel default apparently 'Y'.
+	_kernelConfig_warn-y__ MODULE_SIG_ALL
 }
 
 # ATTENTION: Override with 'ops.sh' or similar.
@@ -32367,6 +33457,10 @@ _kernelConfig_require-virtualization-accessory() {
 	#_kernelConfig_warn-n__ CONFIG_XEN_SELFBALLOONING
 	#_kernelConfig_warn-n__ CONFIG_IOMMU_DEFAULT_PASSTHROUGH
 	#_kernelConfig_warn-n__ CONFIG_INTEL_IOMMU_DEFAULT_ON
+
+
+	# TODO: Evaluate.
+	_kernelConfig_warn-y__ KVM_HYPERV
 }
 
 # https://wiki.gentoo.org/wiki/VirtualBox
@@ -32581,6 +33675,13 @@ _kernelConfig_require-accessory() {
 	#PCIE_BW
 	#ACRN_GUEST
 	#XILINX SDFEC
+
+	# FB_NVIDIA , FB_RIVA , at best, has not been reccently tested with NOUVEAU or other NVIDIA drivers.
+	_kernelConfig_warn-n__ FB_NVIDIA
+	_kernelConfig_warn-n__ FB_RIVA
+
+
+
 }
 
 _kernelConfig_require-build() {
@@ -32641,6 +33742,14 @@ _kernelConfig_require-latency() {
 	_kernelConfig__bad-y__ CONFIG_CPU_FREQ_GOV_ONDEMAND
 	_kernelConfig__bad-y__ CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
 	_kernelConfig__bad-y__ CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+
+	# WARNING: May be untested.
+	#X86_AMD_PSTATE_DEFAULT_MODE
+	if ! cat "$kernelConfig_file" | _kernelConfig_reject-comments | grep "X86_AMD_PSTATE_DEFAULT_MODE"'\=3' > /dev/null 2>&1
+	then
+		_messagePlain_bad 'bad: not:      3: '"X86_AMD_PSTATE_DEFAULT_MODE"
+		export kernelConfig_bad='true'
+	fi
 	
 	# CRITICAL!
 	# CONFIG_PREEMPT is significantly more stable and compatible with third party (eg. VirtualBox) modules.
@@ -32731,6 +33840,9 @@ _kernelConfig_require-latency() {
 	# CRITICAL!
 	# Lightweight kernel compression theoretically may significantly accelerate startup from slow disks.
 	_kernelConfig__bad-y__ CONFIG_KERNEL_LZ4
+
+	# TODO
+	#PCP_BATCH_SCALE_MAX
 	
 }
 
@@ -32860,8 +33972,110 @@ _kernelConfig_require-special() {
 	_kernelConfig__bad-y__ CONFIG_HW_RANDOM_VIA
 	_kernelConfig__bad-y_m HW_RANDOM_VIRTIO
 	_kernelConfig__bad-y__ CONFIG_HW_RANDOM_TPM
+
+
+	# Somewhat unusually, without known loss of performance.
+	# Discovered during 'make oldconfig' of 'Linux 6.12.1' from then existing 'mainline' config file.
+	_kernelConfig__bad-y__ X86_FRED
+
+	_kernelConfig__bad-y__ SLAB_BUCKETS
 	
 	
+
+	# TODO: Disabled presently (because this feature is in development and does not yet work), but seems like something to enable eventually.
+	# _kernelConfig__bad-y__ KVM_SW_PROTECTED_VM
+
+	
+	# Usually a bad idea, since BTRFS filesystem compression, etc, should take care of this better.
+	_kernelConfig__bad-n__ MODULE_COMPRESS
+
+	# TODO: Expected unhelpful, but worth considering.
+	#ZSWAP_SHRINKER_DEFAULT_ON
+
+
+	# Unusual tradeoff. Theoretically may cause issues for Gentoo doing fsck on read-only root (due to not necessarily having initramfs).
+	_kernelConfig__bad-y__ BLK_DEV_WRITE_MOUNTED
+	_kernelConfig_warn-n__ BLK_DEV_WRITE_MOUNTED
+
+	# If there is no compatibility issue, then the more compressible zswap allocator seems more useful.
+	#_kernelConfig__warn-y__ ZSWAP_ZPOOL_DEFAULT_ZSMALLOC 
+
+
+	# DANGER
+	# If you honestly believe Meta cares about end-user security...
+	# https://studio.youtube.com/video/MeUvSg9zQYc/edit
+	# https://studio.youtube.com/video/kXrLujzPm_4/edit
+	# There is just NO GOOD REASON to use or support Meta hardware. At all.
+	_kernelConfig__bad-n__ NET_VENDOR_META
+
+	# DANGER
+	# Although disabling kernel support is NEVER guaranteed to eliminate a 'BadUSB' style vulnerability, reducing this functionality is still very strongly recommended.
+	#
+	# SDIO . Especially useless, very few very old devices are expected to benefit from SDIO WiFi, etc, peripherials, while SDIO degrades one of the very few otherwise storage exclusive protocols (ie. SD card storage) into a 'BadUSB' input.
+	_kernelConfig__bad-n__ ATH10K_SDIO
+	_kernelConfig__bad-n__ ATH6KL_SDIO
+	_kernelConfig__bad-n__ B43_SDIO
+	_kernelConfig__bad-n__ BRCMFMAC_SDIO
+	_kernelConfig__bad-n__ BT_HCIBTSDIO
+	_kernelConfig__bad-n__ BT_MRVL_SDIO
+	_kernelConfig__bad-n__ BT_MTKSDIO
+	_kernelConfig__bad-n__ CW1200_WLAN_SDIO
+	_kernelConfig__bad-n__ GREYBUS_SDIO
+	_kernelConfig__bad-n__ LIBERTAS_SDIO
+	#
+	_kernelConfig__bad-n__ MMC_MESON_MX_SDIO # Disabled by default apparently.
+	_kernelConfig__bad-n__ MMC_MVSDIO # Disabled by default apparently.
+	#
+	#_kernelConfig__bad-n__ MT7663_USB_SDIO_COMMON
+	#
+	_kernelConfig__bad-n__ MT76_SDIO
+	_kernelConfig__bad-n__ MWIFIEX_SDIO
+	_kernelConfig__bad-n__ RSI_SDIO
+	_kernelConfig__bad-n__ RTW88_SDIO
+	#
+	_kernelConfig__bad-n__ SDIO_UART
+	#
+	_kernelConfig__bad-n__ SMS_SDIO_DRV
+	#
+	_kernelConfig__bad-n__ SSB_SDIOHOST
+	_kernelConfig__bad-n__ SSB_SDIOHOST_POSSIBLE
+	#
+	_kernelConfig__bad-n__ WILC1000_SDIO
+	_kernelConfig__bad-n__ WL1251_SDIO
+	_kernelConfig__bad-n__ WLCORE_SDIO
+	
+	_kernelConfig__bad-n__ RTW88_8822BS
+	_kernelConfig__bad-n__ RTW88_8822CS
+	_kernelConfig__bad-n__ RTW88_8723DS
+	_kernelConfig__bad-n__ RTW88_8723CS
+	_kernelConfig__bad-n__ RTW88_8821CS
+
+
+
+
+	# Requires compiling binaries to support this. Future Debian security updates may use this.
+	_kernelConfig__bad-y__ X86_USER_SHADOW_STACK
+
+
+
+	_kernelConfig__bad-y_m USB_GADGET
+
+	# ATTENTION: Only drivers that are highly likely to cripple the 'out-of-box-experience' to the point of being unable to perform gParted, revert, basic web browsing, etc, for relatively useful laptops/tablets/etc .
+	# Essential drivers (eg. iGPU, or at least basic 'VGA', keyboard, USB, etc) are normally included already Debian's default kernel config, if that is used as a starting point.
+	# WARNING: Delegating which drivers to enable to upstream default Debian (or other distro) config files may be better for reliability, etc.
+	_kernelConfig_warn-y_m ATH12K #WiFi7
+	_kernelConfig_warn-y_m MT7996E #WiFi7 Concurrent Tri-Band
+	_kernelConfig_warn-y_m RTW88_8822BU #WiFi USB
+	_kernelConfig_warn-y_m RTW88_8822CU
+	_kernelConfig_warn-y_m RTW88_8723DU
+	_kernelConfig_warn-y_m RTW88_8821CE
+	_kernelConfig_warn-y_m RTW88_8821CU
+	_kernelConfig_warn-y_m RTW89_8851BE
+	_kernelConfig_warn-y_m RTW89_8852AE
+	_kernelConfig_warn-y_m RTW89_8852BE
+
+
+
 	true
 }
 
@@ -35556,6 +36770,8 @@ CZXWXcRMTo8EmM8i4d
 
 
 _test_h1060p() {
+	_if_cygwin && return 0
+	
 	sudo -n mkdir -p /etc/X11/xorg.conf.d
 	_h1060p_xorg_here | sudo -n tee /etc/X11/xorg.conf.d/70-wacom-h1060p > /dev/null
 	
@@ -35581,6 +36797,130 @@ _test_h1060p() {
 	fi
 	
 	return 0
+}
+
+
+# ATTRIBUTION-AI: ChatGPT o1 2024-12-24 .
+_live_hash-getRootBlkDevice()  {
+    _if_cygwin && _stop
+
+    local current_root_part
+    local current_root_disk
+    local current_root_type
+    local current_fallback_part
+    local current_fallback_disk
+
+
+    
+    # 1) Identify the root mount's source (which might be /dev/sdXn, overlay, etc.)
+    current_root_part=$(findmnt -no SOURCE / 2>/dev/null || true)
+
+    # 2) Try to look up the underlying physical disk for that partition/device.
+    current_root_disk=$(lsblk -no PKNAME "$current_root_part" 2>/dev/null || true)
+
+    # 3) If lsblk gave us an empty string, there are two main possibilities:
+    #    a) $current_root_part is an entire disk (e.g. /dev/sda).
+    #    b) The root is an overlay/union FS (e.g., in a Debian Live system).
+    if [ -z "$current_root_disk" ]; then
+        # 3a) Check if $current_root_part is a whole disk (TYPE='disk'):
+        current_root_type=$(lsblk -no TYPE "$current_root_part" 2>/dev/null || true)
+        if [ "$current_root_type" = "disk" ]; then
+            # $current_root_part is already the whole disk
+            current_root_disk=$(basename "$current_root_part")
+        fi
+    fi
+
+    # 4) If still empty, we suspect an overlay environment. Let's do a fallback to
+    #    /lib/live/mount/medium, which Debian Live typically uses as the real device mountpoint.
+    if [ -z "$current_root_disk" ] && [ -d "/lib/live/mount/medium" ]; then
+        # 4a) Find the block device underlying /lib/live/mount/medium
+        current_fallback_part=$(findmnt -n -o SOURCE /lib/live/mount/medium 2>/dev/null || true)
+
+        if [ -n "$current_fallback_part" ]; then
+            # 4b) Look up parent disk for current_fallback_part
+            current_fallback_disk=$(lsblk -no PKNAME "$current_fallback_part" 2>/dev/null || true)
+
+            # 4c) If current_fallback_disk is still empty, maybe current_fallback_part itself is a whole disk
+            if [ -z "$current_fallback_disk" ]; then
+            fallback_type=$(lsblk -no TYPE "$current_fallback_part" 2>/dev/null || true)
+                if [ "$fallback_type" = "disk" ]; then
+                current_fallback_disk=$(basename "$current_fallback_part")
+                fi
+            fi
+
+            # 4d) If current_fallback_disk is not empty now, that's our current_root_disk
+            if [ -n "$current_fallback_disk" ]; then
+            current_root_disk="$current_fallback_disk"
+            fi
+        fi
+    fi
+
+    # 5) If still empty, we cannot determine the device.
+    if [ -z "$current_root_disk" ]; then
+        echo "ERROR: Could not determine the underlying root disk device." >&2
+        exit 1
+    fi
+
+    echo "/dev/$current_root_disk"
+}
+
+# DANGER: CAUTION: ATTENTION: Initial measurement should be done BEFORE connecting computer, USB flash drive, etc, to potentially untrusted networks, peripherials, etc.
+#
+# For 'live' dist/OS , which is NOT supposed to change the disk contents, this may in theory, frustrate simple 'BadUSB'->dist/OS_filesystem_alteration->'BadUSB' spreading, and hopefully at least drastically reduce the efficiency of attempts at 'smart' firmware/microcontroller/etc reprogramming that sufficiently alters the binary code sequences of booted software on-the-fly in unpredictable environments to spread 'BadUSB' without direct dist/OS_filesystem_alteration .
+# Availability is a serious underpinning of Integrity security. Persistent booting with 'SecureBoot', 'IntelTXT', etc, has the downside that if integrity is lost, then this is persistent. Read-only USB flash drives are not only expensive and bulky, but not commercially available (as of 2024) with both FIPS (ie. software) and EAL (ie. hardware) certification. True read-only Optical Disc Drives, are becoming quite rare, are limited in capacity, and are also bulky.
+# This is a compromise that is hoped to bring the higher standard of non-persistent yet measured OS security to any available USB flash drive and Linux bootable laptop.
+_live_hash_sequence() {
+    _start
+
+    _if_cygwin && _stop
+    
+    local current_root_disk
+    current_root_disk=$(_live_hash-getRootBlkDevice)
+    _messagePlain_probe_var current_root_disk
+
+    # Attempt to ensure legacy openssl is available.
+    # Should do nothing if either openssl legacy is already enabled or if sudo is not available.
+	_here_opensslConfig_legacy | sudo -n tee /etc/ssl/openssl_legacy.cnf > /dev/null 2>&1
+
+    if ! sudo -n grep 'openssl_legacy' /etc/ssl/openssl.cnf > /dev/null 2>&1
+    then
+        sudo -n cp -f /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.orig
+        echo '
+
+
+.include = /etc/ssl/openssl_legacy.cnf
+
+' | sudo -n cat /etc/ssl/openssl.cnf.orig - | sudo -n tee /etc/ssl/openssl.cnf > /dev/null 2>&1
+    fi
+
+
+    _messagePlain_request 'request: Photograph, print, and label computer and USB flash drive with the below.'
+
+    # Speed limit is provided to run as a background process, though this is usually not useful.
+    local current_speed
+    current_speed="$2"
+    [[ "$current_speed" == "" ]] && current_speed="10G"
+    sudo -n dd if="$current_root_disk" bs=1M status=progress | pv -q -L "$current_speed" | \
+tee >( wc -c /dev/stdin | cut -f1 -d\ | tr -dc '0-9' > "$safeTmp"/.tmp-currentFileBytes ) | \
+tee >( openssl dgst -whirlpool -binary | xxd -p -c 256 > "$safeTmp"/.tmp-whirlpool ) | \
+tee >( openssl dgst -sha3-512 -binary | xxd -p -c 256 > "$safeTmp"/.tmp-sha3 ) > /dev/null
+
+    echo 'dd if='"$current_root_disk"' bs=1048576 count=$(bc <<< '"'"$(cat "$safeTmp"/.tmp-currentFileBytes)' / 1048576'"'"' ) status=progress | openssl dgst -whirlpool -binary | xxd -p -c 256'
+    
+    cat "$safeTmp"/.tmp-whirlpool
+    
+    
+    echo 'dd if='"$current_root_disk"' bs=1048576 count=$(bc <<< '"'"$(cat "$safeTmp"/.tmp-currentFileBytes)' / 1048576'"'"' ) status=progress | openssl dgst -sha3-512 -binary | xxd -p -c 256'
+    
+    cat "$safeTmp"/.tmp-sha3
+
+    _messagePlain_request 'request: Photograph, print, and label computer and USB flash drive with the above.'
+
+
+    _stop
+}
+_live_hash() {
+    "$scriptAbsoluteLocation" _live_hash_sequence "$@"
 }
 
 #####Basic Variable Management
@@ -47259,6 +48599,11 @@ _deps_hardware() {
 	export enUb_hardware="true"
 }
 
+_deps_measurement() {
+	_deps_hardware
+	export enUb_measurement="true"
+}
+
 _deps_x220t() {
 	_deps_notLean
 	_deps_hardware
@@ -47859,6 +49204,7 @@ _compile_bash_deps() {
 		_deps_linux
 		
 		_deps_hardware
+		_deps_measurement
 		_deps_x220t
 		_deps_w540
 		
@@ -48064,6 +49410,7 @@ _compile_bash_deps() {
 		#_deps_synergy
 		
 		#_deps_hardware
+		#_deps_measurement
 		#_deps_x220t
 		#_deps_w540
 		#_deps_peripherial
@@ -48166,6 +49513,7 @@ _compile_bash_deps() {
 		#_deps_synergy
 		
 		#_deps_hardware
+		#_deps_measurement
 		#_deps_x220t
 		#_deps_w540
 		#_deps_peripherial
@@ -48268,6 +49616,7 @@ _compile_bash_deps() {
 		_deps_synergy
 		
 		_deps_hardware
+		_deps_measurement
 		_deps_x220t
 		_deps_w540
 		_deps_peripherial
@@ -48444,6 +49793,10 @@ _compile_bash_utilities() {
 	
 	
 	
+	[[ "$enUb_notLean" == "true" ]] && includeScriptList+=( "os/distro/cygwin"/getMost_cygwin.sh )
+
+
+	
 	[[ "$enUb_notLean" == "true" ]] && includeScriptList+=( "os/unix/systemd"/here_systemd.sh )
 	[[ "$enUb_notLean" == "true" ]] && includeScriptList+=( "os/unix/systemd"/hook_systemd.sh )
 	
@@ -48614,6 +49967,7 @@ _compile_bash_shortcuts() {
 	
 	( [[ "$enUb_dev_heavy" == "true" ]] || [[ "$enUb_repo" == "true" ]] || [[ "$enUb_cloud" == "true" ]] ) && includeScriptList+=( "shortcuts/dev/app/repo/mktorrent"/mktorrent.sh )
 	( [[ "$enUb_notLean" == "true" ]] || [[ "$enUb_dev" == "true" ]] || [[ "$enUb_dev_heavy" == "true" ]] || [[ "$enUb_image" == "true" ]] || [[ "$enUb_repo" == "true" ]] || [[ "$enUb_cloud" == "true" ]] ) && includeScriptList+=( "shortcuts/dev/app/repo/disk"/dd.sh )
+	( [[ "$enUb_notLean" == "true" ]] || [[ "$enUb_dev" == "true" ]] || [[ "$enUb_dev_heavy" == "true" ]] || [[ "$enUb_image" == "true" ]] || [[ "$enUb_repo" == "true" ]] || [[ "$enUb_cloud" == "true" ]] ) && includeScriptList+=( "shortcuts/dev/app/repo/disc"/growisofs.sh )
 	
 	
 	( [[ "$enUb_dev_heavy" == "true" ]] || [[ "$enUb_search" == "true" ]] ) && includeScriptList+=( "shortcuts/dev/app/search"/search.sh )
@@ -48752,6 +50106,8 @@ _compile_bash_hardware() {
 	[[ "$enUb_hardware" == "true" ]] && [[ "$enUb_w540" == "true" ]] && includeScriptList+=( "hardware/w540"/w540_fan.sh )
 	
 	[[ "$enUb_hardware" == "true" ]] && [[ "$enUb_peripherial" == "true" ]] && includeScriptList+=( "hardware/peripherial/h1060p"/h1060p.sh )
+
+	( [[ "$enUb_hardware" == "true" ]] || [[ "$enUb_measurement" == "true" ]] ) && includeScriptList+=( "hardware/measurement"/live_hash.sh )
 }
 
 _compile_bash_vars_basic() {
