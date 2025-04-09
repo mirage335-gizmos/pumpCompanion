@@ -19,4 +19,7 @@ _knowledge-pumpCompanion() {
 
     cp "$scriptAbsoluteFolder"/license.txt "$scriptLocal"/knowledge/pumpCompanion/
     cp "$scriptAbsoluteFolder"/agpl-3.0.txt "$scriptLocal"/knowledge/pumpCompanion/
+
+    cp "$scriptAbsoluteFolder"/README.sh.out.txt "$scriptLocal"/knowledge/pumpCompanion/
+    cp "$scriptAbsoluteFolder"/README-installer.pdf "$scriptLocal"/knowledge/pumpCompanion/
 }
