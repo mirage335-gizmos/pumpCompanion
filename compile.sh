@@ -36,7 +36,7 @@ _ub_cksum_special_derivativeScripts_contents() {
 #export ub_setScriptChecksum_disable='true'
 ( [[ -e "$0".nck ]] || [[ "${BASH_SOURCE[0]}" != "${0}" ]] || [[ "$1" == '--profile' ]] || [[ "$1" == '--script' ]] || [[ "$1" == '--call' ]] || [[ "$1" == '--return' ]] || [[ "$1" == '--devenv' ]] || [[ "$1" == '--shell' ]] || [[ "$1" == '--bypass' ]] || [[ "$1" == '--parent' ]] || [[ "$1" == '--embed' ]] || [[ "$1" == '--compressed' ]] || [[ "$0" == "/bin/bash" ]] || [[ "$0" == "-bash" ]] || [[ "$0" == "/usr/bin/bash" ]] || [[ "$0" == "bash" ]] ) && export ub_setScriptChecksum_disable='true'
 export ub_setScriptChecksum_header='2591634041'
-export ub_setScriptChecksum_contents='118028260'
+export ub_setScriptChecksum_contents='4239660687'
 
 # CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.
 # WARNING: Performance may be crucial here.
@@ -2838,6 +2838,48 @@ _command_safeBackup() {
 	! type basename > /dev/null 2>&1 && return 1
 	
 	return 0
+}
+
+
+
+
+# Suggested for files used as Inter-Process Communication (IPC) or similar indicators (eg. temporary download files recently in progress).
+# Works around files that may not be deleted by 'rm -f' when expected (ie. due to Cygwin/MSW file locking).
+# ATTRIBUTION-AI: OpRt_.deepseek/deepseek-r1-distill-llama-70b  2025-03-27  (partial)
+_destroy_lock() {
+    [[ "$1" == "" ]] && return 0
+
+    # Fraction of   2GB part file  divided by  1MB/s optical-disc write speed   .
+    local currentLockWait="1250"
+
+    local current_anyFilesExists
+    local currentFile
+    
+    
+    local currentIteration=0
+    for ((currentIteration=0; currentIteration<"$currentLockWait"; currentIteration++))
+    do
+        rm -f "$@" > /dev/null 2>&1
+
+        current_anyFilesExists="false"
+        for currentFile in "$@"
+        do
+            [[ -e "$currentFile" ]] && current_anyFilesExists="true"
+        done
+
+        if [[ "$current_anyFilesExists" == "false" ]]
+        then
+            return 0
+            break
+        fi
+
+        # DANGER: Does NOT use _safeEcho . Do NOT use with external input!
+        ( echo "STACK_FAIL STACK_FAIL STACK_FAIL: software: wait: rm: exists: file: ""$@" >&2 ) > /dev/null
+        sleep 1
+    done
+
+    [[ "$currentIteration" != "0" ]] && sleep 7
+    return 1
 }
 
 
@@ -6037,6 +6079,8 @@ _init_deps() {
 	export enUb_dev_heavy_atom=""
 	
 	export enUb_generic=""
+
+	export enUb_dev_buildOps=""
 	
 	export enUb_cloud_heavy=""
 	
@@ -6051,15 +6095,24 @@ _init_deps() {
 	export enUb_cloud_self=""
 	export enUb_cloud_build=""
 	export enUb_notLean=""
+	export enUb_github=""
 	export enUb_distro=""
+	export enUb_getMinimal=""
+	export enUb_getMost_special_veracrypt=""
 	export enUb_build=""
 	export enUb_buildBash=""
 	export enUb_os_x11=""
 	export enUb_proxy=""
 	export enUb_proxy_special=""
+	export enUb_serial=""
 	export enUb_fw=""
 	export enUb_clog=""
 	export enUb_x11=""
+	export enUb_researchEngine=""
+	export enUb_ollama=""
+	export enUb_ai_dataset=""
+	export enUb_ai_semanticAssist=""
+	export enUb_ai_knowledge=""
 	export enUb_blockchain=""
 	export enUb_java=""
 	export enUb_image=""
@@ -6068,6 +6121,7 @@ _init_deps() {
 	export enUb_virt_thick=""
 	export enUb_virt_translation=""
 	export enUb_ChRoot=""
+	export enUb_bios=""
 	export enUb_QEMU=""
 	export enUb_vbox=""
 	export enUb_docker=""
@@ -6085,8 +6139,10 @@ _init_deps() {
 	export enUb_synergy=""
 	
 	export enUb_hardware=""
+	export enUb_measurement=""
 	export enUb_enUb_x220t=""
 	export enUb_enUb_w540=""
+	export enUb_enUb_gpd=""
 	export enUb_enUb_peripherial=""
 	
 	export enUb_user=""
@@ -6103,6 +6159,10 @@ _init_deps() {
 	export enUb_haskell=""
 	
 	export enUb_calculators=""
+
+	export enUb_ai_shortcuts=""
+	export enUb_ollama_shortcuts=""
+	export enUb_factory_shortcuts=""
 }
 
 _deps_generic() {
@@ -6264,6 +6324,18 @@ _deps_ai() {
 	_deps_notLean
 	export enUb_researchEngine="true"
 	export enUb_ollama="true"
+}
+_deps_ai_dataset() {
+	_deps_ai
+	_deps_ai_shortcuts
+	export enUb_ai_dataset="true"
+}
+_deps_ai_semanticAssist() {
+	_deps_ai_dataset
+	export enUb_ai_semanticAssist="true"
+}
+_deps_ai_knowledge() {
+	export enUb_ai_knowledge="true"
 }
 
 _deps_blockchain() {
@@ -6487,10 +6559,17 @@ _deps_calculators() {
 	export enUb_calculators="true"
 }
 
-_deps_ai_shortuts() {
+_deps_ai_shortcuts() {
 	_deps_generic
 	
+	export enUb_ai_shortcuts="true"
 	export enUb_ollama_shortcuts="true"
+}
+
+_deps_factory_shortcuts() {
+	_deps_generic
+	
+	export enUb_factory_shortcuts="true"
 }
 
 #placeholder, define under "queue/build"
@@ -7054,7 +7133,14 @@ _compile_bash_deps() {
 		_deps_haskell
 		
 		_deps_ai
-		_deps_ai_shortuts
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 		
 		_deps_calculators
 		
@@ -7119,7 +7205,14 @@ _compile_bash_deps() {
 		_deps_haskell
 		
 		_deps_ai
-		_deps_ai_shortuts
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 		
 		_deps_calculators
 		
@@ -7143,7 +7236,13 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
-		_deps_ai_shortuts
+		_deps_ai
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
 		
 		_deps_calculators
 		
@@ -7170,7 +7269,13 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
-		_deps_ai_shortuts
+		_deps_ai
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
 		
 		_deps_calculators
 		
@@ -7233,7 +7338,14 @@ _compile_bash_deps() {
 		_deps_haskell
 		
 		_deps_ai
-		_deps_ai_shortuts
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 		
 		_deps_calculators
 		
@@ -7338,8 +7450,15 @@ _compile_bash_deps() {
 		_deps_python
 		_deps_haskell
 		
+		_deps_ai
+		_deps_ai_shortcuts
+
 		#_deps_ai
-		_deps_ai_shortuts
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 		
 		_deps_calculators
 		
@@ -7401,10 +7520,19 @@ _compile_bash_deps() {
 		return 0
 	fi
 
+	# In practice, 'core' now includes '_deps_ai' by default to support '_deps_ai_dataset' .
 	if [[ "$1" == "core_ai" ]]
 	then
 		_deps_ai
+		_deps_ai_shortcuts
 		_compile_bash_deps 'core'
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 	fi
 	
 	if [[ "$1" == "" ]] || [[ "$1" == "ubiquitous_bash" ]] || [[ "$1" == "ubiquitous_bash.sh" ]] || [[ "$1" == "complete" ]]
@@ -7451,7 +7579,14 @@ _compile_bash_deps() {
 		_deps_haskell
 		
 		_deps_ai
-		_deps_ai_shortuts
+		_deps_ai_shortcuts
+
+		#_deps_ai
+		_deps_ai_dataset
+		_deps_ai_semanticAssist
+		_deps_ai_knowledge
+
+		_deps_factory_shortcuts
 		
 		_deps_calculators
 		
@@ -7553,6 +7688,7 @@ _compile_bash_essential_utilities() {
 	includeScriptList+=( "labels"/utilitiesLabel.sh )
 	includeScriptList+=( "generic/filesystem"/absolutepaths.sh )
 	includeScriptList+=( "generic/filesystem"/safedelete.sh )
+	includeScriptList+=( "generic/filesystem"/destroylock.sh )
 	includeScriptList+=( "generic/filesystem"/moveconfirm.sh )
 	includeScriptList+=( "generic/filesystem"/allLogic.sh )
 	includeScriptList+=( "generic/process"/timeout.sh )
@@ -7798,8 +7934,25 @@ _compile_bash_shortcuts() {
 	[[ "$enUb_ollama" == "true" ]] && includeScriptList+=( "ai/ollama"/ollama.sh )
 	
 	( ( [[ "$enUb_dev_heavy" == "true" ]] ) || [[ "$enUb_ollama_shortcuts" == "true" ]] ) && includeScriptList+=( "shortcuts/ai/ollama"/ollama.sh )
+
+	[[ "$enUb_factory_shortcuts" ]] && includeScriptList+=( "shortcuts/factory"/factory.sh )
 	
-	
+
+	[[ "$enUb_ai_dataset" == "true" ]] && includeScriptList+=( "ai/dataset"/format.sh )
+	( [[ "$enUb_ai_dataset" == "true" ]] || [[ "$enUb_ai_shortcuts" == "true" ]] ) && includeScriptList+=( "ai/dataset"/format-special.sh )
+
+	[[ "$enUb_ai_dataset" == "true" ]] && includeScriptList+=( "ai/dataset"/here_convert.sh )
+	[[ "$enUb_ai_dataset" == "true" ]] && includeScriptList+=( "ai/dataset"/convert.sh )
+
+	[[ "$enUb_ai_dataset" == "true" ]] && includeScriptList+=( "ai/dataset"/corpus_bash.sh )
+	[[ "$enUb_ai_dataset" == "true" ]] && includeScriptList+=( "ai/dataset"/corpus.sh )
+
+	[[ "$enUb_ai_semanticAssist" == "true" ]] && includeScriptList+=( "ai/semanticAssist"/here_semanticAssist.sh )
+	[[ "$enUb_ai_semanticAssist" == "true" ]] && includeScriptList+=( "ai/semanticAssist"/distill_semanticAssist.sh )
+	[[ "$enUb_ai_semanticAssist" == "true" ]] && includeScriptList+=( "ai/semanticAssist"/semanticAssist_bash.sh )
+	[[ "$enUb_ai_semanticAssist" == "true" ]] && includeScriptList+=( "ai/semanticAssist"/semanticAssist.sh )
+
+	[[ "$enUb_ai_knowledge" == "true" ]] && includeScriptList+=( "ai"/knowledge.sh )
 	
 	#[[ "$enUb_dev_heavy" == "true" ]] && 
 	includeScriptList+=( "shortcuts/dev"/devsearch.sh )
@@ -8310,6 +8463,7 @@ _compile_bash() {
 		includeScriptList+=( "labels"/utilitiesLabel.sh )
 		includeScriptList+=( "generic/filesystem"/absolutepaths.sh )
 		includeScriptList+=( "generic/filesystem"/safedelete.sh )
+		includeScriptList+=( "generic/filesystem"/destroylock.sh )
 		includeScriptList+=( "generic/filesystem"/moveconfirm.sh )
 		includeScriptList+=( "generic/filesystem"/allLogic.sh )
 		includeScriptList+=( "generic/process"/timeout.sh )
