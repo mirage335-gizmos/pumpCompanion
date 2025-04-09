@@ -112,6 +112,8 @@ _compile_bash_program_prog() {
 	
 	includeScriptList+=( features.sh )
 	
+	includeScriptList+=( knowledge.sh )
+	
 	true
 }
 

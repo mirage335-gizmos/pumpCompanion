@@ -611,9 +611,11 @@ _gnuradioCompanion() {
 
 
 _refresh_anchors() {
+	# Subtly repurposes the '_anchor.bat' script to install dependencies (ie. 'par2') quickly if not already present.
 	_setup_prog
 	
 	
+	# Uncomment to upgrade/recreate anchor files.
 	
 	##cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-frame
 	##cp -a "$scriptAbsoluteFolder"/_anchor ./_pumpCompanion-deframe

@@ -1,5 +1,9 @@
 
 _setup_prog() {
+	
+	
+	_if_cygwin && return 0
+
 	#sudo -n apt-get install -y dar
 	#_getDep dar
 	
